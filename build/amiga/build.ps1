@@ -1,0 +1,1 @@
+bin\vasmm68k_mot_win32 -Fbin -o amiga.adf ..\amiga.asm -m68000
