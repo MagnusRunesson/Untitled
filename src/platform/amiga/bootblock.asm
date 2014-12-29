@@ -13,7 +13,7 @@ contentbegin
 ;                                           2    DIRC&INTL   NO_DIRC&INTL
 	dc.b	'DOS',0
 ; 4/0x04  ulong   1       Chksum          special block checksum
-	dc.l	0
+	dc.l	$a7315a6d
 ; 8/0x08  ulong   1       Rootblock       Value is 880 for DD and HD 
 ;                                          (yes, the 880 value is strange for HD)
 	dc.l	880
