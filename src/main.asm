@@ -12,6 +12,8 @@ main:
 	nop
 	nop
 
+	; Yo from Magnus!
+
 .loop:
 	jsr			inpUpdate				; Return the currently pressed buttons in d7
 	
