@@ -3,7 +3,7 @@ main:
 	move.l		#0,d1					; d1 = scroll vertical
 
 
-	nop
+	nop									; krister was here
 	nop
 	nop
 	nop
