@@ -19,10 +19,10 @@ main:
 .loop:
 	jsr			inpUpdate				; Return the currently pressed buttons in d7
 
-	btst		#INPUT_LEFT,d7
+	btst		#INPUT_LEFT,d0
 	beq			.scroll_left
 
-	btst		#INPUT_RIGHT,d7
+	btst		#INPUT_RIGHT,d0
 	beq			.scroll_right
 
 	bra			.scroll_updown
@@ -36,10 +36,10 @@ main:
 	bra			.scroll_updown
 
 .scroll_updown:
-	btst		#INPUT_UP,d7
+	btst		#INPUT_UP,d0
 	beq			.scroll_up
 
-	btst		#INPUT_DOWN,d7
+	btst		#INPUT_DOWN,d0
 	beq			.scroll_down
 
 	bra			.done
