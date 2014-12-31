@@ -158,7 +158,7 @@ LoadPatterns:
     move.w  	#$8F02,(a5)				; Set autoincrement (register 15) to 2
     move.l  	#$40000000,(a5)			; Point data port to start of VRAM
 
-    moveq   	#47,d0					; We'll load 4 patterns, each 8 longs wide
+    moveq   	#95,d0					; We'll load 4 patterns, each 8 longs wide
     lea     	Patterns,a0				; Load address of Patterns into A0
 
 .1:
