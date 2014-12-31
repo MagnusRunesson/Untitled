@@ -3,21 +3,18 @@ VarHsync equ	$00FF0004	; long
 
 
 rendInit:
-	;
-	; Write some magic values so we know we've reached this far
-	;
 	jsr			InitVDP
-	move.l		#$11213141,$fffff4
+	;move.l		#$11213141,$fffff4		; Write some magic values so we know we've reached this far
 
 	jsr			LoadPalettes
-	move.l		#$12223242,$fffff8
+	;move.l		#$12223242,$fffff8		; Write some magic values so we know we've reached this far
 
 	jsr			LoadPatterns
 	jsr			FillPlaneA
 	jsr			FillPlaneB
 
 	jsr			LoadSprites
-	;move.l		#$12223344,$fffffc
+	;move.l		#$12223344,$fffffc		; Write some magic values so we know we've reached this far
 
 	rts
 
@@ -28,8 +25,8 @@ rendInit:
 ;==============================================================================
 rendWaitVSync:
 	; Push
-	move.l		d0,-(sp)
-	move.l		d1,-(sp)
+	;move.l		d0,-(sp)
+	;move.l		d1,-(sp)
 
 	; Read initial value
 	move.l		(VarVsync),d0			; Read value from VarVsync into D0
@@ -44,8 +41,8 @@ rendWaitVSync:
 										; so jump back to 1
 
    	; Pop
-	move.l		(sp)+,d1
-	move.l		(sp)+,d0
+	;move.l		(sp)+,d1
+	;move.l		(sp)+,d0
 
 	rts									; Return to caller
 
@@ -60,25 +57,25 @@ rendWaitVSync:
 ;==============================================================================
 rendSetScrollXY:
 	; Push
-	move.l		a4,-(sp)
-	move.l		a5,-(sp)
+	;move.l		a4,-(sp)
+	;move.l		a5,-(sp)
 
 	; Setup CPU registers and VDP auto increment register
-	move.l		#$00C00000,a4		; Throughout all my code I'll use A4
-	move.l		#$00C00004,a5		; for the VDP data port and A5 for the
-	move.w		#$8F00,(a5)			; Disable autoincrement
+	move.l		#$00C00000,a0		; Throughout all my code I'll use A4
+	move.l		#$00C00004,a1		; for the VDP data port and A5 for the
+	move.w		#$8F00,(a1)			; Disable autoincrement
 
 	; Set horizontal scroll
-	move.l		#$50000003,(a5)		; Point the VDP data port to the horizontal scroll table
-	move.w		d0,(a4)
+	move.l		#$50000003,(a1)		; Point the VDP data port to the horizontal scroll table
+	move.w		d0,(a0)
 
 	; Set vertical scroll
-	move.l		#$40000010,(a5)		; Point the VDP data port to the vertical scroll table
-	move.w		d1,(a4)
+	move.l		#$40000010,(a1)		; Point the VDP data port to the vertical scroll table
+	move.w		d1,(a0)
 
 	; Pop
-	move.l		(sp)+,a5
-	move.l		(sp)+,a4
+	;move.l		(sp)+,a5
+	;move.l		(sp)+,a4
 
 	rts
 
