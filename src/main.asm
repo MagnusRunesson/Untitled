@@ -2,6 +2,8 @@ main:
 	move.l		#0,d0					; d0 = scroll position for background layer
 	move.l		#0,d1					; d1 = scroll vertical
 
+	jsr			memGetUserBaseAddress	;
+	move.l		a0,a2					; a2 will be user mem from now on
 
 	nop									; krister was here
 	nop
@@ -16,7 +18,7 @@ main:
 
 .loop:
 	jsr			inpUpdate				; Return the currently pressed buttons in d7
-	
+
 	btst		#INPUT_LEFT,d7
 	beq			.scroll_left
 
