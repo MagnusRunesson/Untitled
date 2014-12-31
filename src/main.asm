@@ -24,21 +24,23 @@ main:
 
 	btst		#INPUT_RIGHT,d7
 	beq			.scroll_right
+	bra			.scroll_updown
 
+.scroll_left:
+	addq.w		#1,d0
+	bra			.scroll_updown
+
+.scroll_right:
+	subq.w		#1,d0
+	bra			.scroll_updown
+
+.scroll_updown:
 	btst		#INPUT_UP,d7
 	beq			.scroll_up
 
 	btst		#INPUT_DOWN,d7
 	beq			.scroll_down
 
-	bra			.done
-
-.scroll_left:
-	addq.w		#1,d0
-	bra			.done
-
-.scroll_right:
-	subq.w		#1,d0
 	bra			.done
 
 .scroll_up:
