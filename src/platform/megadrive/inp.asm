@@ -1,3 +1,10 @@
+;==============================================================================
+;
+; It is quite likely that the bit positions for the different buttons will be
+; different on the different platforms so the macros for them should be in the
+; platform specific source file.
+;
+;==============================================================================
 INPUT_UP			equ		0
 INPUT_DOWN			equ		1
 INPUT_LEFT			equ		2
