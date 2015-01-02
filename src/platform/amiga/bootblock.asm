@@ -16,7 +16,20 @@
 ;                                         for a harddisk it is
 ;                                         (DosEnvVec->Bootblocks * BSIZE) - 12
 ; -------------------------------------------------------------------------------
+;
+; more information at  http://amigadev.elowar.com/read/ADCD_2.1/Devices_Manual_guide/node015A.html 
+;
+
+; Macro for use by exec/exec_lib.i
+FUNC_CNT	EQU	LIB_USERDEF	; Skip 4 standard vectors
+FUNCDEF		MACRO
+_LVO\1		EQU	FUNC_CNT
+FUNC_CNT	SET	FUNC_CNT-6	; Standard offset-6 bytes each
+			ENDM
+
 	include "exec/exec.i"
+	include "exec/exec_lib.i"
+	include "devices/trackdisk.i"
 	
 bootblockbegin
 		dc.b	'DOS',0
@@ -24,43 +37,56 @@ bootblockbegin
 		dc.l	880
 
 bootblockcodestart	
-
+	; The code is called with an open trackdisk.device I/O request pointer in A1
+	move.l	a1,a3
+	
 	; allocate memory
-	move.l	#(489*1024),d0 ; 489k is max alloc (at least on fs-uae a500)
+	move.l	#(487*1024),d0	; 487k is max alloc (at least on fs-uae a500)
 	moveq	#MEMF_CHIP,d1
-	; jsr		AllocMem(a6)
-	; JMPLIB AllocMem
-	; jsr	_LOVAllocMem(a6)
-	jsr		-$c6(a6) ;AllocMem
-	cmp.l	#0,d0
-	beq.s 	booterror
-		
+	jsr		_LVOAllocMem(a6)
+	tst.l	d0
+	beq.s 	outofmemerror
+	move.l	d0,d7			; d7=store memory pointer
+
 	; load code
-	;----
+	move.l	a3,a1
+	move.l	#(TD_SECTOR*NUMSECS),IO_LENGTH(a1)
+	move.l	d0,IO_DATA(a1)
+	move.l	#TD_SECTOR*2,IO_OFFSET(a1)
+	move.w 	#CMD_READ,IO_COMMAND(a1)
+	jsr		_LVODoIO(a6)
+	tst.l	d0
+	bne.s	diskreaderror
 	
 	; store data pointer for use by real code
 	;  (probably useless, better to use Dx to pass it on)
-	move.l	d0,a0
-	move.l	d0,(data-flimmer)(a0)
+	; move.l	d0,a0
+	; move.l	d0,(data-flimmer)(a0)
 	
 	; debug code to show OK for now
 	;  (remove when done)
-ok
-	moveq	#-1,d0
-.loop
-	move.w	d0,$dff180
-	dbra	d0,.loop
-	
-	bra.s 	ok
+; ok
+	; moveq	#-1,d0
+; .loop
+	; move.w	#$0F00,$dff180
+	; dbra	d0,.loop
 
+	; goto code
+	moveq	#0,d0
+	move.l	d7,a0
+	rts
 
-booterror
+outofmemerror
 	moveq	#1,d0
+	rts
+
+diskreaderror
+	moveq	#2,d0
 	rts
 
 bootblockcodeend
 
 bootblocklength = (bootblockcodeend-bootblockbegin)
-	blk.b	1024-bootblocklength,$BB
+	blk.b	(TD_SECTOR*2)-bootblocklength,$BB
 
 bootblockend

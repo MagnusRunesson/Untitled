@@ -5,3 +5,4 @@
 floppy_drive_0 = untitled.adf
 fade_in_duration = 0
 fade_out_duration = 0
+console_debugger = 1

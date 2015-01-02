@@ -9,10 +9,12 @@ flimmer
 	
 	moveq	#-1,d0
 .loop2
-	move.w	#$0F0F,$dff180
+	move.w	#$0f0f,$dff180
 	dbra	d0,.loop2
+	; nop
 	
 	bra.s	flimmer
 
 data
-	dc.l	0
+	dc.b	'krister'
+	; dc.l	0
