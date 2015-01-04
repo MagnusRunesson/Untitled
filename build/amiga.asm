@@ -1,5 +1,14 @@
-	include		"../../src/platform/amiga/bootblock.asm"
-	include		"../../src/platform/amiga/flimmer.asm"
-	;include		"../src/main.asm"
-	;include		"../src/platform/megadrive/inp.asm"
-	;include		"../src/platform/megadrive/rend.asm"
+
+_custom		equ 	$dff000;
+
+	include		"../src/platform/amiga/bootblock.asm"
+	include		"../src/structs.asm"
+	include		"../src/macros.asm"
+	include		"../src/main.asm"
+	include		"../src/core/mem.asm"
+	include		"../src/platform/amiga/inp.asm"
+	include		"../src/platform/amiga/rend.asm"
+	include		"../src/platform/amiga/mem.asm"
+	; include		"../src/platform/amiga/flimmer.asm"
+
+
