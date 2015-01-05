@@ -1,8 +1,0 @@
-# FS-UAE configuration saved by FS-UAE Launcher
-# Last saved: 2014-12-29 22:55:51
-
-[fs-uae]
-floppy_drive_0 = out\untitled.adf
-fade_in_duration = 0
-fade_out_duration = 0
-console_debugger = 1
