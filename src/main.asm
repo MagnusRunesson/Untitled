@@ -2,10 +2,9 @@ main:
 	move.l		#0,d2					; d2 = x scroll position for background layer
 	move.l		#0,d3					; d3 = y scroll position for background layer
 
-	jsr			memGetUserBaseAddress	;
+	jsr			memGetUserBaseAddress(pc)	;
 	move.l		a0,a2					; a2 will be user mem from now on
 
-	nop									; krister was here
 	nop
 	nop
 	nop
@@ -13,8 +12,7 @@ main:
 	nop
 	nop
 	nop
-
-	; Yo from Magnus!
+	nop
 
 .loop:
 	jsr			inpUpdate				; Return the currently pressed buttons in d7
@@ -53,12 +51,12 @@ main:
 	bra			.done
 
 .done:
-	jsr			rendWaitVSync
+	jsr			rendWaitVSync(pc)
 
 	; Update scrolling position
 	move.l		d2,d0					; x position
 	move.l		d3,d1					; y position
-	jsr			rendSetScrollXY			; d0=x position, d1=y position
+	jsr			rendSetScrollXY(pc)			; d0=x position, d1=y position
 
 	;
 	bra			.loop
