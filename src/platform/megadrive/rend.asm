@@ -119,7 +119,7 @@ VDPRegs:
 	dc.w		$8d34						; Reg. 13: Hscroll is at $D000
 	dc.w		$8e00						; Reg. 14: always zero
 	dc.w		$8f00						; Reg. 15: no autoincrement
-	dc.w		$9000						; Reg. 16: Scroll 32V and 32H
+	dc.w		$9001						; Reg. 16: Scroll 32V and 32H
 	dc.w		$9100						; Reg. 17: Set window X position/size to 0
 	dc.w		$9200						; Reg. 18: Set window Y position/size to 0
 	dc.w		$9300						; Reg. 19: DMA counter low
@@ -138,7 +138,7 @@ LoadPalettes:
 	move.l  	#$C0000000,(a5)      			; Point data port to CRAM
 
 	moveq   	#31,d0                			; We'll load 32 colors (2 palettes)
-	lea     	Palettes,a0           			; Load address of Palettes into A0
+	lea     	TestPalette,a0         			; Load address of Palettes into A0
 
  .1:
 	move.w  	(a0)+,(a4)           			; Move word from palette into VDP data
@@ -155,8 +155,8 @@ LoadPatterns:
     move.w  	#$8F02,(a5)				; Set autoincrement (register 15) to 2
     move.l  	#$40000000,(a5)			; Point data port to start of VRAM
 
-    moveq   	#95,d0					; We'll load 4 patterns, each 8 longs wide
-    lea     	Patterns,a0				; Load address of Patterns into A0
+    move.l 	  	#109*8,d0				; We'll load 4 patterns, each 8 longs wide
+    lea     	TestPatterns,a0			; Load address of Patterns into A0
 
 .1:
 	move.l  	(a0)+,(a4)				; Move long word from patterns into VDP
@@ -177,8 +177,8 @@ FillPlaneA:
 	move.w		#$8F02,(a5)			; Set autoincrement (register 15) to 2
 	move.l		#$40000003,(a5)		; Point data port to $C000 in VRAM,
 									; which is the start address of plane A
-	move.l		#1024,d0			; Loop 32x32 cells
-	lea			PlaneAData,a0		; 
+	move.l		#64*32,d0			; Loop this many cells
+	lea			TestPlaneData,a0	; 
 
 .loop:
 	move.w		(a0)+,(a4)
@@ -614,3 +614,12 @@ PlaneCData:
 	dc.w	$0000,$0000,$0000,$0000,$0000,$0000,$0000,$0000,$0000,$0000,$0000,$0000,$0000,$0000,$0000,$0000,$0000,$0000,$0000,$0000,$0000,$0000,$0000,$0000,$0000,$0000,$0000,$0000,$0000,$0000,$0000,$0000
 	dc.w	$0000,$0000,$0000,$0000,$0000,$0000,$0000,$0000,$0000,$0000,$0000,$0000,$0000,$0000,$0000,$0000,$0000,$0000,$0000,$0000,$0000,$0000,$0000,$0000,$0000,$0000,$0000,$0000,$0000,$0000,$0000,$0000
 	dc.w	$0000,$0000,$0000,$0000,$0000,$0000,$0000,$0000,$0000,$0000,$0000,$0000,$0000,$0000,$0000,$0000,$0000,$0000,$0000,$0000,$0000,$0000,$0000,$0000,$0000,$0000,$0000,$0000,$0000,$0000,$0000,$0000
+
+TestPalette:
+	incbin	"../src/incbin/untitled_splash.bin.palette"
+
+TestPatterns:
+	incbin	"../src/incbin/untitled_splash.bin.bank"
+
+TestPlaneData:
+	incbin	"../src/incbin/untitled_splash.bin.map"
