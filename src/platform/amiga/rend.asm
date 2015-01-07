@@ -1,24 +1,37 @@
 	
 	include		"hardware/custom.i"
+	include		"hardware/dmabits.i"
+	include		"exec_lib.i"
+	include		"graphics_lib.i"
 	
 
 	
 rendInit:
-	; jsr			InitVDP
-	; ;move.l		#$11213141,$fffff4		; Write some magic values so we know we've reached this far
-
-	; jsr			LoadPalettes
-	; ;move.l		#$12223242,$fffff8		; Write some magic values so we know we've reached this far
-
-	; jsr			LoadPatterns
-	; jsr			FillPlaneA
-	; jsr			FillPlaneB
-
-	; jsr			LoadSprites
-	; ;move.l		#$12223344,$fffffc		; Write some magic values so we know we've reached this far
-
+	lea		_custom,a1
+	move.w	#DMAF_ALL,dmacon(a1)
+	
+	lea		copper(pc),a0
+	move.l	a0,cop1lc(a1)
+	move.w	d0,copjmp1(a1)
+	
+	move.w	#(DMAF_SETCLR!DMAF_COPPER),dmacon(a1)
+	
 	rts
 
+copper:
+	dc.w	bplcon0,$0200
+	dc.w	color+0*2,$0FFF
+	dc.w	color+1*2,$0F00
+	dc.w	color+2*2,$00F0
+	dc.w	color+3*2,$000F
+copwait:
+	dc.w	$9601,$FFFE
+	dc.w	color+0*2,$0404
+	dc.w	color+1*2,$0FF0
+	dc.w	color+2*2,$00FF
+	dc.w	color+3*2,$0F0F	
+	dc.w	$FFFF,$FFFE
+	
 ;==============================================================================
 ;
 ; WaitVsync
@@ -46,25 +59,29 @@ rendWaitVSync:
 ; d1=Y scroll
 ;
 ;==============================================================================
-; kurt: 	dc.w 	$0000
 
 rendSetScrollXY:
 
 	movem.l	d2-d3,-(sp)
 	
-	; lea		kurt(pc),a0
-	; move.w	(a0),d2
-	; add.w	#$1,d2
-	; move.w	d2,(a0)
-	; move.w	d2,$dff180
-	move.w	d0,d2
-	and.w	#$000f,d2
-	asl.w	#4,d2
-	move.w	d1,d3
-	and.w	#$000f,d3
-	or.w    d3,d2
-	move.w	d2,_custom+color
+	; move.w	d0,d2
+	; and.w	#$000f,d2
+	; asl.w	#4,d2
+	; move.w	d1,d3
+	; and.w	#$000f,d3
+	; or.w    d3,d2
+	; move.w	d2,_custom+color
+	
 	; move.w	#$0f00,_custom+color
+	
+	; move.w	d1,d2
+	and.w	#$00ff,d0
+	and.w	#$00ff,d1
+	asl.w	#8,d1
+	or.w    d1,d0
+	or.w	#$0001,d0
+	lea		copwait(pc),a0
+	move.w	d0,(a0)
 
 	movem.l	(sp)+,d2-d3
 	
