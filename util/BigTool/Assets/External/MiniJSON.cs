@@ -441,14 +441,20 @@ namespace MiniJSON {
 			
 			void SerializeObject(IDictionary obj) {
 				bool first = true;
-				
+
+				builder.Append('\n');
+				AddIndention();
 				builder.Append('{');
-				
+				builder.Append('\n');
+				Indent();
+
 				foreach (object e in obj.Keys) {
 					if (!first) {
 						builder.Append(',');
+						builder.Append('\n');
 					}
-					
+
+					AddIndention();
 					SerializeString(e.ToString());
 					builder.Append(':');
 					
@@ -457,24 +463,36 @@ namespace MiniJSON {
 					first = false;
 				}
 				
+				builder.Append('\n');
+				Unindent();
+				AddIndention();
 				builder.Append('}');
 			}
 			
 			void SerializeArray(IList anArray) {
+				builder.Append('\n');
+				AddIndention();
 				builder.Append('[');
-				
+				builder.Append('\n');
+				Indent();
+
 				bool first = true;
 				
 				foreach (object obj in anArray) {
 					if (!first) {
 						builder.Append(',');
+						builder.Append('\n');
 					}
-					
+
+					AddIndention();
 					SerializeValue(obj);
 					
 					first = false;
 				}
 				
+				builder.Append('\n');
+				Unindent();
+				AddIndention();
 				builder.Append(']');
 			}
 			
@@ -540,6 +558,27 @@ namespace MiniJSON {
 					builder.Append(Convert.ToDouble(value).ToString("R"));
 				} else {
 					SerializeString(value.ToString());
+				}
+			}
+
+			int m_indention = 0;
+
+			void Indent()
+			{
+				m_indention += 4;
+			}
+
+			void Unindent()
+			{
+				m_indention -= 4;
+			}
+
+			void AddIndention()
+			{
+				int i;
+				for( i=0; i<m_indention; i++ )
+				{
+					builder.Append(' ');
 				}
 			}
 		}
