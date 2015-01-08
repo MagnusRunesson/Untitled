@@ -4,6 +4,7 @@ using System.Collections;
 
 public class bmp2tile : EditorWindow
 {
+	const string PPKEY_PROJECT_PATH = "bmp2tile_project_path";
 	const string PPKEY_LAST_OPEN_DIRECTORY = "bmp2tile_last_open_directory";
 	const string PPKEY_LAST_EXPORT_DIRECTORY = "bmp2tile_last_export_directory";
 
@@ -14,6 +15,8 @@ public class bmp2tile : EditorWindow
 	string m_lastExportDirectory;
 	Texture2D m_imageTexture;
 
+	Project m_project;
+
 	TileBank m_tileBank;
 	TileMap m_tileMap;
 	TilePalette m_tilePalette;
@@ -21,16 +24,23 @@ public class bmp2tile : EditorWindow
 
 	Rect m_tileBankWindowRect;
 	Rect m_paletteRemapRect;
+	Rect m_projectWindowRect;
 
 	[MenuItem("Untitled/bmp2tile %e")]
 	static public void OpenWindow()
 	{
-		bmp2tile wnd = EditorWindow.GetWindow( typeof( bmp2tile ), false, "bmp2tile" ) as bmp2tile;
+		bmp2tile wnd = EditorWindow.GetWindow( typeof( bmp2tile ), false, "Untitled 2 Data" ) as bmp2tile;
 		wnd.Init();
 	}
 
 	public void Init()
 	{
+		m_project = null;
+		if( PlayerPrefs.HasKey( PPKEY_PROJECT_PATH ))
+		{
+			m_project = new Project( PlayerPrefs.GetString( PPKEY_PROJECT_PATH ));
+		}
+
 		if( PlayerPrefs.HasKey( PPKEY_LAST_OPEN_DIRECTORY ))
 			m_lastOpenDirectory = PlayerPrefs.GetString( PPKEY_LAST_OPEN_DIRECTORY );
 		else
@@ -50,6 +60,21 @@ public class bmp2tile : EditorWindow
 	void OnGUI()
 	{
 		GUILayout.BeginHorizontal();
+
+		if( m_project == null )
+		{
+			if( GUILayout.Button( "Load project" ))
+			{
+				string path = EditorUtility.OpenFolderPanel( "Open project folder", Application.dataPath, "" );
+
+				//
+				PlayerPrefs.SetString( PPKEY_PROJECT_PATH, path );
+				PlayerPrefs.Save();
+
+				//
+				m_project = new Project( path );
+			}
+		}
 
 		if( GUILayout.Button( "Load BMP" ))
 		{
