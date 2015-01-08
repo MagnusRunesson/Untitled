@@ -23,8 +23,7 @@
 	include "exec/exec.i"
 	include "exec_lib.i"
 	include "devices/trackdisk.i"
-			
-bootblockbegin
+		
 		dc.b	'DOS',0
 		dc.l	0
 		dc.l	880
@@ -43,9 +42,9 @@ bootblockcodestart
 
 	; load code
 	move.l	a3,a1
-	move.l	#(TD_SECTOR*NUMSECS),IO_LENGTH(a1)
+	move.l	#mainnumsectors*TD_SECTOR,IO_LENGTH(a1)
 	move.l	d0,IO_DATA(a1)
-	move.l	#TD_SECTOR*2,IO_OFFSET(a1)
+	move.l	#mainbeginstartsector*TD_SECTOR,IO_OFFSET(a1)
 	move.w 	#CMD_READ,IO_COMMAND(a1)
 	jsr		_LVODoIO(a6)
 	tst.l	d0
@@ -66,7 +65,6 @@ bootblockcodestart
 
 bootblockcodeend
 
-bootblocklength = (bootblockcodeend-bootblockbegin)
-	blk.b	(TD_SECTOR*2)-bootblocklength,$BB
+bootblockcodelength equ (bootblockcodeend-bootblockbegin)
 
-bootblockend
+	blk.b	(TD_SECTOR*2)-bootblockcodelength,$BB

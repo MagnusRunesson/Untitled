@@ -13,38 +13,16 @@ rendInit:
 	lea		copperbplpt(pc),a0
 	lea		splashplanar(pc),a1
 	move.l	a1,d0
-	; moveq	#2,d1
-; .bplconloop
+	moveq	#4-1,d1
+.bplconloop
 	swap.w	d0
 	move.w	d0,2(a0)
 	swap.w	d0
 	move.w	d0,6(a0)
 	add.l	#320*224/8,d0
-	add.l	#8,a0
-
-	swap.w	d0
-	move.w	d0,2(a0)
-	swap.w	d0
-	move.w	d0,6(a0)
-	add.l	#320*224/8,d0
-	add.l	#8,a0
-
-	swap.w	d0
-	move.w	d0,2(a0)
-	swap.w	d0
-	move.w	d0,6(a0)
-	add.l	#320*224/8,d0
-	add.l	#8,a0
-
-	swap.w	d0
-	move.w	d0,2(a0)
-	swap.w	d0
-	move.w	d0,6(a0)
-	; add.l	#320*224/8,d0
-	; add.l	#8,a0
+	add.l	#8,a0	
+	dbra		d1,.bplconloop
 	
-	
-	; dbf		d1,.bplconloop
 	; move.w	#$2c81,diwstrt(a2)
 	; move.w	#$0cc1,diwstop(a2)
 	; move.w	#$0038,ddfstrt(a2)
@@ -58,9 +36,10 @@ rendInit:
 	
 	
 	move.w	#(DMAF_SETCLR!DMAF_COPPER|DMAF_RASTER),dmacon(a2)
-	
+
 	rts
 
+	cnop	0,4
 copper
 	dc.w	bplcon0,$4200
 	dc.w	bplcon1,$0000
@@ -96,12 +75,6 @@ coppercolor
 	dc.w	color+26,$0000
 	dc.w	color+28,$0000
 	dc.w	color+30,$0000	
-; copwait:
-	; dc.w	$9601,$FFFE
-	; dc.w	color+0*2,$0404
-	; dc.w	color+1*2,$0FF0
-	; dc.w	color+2*2,$00FF
-	; dc.w	color+3*2,$0F0F	
 	dc.w	$FFFF,$FFFE
 	
 ;==============================================================================
@@ -134,33 +107,6 @@ rendWaitVSync:
 
 rendSetScrollXY:
 
-	movem.l	d2-d3,-(sp)
-	
-	; move.w	d0,d2
-	; and.w	#$000f,d2
-	; asl.w	#4,d2
-	; move.w	d1,d3
-	; and.w	#$000f,d3
-	; or.w    d3,d2
-	; move.w	d2,_custom+color
-	
-	; move.w	#$0f00,_custom+color
-	
-	; move.w	d1,d2
-	
-	; and.w	#$00ff,d0
-	; and.w	#$00ff,d1
-	; asl.w	#8,d1
-	; or.w    d1,d0
-	; or.w	#$0001,d0
-	; lea		copwait(pc),a0
-	; move.w	d0,(a0)
-
-	movem.l	(sp)+,d2-d3
-	
-
-
-	
 	
 	rts
 
