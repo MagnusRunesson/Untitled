@@ -9,5 +9,9 @@ _custom		equ 	$dff000;
 	include		"../src/platform/amiga/inp.asm"
 	include		"../src/platform/amiga/rend.asm"
 	include		"../src/platform/amiga/mem.asm"
+splashplanar:
+	incbin		"../src/incbin/Untitled splash2.bin.planar"
+splashpalette:
+	incbin		"../src/incbin/Untitled splash2.bin.palette"
 
 
