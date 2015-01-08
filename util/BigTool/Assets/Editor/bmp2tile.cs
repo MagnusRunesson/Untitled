@@ -17,6 +17,7 @@ public class bmp2tile : EditorWindow
 	TileBank m_tileBank;
 	TileMap m_tileMap;
 	TilePalette m_tilePalette;
+	PlanarImage m_planarImage;
 
 	Rect m_tileBankWindowRect;
 	Rect m_paletteRemapRect;
@@ -66,6 +67,8 @@ public class bmp2tile : EditorWindow
 				m_paletteRemapRect = new Rect( m_tileBankWindowRect.x + m_tileBankWindowRect.width + 5.0f, m_tileBankWindowRect.y, 100.0f, 15.0f + (16.0f * 30.0f) );
 
 				//
+				int numberOfBitplanesIsHardcodedForNow = 4;
+				m_planarImage = new PlanarImage( m_imageData, numberOfBitplanesIsHardcodedForNow);
 				m_tileBank = new TileBank( m_imageData );
 				m_tileMap = new TileMap( m_tileBank, m_imageData );
 				m_tilePalette = new TilePalette( m_imageData );
@@ -113,6 +116,7 @@ public class bmp2tile : EditorWindow
 				m_tileBank.Export( outFileName + ".bank" );
 				m_tileMap.Export( outFileName + ".map" );
 				m_tilePalette.Export( outFileName + ".palette" );
+				m_planarImage.Export( outFileName + ".planar" );
 			}
 		}
 
