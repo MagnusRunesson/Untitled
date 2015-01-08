@@ -9,3 +9,4 @@ util/BigTool/BigTool.sln
 util/BigTool/BigTool.userprefs
 util/BigTool/BigTool-csharp.sln
 util/BigTool/Library
+build/out
