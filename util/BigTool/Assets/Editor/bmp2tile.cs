@@ -4,6 +4,7 @@ using System.Collections;
 
 public class bmp2tile : EditorWindow
 {
+	const string PPKEY_PROJECT_PATH = "bmp2tile_project_path";
 	const string PPKEY_LAST_OPEN_DIRECTORY = "bmp2tile_last_open_directory";
 	const string PPKEY_LAST_EXPORT_DIRECTORY = "bmp2tile_last_export_directory";
 
@@ -14,22 +15,32 @@ public class bmp2tile : EditorWindow
 	string m_lastExportDirectory;
 	Texture2D m_imageTexture;
 
+	Project m_project;
+
 	TileBank m_tileBank;
 	TileMap m_tileMap;
 	TilePalette m_tilePalette;
+	PlanarImage m_planarImage;
 
 	Rect m_tileBankWindowRect;
 	Rect m_paletteRemapRect;
+	Rect m_projectWindowRect;
 
 	[MenuItem("Untitled/bmp2tile %e")]
 	static public void OpenWindow()
 	{
-		bmp2tile wnd = EditorWindow.GetWindow( typeof( bmp2tile ), false, "bmp2tile" ) as bmp2tile;
+		bmp2tile wnd = EditorWindow.GetWindow( typeof( bmp2tile ), false, "Untitled 2 Data" ) as bmp2tile;
 		wnd.Init();
 	}
 
 	public void Init()
 	{
+		m_project = null;
+		if( PlayerPrefs.HasKey( PPKEY_PROJECT_PATH ))
+		{
+			m_project = new Project( PlayerPrefs.GetString( PPKEY_PROJECT_PATH ));
+		}
+
 		if( PlayerPrefs.HasKey( PPKEY_LAST_OPEN_DIRECTORY ))
 			m_lastOpenDirectory = PlayerPrefs.GetString( PPKEY_LAST_OPEN_DIRECTORY );
 		else
@@ -50,6 +61,21 @@ public class bmp2tile : EditorWindow
 	{
 		GUILayout.BeginHorizontal();
 
+		if( m_project == null )
+		{
+			if( GUILayout.Button( "Load project" ))
+			{
+				string path = EditorUtility.OpenFolderPanel( "Open project folder", Application.dataPath, "" );
+
+				//
+				PlayerPrefs.SetString( PPKEY_PROJECT_PATH, path );
+				PlayerPrefs.Save();
+
+				//
+				m_project = new Project( path );
+			}
+		}
+
 		if( GUILayout.Button( "Load BMP" ))
 		{
 			string path = EditorUtility.OpenFilePanel( "Open BMP file to convert into tilebank", m_lastOpenDirectory, "bmp" );
@@ -66,6 +92,8 @@ public class bmp2tile : EditorWindow
 				m_paletteRemapRect = new Rect( m_tileBankWindowRect.x + m_tileBankWindowRect.width + 5.0f, m_tileBankWindowRect.y, 100.0f, 15.0f + (16.0f * 30.0f) );
 
 				//
+				int numberOfBitplanesIsHardcodedForNow = 4;
+				m_planarImage = new PlanarImage( m_imageData, numberOfBitplanesIsHardcodedForNow);
 				m_tileBank = new TileBank( m_imageData );
 				m_tileMap = new TileMap( m_tileBank, m_imageData );
 				m_tilePalette = new TilePalette( m_imageData );
@@ -113,6 +141,7 @@ public class bmp2tile : EditorWindow
 				m_tileBank.Export( outFileName + ".bank" );
 				m_tileMap.Export( outFileName + ".map" );
 				m_tilePalette.Export( outFileName + ".palette" );
+				m_planarImage.Export( outFileName + ".planar" );
 			}
 		}
 

@@ -8,5 +8,5 @@
 #
 # Build Amiga
 #
-../bin/osx/vasmm68k_mot -Fbin -o out/untitled.adf amiga.asm -m68000 -I"/Users/magnusrunesson/Projects/Amiga/NDK_3.9/Include/include_i"
+../bin/osx/vasmm68k_mot -Fbin -o out/untitled.adf amigaadf.asm -m68000 -I"/Users/magnusrunesson/Projects/Amiga/NDK_3.9/Include/include_i" -I"/Users/magnusrunesson/Projects/md/Untitled/src/amiga_lib"
 ../bin/osx/makeimage out/untitled.adf

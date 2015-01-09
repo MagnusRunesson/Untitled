@@ -5,3 +5,8 @@ util/BigTool/Assembly-CSharp.csproj
 util/BigTool/Tools-csharp.sln
 util/BigTool/Tools.sln
 util/BigTool/Tools.userprefs
+util/BigTool/BigTool.sln
+util/BigTool/BigTool.userprefs
+util/BigTool/BigTool-csharp.sln
+util/BigTool/Library
+build/out
