@@ -10,5 +10,5 @@ _custom		equ 	$dff000;
 	include		"../src/platform/amiga/rend.asm"
 	include		"../src/platform/amiga/mem.asm"
 	; include		"../src/platform/amiga/flimmer.asm"
-
+	include		"../src/incbin/data.asm"
 

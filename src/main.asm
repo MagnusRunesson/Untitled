@@ -9,6 +9,15 @@ main:
 	nop
 	nop
 	nop
+
+	lea			_data_untitled_splash_bank,a0
+	move.l		#_data_untitled_splash_bank_pos,d0
+	move.l		#_data_untitled_splash_bank_length,d0
+
+	nop
+	nop
+	nop
+	nop
 	nop
 	nop
 	nop

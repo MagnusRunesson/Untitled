@@ -7,4 +7,8 @@
 	include		"../src/platform/megadrive/rend.asm"
 	include		"../src/platform/megadrive/mem.asm"
 
+	org			$10000
+
+	include		"../src/incbin/data.asm"
+
 	org			$20000
