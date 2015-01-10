@@ -1,15 +1,5 @@
 _chunk_size		equ		128			; same as TD_SECTOR (size of sector on floppy)
 
-bootblockbegin
-
-_align_on_chunk	MACRO
-\@
-.offset			equ		(\@-bootblockbegin)
-.mod			equ		(.offset//_chunk_size)
-.padsize		equ		(_chunk_size-.mod)
-				blk.b	10,$AC
-				ENDM
-
 	include		"../src/platform/megadrive/bootup.asm"
 	include		"../src/structs.asm"
 	include		"../src/macros.asm"
@@ -19,6 +9,8 @@ _align_on_chunk	MACRO
 	include		"../src/platform/megadrive/rend.asm"
 	include		"../src/platform/megadrive/mem.asm"
 	include		"../src/platform/megadrive/file.asm"
+
+	org			$10000
 
 	include		"../src/incbin/data.asm"
 	include		"../src/incbin/files.asm"
