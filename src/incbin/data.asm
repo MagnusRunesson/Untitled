@@ -17,7 +17,7 @@ _data_untitled_splash_map_length			equ ((_data_untitled_splash_map_end-_data_unt
 _data_untitled_splash_map_end:
 
 ;	_align_on_chunk
-	cnop		0,128
+	cnop		0,_chunk_size
 
 _data_untitled_splash_palette:
 	incbin	"../src/incbin/untitled_splash.bin.palette"

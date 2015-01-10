@@ -15,6 +15,7 @@ public class bmp2tile : EditorWindow
 	string m_lastExportDirectory;
 	Texture2D m_imageTexture;
 
+	string m_openImageName;
 	Project m_project;
 
 	TileBank m_tileBank;
@@ -25,6 +26,10 @@ public class bmp2tile : EditorWindow
 	Rect m_tileBankWindowRect;
 	Rect m_paletteRemapRect;
 	Rect m_projectWindowRect;
+
+	const float m_windowTop = 30.0f;
+	const float m_windowPadding = 10.0f;
+	const float m_projectWindowWidth = 250.0f;
 
 	[MenuItem("Untitled/bmp2tile %e")]
 	static public void OpenWindow()
@@ -38,7 +43,8 @@ public class bmp2tile : EditorWindow
 		m_project = null;
 		if( PlayerPrefs.HasKey( PPKEY_PROJECT_PATH ))
 		{
-			m_project = new Project( PlayerPrefs.GetString( PPKEY_PROJECT_PATH ));
+			LoadProject( PlayerPrefs.GetString( PPKEY_PROJECT_PATH ));
+			//m_project = new Project( PlayerPrefs.GetString( PPKEY_PROJECT_PATH ));
 		}
 
 		if( PlayerPrefs.HasKey( PPKEY_LAST_OPEN_DIRECTORY ))
@@ -61,7 +67,7 @@ public class bmp2tile : EditorWindow
 	{
 		GUILayout.BeginHorizontal();
 
-		if( m_project == null )
+		//if( m_project == null )
 		{
 			if( GUILayout.Button( "Load project" ))
 			{
@@ -72,7 +78,7 @@ public class bmp2tile : EditorWindow
 				PlayerPrefs.Save();
 
 				//
-				m_project = new Project( path );
+				LoadProject( path );
 			}
 		}
 
@@ -82,47 +88,7 @@ public class bmp2tile : EditorWindow
 			m_lastOpenDirectory = System.IO.Path.GetDirectoryName( path );
 			SaveLastOpenDirectory();
 
-			// Load corresponding config first as it have information on how the image should be loaded
-			m_imageConfig = new PalettizedImageConfig( path + ".config" );
-
-			m_imageData = PalettizedImage.LoadBMP( path, m_imageConfig );
-			if( m_imageData != null )
-			{
-				m_tileBankWindowRect = new Rect( 5.0f, 30.0f, m_imageData.m_width*2.0f+10.0f, m_imageData.m_height*2.0f+10.0f+15.0f );
-				m_paletteRemapRect = new Rect( m_tileBankWindowRect.x + m_tileBankWindowRect.width + 5.0f, m_tileBankWindowRect.y, 100.0f, 15.0f + (16.0f * 30.0f) );
-
-				//
-				int numberOfBitplanesIsHardcodedForNow = 4;
-				m_planarImage = new PlanarImage( m_imageData, numberOfBitplanesIsHardcodedForNow);
-				m_tileBank = new TileBank( m_imageData );
-				m_tileMap = new TileMap( m_tileBank, m_imageData );
-				m_tilePalette = new TilePalette( m_imageData );
-
-				//
-				int w, h;
-				w = m_imageData.m_width;
-				h = m_imageData.m_height;
-
-				//
-				m_imageTexture = new Texture2D( w, h, TextureFormat.ARGB32, false );
-				m_imageTexture.filterMode = FilterMode.Point;
-
-				//
-				int x, y;
-				for( y=0; y<h; y++ )
-				{
-					for( x=0; x<w; x++ )
-					{
-						int ii = ((h-1-y)*w)+x;
-						int ic = m_imageData.m_image[ ii ];
-						Color col = m_imageData.m_palette[ ic ];
-						m_imageTexture.SetPixel( x, y, col );
-					}
-				}
-
-				//
-				m_imageTexture.Apply();
-			}
+			LoadBMP( path );
 		}
 
 		//
@@ -138,19 +104,30 @@ public class bmp2tile : EditorWindow
 				SaveLastExportDirectory();
 				
 				//
-				m_tileBank.Export( outFileName + ".bank" );
-				m_tileMap.Export( outFileName + ".map" );
-				m_tilePalette.Export( outFileName + ".palette" );
-				m_planarImage.Export( outFileName + ".planar" );
+				string outFileNameNoExt = System.IO.Path.GetFileNameWithoutExtension( outFileName ).ToLower();
+				string outBaseName = m_lastExportDirectory + System.IO.Path.DirectorySeparatorChar + outFileNameNoExt;
+
+				//
+				m_tileBank.Export( outBaseName + "_bank.bin" );
+				m_tileMap.Export( outBaseName + "_map.bin" );
+				m_tilePalette.Export( outBaseName + "_palette.bin" );
+				m_planarImage.Export( outBaseName + "_planar.bin" );
 			}
 		}
 
 		BeginWindows();
 		if( m_tileBank != null )
 		{
-			m_tileBankWindowRect = GUI.Window( 0, m_tileBankWindowRect, OnDrawTileBank, "Original image" );
+			m_tileBankWindowRect = GUI.Window( 0, m_tileBankWindowRect, OnDrawTileBank, m_openImageName );
 			m_paletteRemapRect = GUI.Window( 1, m_paletteRemapRect, OnDrawColorRemapTable, "Color remap" );
 		}
+
+		if( m_project != null )
+		{
+			// Show the project window.
+			m_projectWindowRect = GUI.Window( 2, m_projectWindowRect, OnDrawProject, "Project" );
+		}
+		
 		EndWindows();
 
 		GUILayout.EndHorizontal();
@@ -252,6 +229,21 @@ public class bmp2tile : EditorWindow
 		GUI.DragWindow();
 	}
 
+	void OnDrawProject( int _id )
+	{
+		string[] imageFiles = m_project.m_imageFiles;
+		foreach( string fullPath in imageFiles )
+		{
+			string name = System.IO.Path.GetFileName( fullPath );
+			if( GUILayout.Button( name ))
+			{
+				LoadBMP( fullPath );
+			}
+		}
+
+		GUI.DragWindow();
+	}
+
 	void SaveLastOpenDirectory()
 	{
 		PlayerPrefs.SetString( PPKEY_LAST_OPEN_DIRECTORY, m_lastOpenDirectory );
@@ -263,5 +255,59 @@ public class bmp2tile : EditorWindow
 		Debug.Log( "m_lastExportDirectory=" + m_lastExportDirectory );
 		PlayerPrefs.SetString( PPKEY_LAST_EXPORT_DIRECTORY, m_lastExportDirectory );
 		PlayerPrefs.Save();
+	}
+
+	void LoadProject( string _path )
+	{
+		m_project = new Project( _path );
+		m_projectWindowRect = new Rect( m_windowPadding, m_windowTop, m_projectWindowWidth, 600.0f );
+	}
+
+	void LoadBMP( string _path )
+	{
+		m_openImageName = "<Untitled>";
+
+		// Load corresponding config first as it have information on how the image should be loaded
+		m_imageConfig = new PalettizedImageConfig( _path + ".config" );
+		
+		m_imageData = PalettizedImage.LoadBMP( _path, m_imageConfig );
+		if( m_imageData != null )
+		{
+			m_openImageName = System.IO.Path.GetFileNameWithoutExtension( _path );
+			m_tileBankWindowRect = new Rect( m_projectWindowWidth + (m_windowPadding*2.0f), m_windowTop, m_imageData.m_width*2.0f+10.0f, m_imageData.m_height*2.0f+10.0f+15.0f );
+			m_paletteRemapRect = new Rect( m_tileBankWindowRect.x + m_tileBankWindowRect.width + m_windowPadding, m_tileBankWindowRect.y, 100.0f, 15.0f + (16.0f * 30.0f) );
+			
+			//
+			int numberOfBitplanesIsHardcodedForNow = 4;
+			m_planarImage = new PlanarImage( m_imageData, numberOfBitplanesIsHardcodedForNow);
+			m_tileBank = new TileBank( m_imageData );
+			m_tileMap = new TileMap( m_tileBank, m_imageData );
+			m_tilePalette = new TilePalette( m_imageData );
+			
+			//
+			int w, h;
+			w = m_imageData.m_width;
+			h = m_imageData.m_height;
+			
+			//
+			m_imageTexture = new Texture2D( w, h, TextureFormat.ARGB32, false );
+			m_imageTexture.filterMode = FilterMode.Point;
+			
+			//
+			int x, y;
+			for( y=0; y<h; y++ )
+			{
+				for( x=0; x<w; x++ )
+				{
+					int ii = ((h-1-y)*w)+x;
+					int ic = m_imageData.m_image[ ii ];
+					Color col = m_imageData.m_palette[ ic ];
+					m_imageTexture.SetPixel( x, y, col );
+				}
+			}
+			
+			//
+			m_imageTexture.Apply();
+		}
 	}
 }

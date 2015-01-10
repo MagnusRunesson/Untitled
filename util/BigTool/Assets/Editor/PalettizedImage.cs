@@ -60,7 +60,6 @@ public class PalettizedImage
 			if( m_config.m_colorRemapSourceToDest.ContainsKey( c ))
 				c2 = m_config.m_colorRemapSourceToDest[ c ];
 
-			Debug.Log ("Reading from color " + c2 + " for color " + c );
 			int i = _offset+(c2*4);
 			int r = _array[ i+2 ];
 			int g = _array[ i+1 ];
