@@ -96,6 +96,8 @@ class PlanarImage
 
 	public void Export( string _outfilename )
 	{
+		Debug.Log ("Exporting planar image to " + _outfilename );
+
 		System.IO.File.WriteAllBytes( _outfilename, m_planarData );
 	}
 }

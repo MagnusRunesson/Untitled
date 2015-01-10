@@ -82,6 +82,15 @@ public class bmp2tile : EditorWindow
 			}
 		}
 
+		if( m_project != null )
+		{
+			if( GUILayout.Button( "Export all" ))
+			{
+				ExportAll();
+			}
+		}
+
+		/*
 		if( GUILayout.Button( "Load BMP" ))
 		{
 			string path = EditorUtility.OpenFilePanel( "Open BMP file to convert into tilebank", m_lastOpenDirectory, "bmp" );
@@ -114,6 +123,7 @@ public class bmp2tile : EditorWindow
 				m_planarImage.Export( outBaseName + "_planar.bin" );
 			}
 		}
+		*/
 
 		BeginWindows();
 		if( m_tileBank != null )
@@ -309,5 +319,78 @@ public class bmp2tile : EditorWindow
 			//
 			m_imageTexture.Apply();
 		}
+	}
+
+	//
+	void ExportAll()
+	{
+		//
+		string outFileName = EditorUtility.SaveFilePanel( "Select folder to export to", m_lastExportDirectory, "filenameignored", "bin" );
+		
+		//
+		m_lastExportDirectory = System.IO.Path.GetDirectoryName( outFileName );
+		SaveLastExportDirectory();
+
+		//
+		// Export all images
+		//
+		string[] imageFiles = m_project.m_imageFiles;
+		foreach( string imageFile in imageFiles )
+		{
+			Debug.Log( "Exporting file '" + imageFile + "'" );
+			string outFileNameNoExt = System.IO.Path.GetFileNameWithoutExtension( imageFile ).ToLower();
+			string outBaseName = m_lastExportDirectory + System.IO.Path.DirectorySeparatorChar + outFileNameNoExt;
+
+			//
+			PalettizedImageConfig imageConfig = new PalettizedImageConfig( imageFile + ".config" );
+			PalettizedImage imageData = PalettizedImage.LoadBMP( imageFile, imageConfig );
+
+			//
+			if( imageData != null )
+			{
+				// Convert to tile banks / planar images
+				int numberOfBitplanesIsHardcodedForNow = 4;
+				PlanarImage planarImage = new PlanarImage( imageData, numberOfBitplanesIsHardcodedForNow);
+				TileBank tileBank = new TileBank( imageData );
+				TileMap tileMap = new TileMap( tileBank, imageData );
+				TilePalette tilePalette = new TilePalette( imageData );
+
+				// Export it
+				tileBank.Export( outBaseName + "_bank.bin" );
+				tileMap.Export( outBaseName + "_map.bin" );
+				tilePalette.Export( outBaseName + "_palette.bin" );
+				planarImage.Export( outBaseName + "_planar.bin" );
+			}
+		}
+
+		/*
+		//
+		string outFileNameNoExt = System.IO.Path.GetFileNameWithoutExtension( outFileName ).ToLower();
+		string outBaseName = m_lastExportDirectory + System.IO.Path.DirectorySeparatorChar + outFileNameNoExt;
+
+		// Load corresponding config first as it have information on how the image should be loaded
+		m_imageConfig = new PalettizedImageConfig( _path + ".config" );
+		
+		m_imageData = PalettizedImage.LoadBMP( _path, m_imageConfig );
+		if( m_imageData != null )
+		{
+			m_openImageName = System.IO.Path.GetFileNameWithoutExtension( _path );
+			m_tileBankWindowRect = new Rect( m_projectWindowWidth + (m_windowPadding*2.0f), m_windowTop, m_imageData.m_width*2.0f+10.0f, m_imageData.m_height*2.0f+10.0f+15.0f );
+			m_paletteRemapRect = new Rect( m_tileBankWindowRect.x + m_tileBankWindowRect.width + m_windowPadding, m_tileBankWindowRect.y, 100.0f, 15.0f + (16.0f * 30.0f) );
+			
+			//
+			int numberOfBitplanesIsHardcodedForNow = 4;
+			m_planarImage = new PlanarImage( m_imageData, numberOfBitplanesIsHardcodedForNow);
+			m_tileBank = new TileBank( m_imageData );
+			m_tileMap = new TileMap( m_tileBank, m_imageData );
+			m_tilePalette = new TilePalette( m_imageData );
+		}
+
+		//
+		m_tileBank.Export( outBaseName + "_bank.bin" );
+		m_tileMap.Export( outBaseName + "_map.bin" );
+		m_tilePalette.Export( outBaseName + "_palette.bin" );
+		m_planarImage.Export( outBaseName + "_planar.bin" );
+		*/
 	}
 }

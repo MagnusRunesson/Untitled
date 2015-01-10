@@ -180,6 +180,8 @@ public class TileBank
 
 	public void Export( string _outfilename )
 	{
+		Debug.Log ("Exporting tile bank to " + _outfilename );
+
 		int numTiles = m_tiles.Count;
 		// Export size = number of tiles * 64 pixels / 2 (because there are 2 bytes per pixel)
 		int outsize = numTiles * 32;
@@ -263,6 +265,8 @@ public class TileMap
 
 	public void Export( string _outfilename )
 	{
+		Debug.Log ("Exporting tile map to " + _outfilename );
+
 		// Export size = width * height * 2 (each tile in the map is 2 bytes)
 		int outsize = m_width*m_height*2;
 		byte[] outBytes = new byte[ outsize ];
@@ -341,6 +345,8 @@ public class TilePalette
 
 	public void Export( string _outfilename )
 	{
+		Debug.Log ("Exporting palette to " + _outfilename );
+
 		int outsize = 16*2;
 		byte[] outBytes = new byte[ outsize ];
 
