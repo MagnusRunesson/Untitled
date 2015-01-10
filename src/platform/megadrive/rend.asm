@@ -80,6 +80,67 @@ rendSetScrollXY:
 	rts
 
 
+;==============================================================================
+;
+; Load a tile bank into VRAM
+;
+; d0=file ID of tile bank file to load into VRAM
+; d1=offset into VRAM where the tile bank should be loaded
+;
+;==============================================================================
+rendLoadTileBank:
+	; Push the VRAM offset onto the stack
+	move.l		d1,-(sp)
+
+	; fileLoad accept the file ID as d0, so no need to do any tricks here
+	jsr			fileLoad
+	; a0 is the return address from fileLoad, so it is set to the source address now
+
+	; d0 is set to the size of the file but rendCopyToVRAM expect it to be in d1
+	move.l		d0,d1
+
+	; Now fetch the VRAM offset argument
+	move.l		(sp)+,d0
+
+	; d0=destination offset
+	; d1=size to copy
+	; a0=source address
+	jsr			rendCopyToVRAM
+
+	rts
+
+
+;==============================================================================
+;
+; General copy from CPU to VRAM subroutine
+;
+; a0=source addres
+; d0=destination offset
+; d1=size to copy
+;
+;==============================================================================
+rendCopyToVRAM:
+	move.l		#$00C00004,a1
+
+    move.w  	#$8F02,(a1)				; Set autoincrement (register 15) to 2
+    move.l  	#$40000000,(a1)			; Point data port to start of VRAM
+
+	move.l		#$00C00000,a1
+
+	move.l		d1,d0
+    ;move.l 	  	#109*8,d0				; We'll load 4 patterns, each 8 longs wide
+    ;lea     	TestPatterns,a0			; Load address of Patterns into A0
+
+.1:
+	move.l  	(a0)+,(a1)				; Move long word from patterns into VDP
+										; port and increment A0 by 4
+	dbra    	d0,.1					; If D0 is not zero decrement and jump
+										; back to 1
+    
+    rts									; Return to caller
+
+
+
 
 ;==============================================================================
 ;

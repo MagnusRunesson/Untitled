@@ -10,10 +10,34 @@ main:
 	nop
 	nop
 	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
 
-	lea			_data_untitled_splash_bank,a0
-	move.l		#_data_untitled_splash_bank_pos,d0
-	move.l		#_data_untitled_splash_bank_length,d0
+	move.l		#FILEID_UNTITLED_SPLASH_PALETTE,d0
+	jsr			fileLoad
+
+	;move.l		#_data_untitled_splash_bank_pos,d0
+
+	printt		'-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-'
+	printt		'_data_untitled_splash_palette_pos:'
+	printv		_data_untitled_splash_palette_pos
+	printt		''
+	printt		'_data_untitled_splash_palette_length:'
+	printv		_data_untitled_splash_palette_length
+	printt		''
+	printt		'_data_untitled_splash_palette:'
+	printv		_data_untitled_splash_palette
+	printt		''
 
 	nop
 	nop

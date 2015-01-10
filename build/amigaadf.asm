@@ -25,6 +25,7 @@ mainbegin
 	include		"../src/platform/amiga/inp.asm"
 	include		"../src/platform/amiga/rend.asm"
 	include		"../src/platform/amiga/mem.asm"
+	include		"../src/platform/amiga/file.asm"
 
 	; test planar, remove!
 	cnop	0,4
@@ -46,4 +47,7 @@ workmemend
 databegin
 	blk.b		300*1024,$DD
 	_align_on_chunk	
+
+	include		"../src/incbin/data.asm"
+	include		"../src/incbin/files.asm"
 dataend
