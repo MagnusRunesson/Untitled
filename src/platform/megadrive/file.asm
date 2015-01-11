@@ -22,4 +22,6 @@ fileLoad:
 	mulu		#_chunk_size,d0	; Offset is not in bytes but in X byte chunks. Correct that.
 	move.l		d0,a0			; Move the corrected address into the return register
 
+	move.l		d1,d0			; Move file size into d0
+
 	rts
