@@ -16,6 +16,7 @@ mainbegin
 	include		"../src/platform/amiga/rend.asm"
 	include		"../src/platform/amiga/mem.asm"
 	include		"../src/platform/amiga/file.asm"
+	include		"../src/platform/amiga/img.asm"
 	
 	include		"../src/incbin/files.asm"
 	include		"../src/incbin/untitled_splash_image.asm"	
