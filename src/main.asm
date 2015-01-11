@@ -23,20 +23,23 @@ main:
 	nop
 	nop
 
-	move.l		#FILEID_UNTITLED_SPLASH_PALETTE,d0
-	jsr			fileLoad
+	lea			untitled_splash_image,a0
+	bsr.w		imgLoad
+
+	;move.l		#FILEID_UNTITLED_SPLASH_PALETTE,d0
+	;bsr.w		fileLoad
 
 	;move.l		#_data_untitled_splash_bank_pos,d0
 
 	printt		'-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-'
-	printt		'_data_untitled_splash_palette_pos:'
-	printv		_data_untitled_splash_palette_pos
+	printt		'_data_untitled_splash_bank_pos:'
+	printv		_data_untitled_splash_bank_pos
 	printt		''
-	printt		'_data_untitled_splash_palette_length:'
-	printv		_data_untitled_splash_palette_length
+	printt		'_data_untitled_splash_bank_length:'
+	printv		_data_untitled_splash_bank_length
 	printt		''
-	printt		'_data_untitled_splash_palette:'
-	printv		_data_untitled_splash_palette
+	printt		'_data_untitled_splash_bank:'
+	printv		_data_untitled_splash_bank
 	printt		''
 
 	nop

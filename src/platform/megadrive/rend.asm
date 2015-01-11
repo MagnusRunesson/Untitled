@@ -9,7 +9,7 @@ rendInit:
 	jsr			LoadPalettes
 	;move.l		#$12223242,$fffff8		; Write some magic values so we know we've reached this far
 
-	jsr			LoadPatterns
+	;jsr			LoadPatterns
 	jsr			FillPlaneA
 	jsr			FillPlaneB
 
@@ -127,8 +127,8 @@ rendCopyToVRAM:
 
 	move.l		#$00C00000,a1
 
-	move.l		d1,d0
-    ;move.l 	  	#109*8,d0				; We'll load 4 patterns, each 8 longs wide
+	;move.l		d1,d0
+    move.l 	  	#109*8,d0				; We'll load 4 patterns, each 8 longs wide
     ;lea     	TestPatterns,a0			; Load address of Patterns into A0
 
 .1:
