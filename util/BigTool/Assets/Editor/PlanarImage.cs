@@ -17,7 +17,7 @@ class PlanarImage
 		m_height = _palettizedImage.m_height;
 
 		SanityChecks (_palettizedImage);
-		m_planarData = ChunkyToPlanarSequential (_palettizedImage.m_image);
+		m_planarData = ChunkyToPlanarInterleaved (_palettizedImage.m_image);
 	}
 
 	void SanityChecks (PalettizedImage _palettizedImage)
@@ -43,7 +43,10 @@ class PlanarImage
 		int chunkyStepPerRow = m_width;
 		int planarStepPerRow = m_width/8;
 		int planarStepPerPlane = planarStepPerRow*m_height;
-		
+//		Debug.Log ("chunkyStepPerRow: " + chunkyStepPerRow);
+//		Debug.Log ("planarStepPerRow: " + planarStepPerRow);
+//		Debug.Log ("planarStepPerPlane: " + planarStepPerPlane);
+
 		return ChunkyToPlanar (image, chunkyStepPerRow, planarStepPerRow, planarStepPerPlane);
 	}
 	
@@ -51,15 +54,19 @@ class PlanarImage
 	{
 		int chunkyStepPerRow = m_width;
 		int planarStepPerRow = m_width/8*m_numberOfBitPlanes;
-		int planarStepPerPlane = planarStepPerRow;
-		
+		int planarStepPerPlane = m_width/8;
+//		Debug.Log ("chunkyStepPerRow: " + chunkyStepPerRow);
+//		Debug.Log ("planarStepPerRow: " + planarStepPerRow);
+//		Debug.Log ("planarStepPerPlane: " + planarStepPerPlane);
+
 		return ChunkyToPlanar (image, chunkyStepPerRow, planarStepPerRow, planarStepPerPlane);
 	}
 	
 	private byte[] ChunkyToPlanar (byte[] image, int chunkyStepPerRow, int planarStepPerRow, int planarStepPerPlane)
 	{
-		int planarDataSize = m_height * m_width * m_numberOfBitPlanes / 8;
+		int planarDataSize = m_height * m_width * m_numberOfBitPlanes / 8;	
 		byte[] planarData = new byte[planarDataSize];
+		
 		for (int y = 0; y < m_height; y++) 
 		{			
 			int chunkyYOffs = y*chunkyStepPerRow;

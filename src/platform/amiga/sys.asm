@@ -19,7 +19,7 @@ entrypoint:
 	move.w	d0,2(a0)
 	swap.w	d0
 	move.w	d0,6(a0)
-	add.l	#320*224/8,d0
+	add.l	#320/8,d0
 	add.l	#8,a0	
 	dbra		d1,.bplconloop
 	
@@ -51,8 +51,8 @@ copper
 	dc.w	diwstop,$0cc1
 	dc.w	ddfstrt,$0038
 	dc.w	ddfstop,$00d0
-	dc.w	bpl1mod,$0000
-	dc.w	bpl2mod,$0000
+	dc.w	bpl1mod,$0078
+	dc.w	bpl2mod,$0078
 copperbplpt
 	dc.w	bplpt+0,$0000
 	dc.w	bplpt+2,$0000
