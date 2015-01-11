@@ -11,11 +11,6 @@
 ;
 ;==============================================================================
 fileLoad:
-	printt		''
-	printt		'=====> File ID map is at:'
-	printv		FileIDMap
-	printt		''
-
 	lea			FileIDMap,a0
 	mulu		#4,d0
 	add.l		d0,a0
