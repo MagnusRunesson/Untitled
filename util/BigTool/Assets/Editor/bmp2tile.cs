@@ -31,6 +31,8 @@ public class bmp2tile : EditorWindow
 	const float m_windowPadding = 10.0f;
 	const float m_projectWindowWidth = 250.0f;
 
+	int m_exportedFileListIndex;
+
 	[MenuItem("Untitled/bmp2tile %e")]
 	static public void OpenWindow()
 	{
@@ -325,11 +327,21 @@ public class bmp2tile : EditorWindow
 	void ExportAll()
 	{
 		//
+		m_exportedFileListIndex = 0;
+
+		//
 		string outFileName = EditorUtility.SaveFilePanel( "Select folder to export to", m_lastExportDirectory, "filenameignored", "bin" );
 		
 		//
 		m_lastExportDirectory = System.IO.Path.GetDirectoryName( outFileName );
 		SaveLastExportDirectory();
+
+		//
+		// Build data.asm and files.asm content
+		//
+		string asmData = "";
+		string asmFileList = "";
+		string asmFileMap = "FileIDMap:\n";
 
 		//
 		// Export all images
@@ -338,6 +350,7 @@ public class bmp2tile : EditorWindow
 		foreach( string imageFile in imageFiles )
 		{
 			Debug.Log( "Exporting file '" + imageFile + "'" );
+
 			string outFileNameNoExt = System.IO.Path.GetFileNameWithoutExtension( imageFile ).ToLower();
 			string outBaseName = m_lastExportDirectory + System.IO.Path.DirectorySeparatorChar + outFileNameNoExt;
 
@@ -360,8 +373,17 @@ public class bmp2tile : EditorWindow
 				tileMap.Export( outBaseName + "_map.bin" );
 				tilePalette.Export( outBaseName + "_palette.bin" );
 				planarImage.Export( outBaseName + "_planar.bin" );
+
+				//
+				AddFile( ref asmData, ref asmFileList, ref asmFileMap, outFileNameNoExt + "_bank.bin" );
+				AddFile( ref asmData, ref asmFileList, ref asmFileMap, outFileNameNoExt + "_map.bin" );
+				AddFile( ref asmData, ref asmFileList, ref asmFileMap, outFileNameNoExt + "_palette.bin" );
+				AddFile( ref asmData, ref asmFileList, ref asmFileMap, outFileNameNoExt + "_planar.bin" );
 			}
 		}
+
+		System.IO.File.WriteAllText( m_lastExportDirectory + System.IO.Path.DirectorySeparatorChar + "data.asm", asmData );
+		System.IO.File.WriteAllText( m_lastExportDirectory + System.IO.Path.DirectorySeparatorChar + "files.asm", asmFileList + "\n" + asmFileMap );
 
 		/*
 		//
@@ -393,4 +415,38 @@ public class bmp2tile : EditorWindow
 		m_planarImage.Export( outBaseName + "_planar.bin" );
 		*/
 	}
+
+	void AddFile( ref string _asmData, ref string _asmFileList, ref string _asmFileMap, string _filename )
+	{
+		string asmFileName = System.IO.Path.GetFileNameWithoutExtension( _filename ).Replace( ' ', '_' );
+		string label = "_data_" + asmFileName;
+
+		// Append to data.asm
+		_asmData += "\n\n; " + _filename + "\n\n";
+		_asmData += "\tcnop\t\t0,_chunk_size\n";
+		_asmData += label + ":\n";
+		_asmData += "\tincbin\t\"../src/incbin/" + _filename + "\"\n";
+		_asmData += (label + "_pos").PadRight( 40 ) + "equ " + label + "/_chunk_size\n";
+		_asmData += (label + "_length").PadRight( 40 ) +"equ ((" + label + "_end-" + label + ")+(_chunk_size-1))/_chunk_size\n";
+		_asmData += label + "_end:\n";
+
+		// Append to files.asm
+		_asmFileList += ("FILEID_" + asmFileName.ToUpper()).PadRight( 40 ) + "equ " + m_exportedFileListIndex + "\n";
+		_asmFileMap += "\tdc.w\t" + label + "_pos," + label + "_length\n";
+		m_exportedFileListIndex++;
+
+/*
+
+	cnop		0,_chunk_size
+
+_data_untitled_splash_bank:
+	incbin	"../src/incbin/untitled_splash_bank.bin"
+_data_untitled_splash_bank_pos				equ _data_untitled_splash_bank/_chunk_size
+_data_untitled_splash_bank_length			equ ((_data_untitled_splash_bank_end-_data_untitled_splash_bank)+(_chunk_size-1))/_chunk_size
+_data_untitled_splash_bank_end:
+
+*/
+		                             }
 }
+
+
