@@ -24,11 +24,15 @@
 	include "exec_lib.i"
 	include "devices/trackdisk.i"
 		
-		dc.b	'DOS',0
-		dc.l	0
-		dc.l	880
+mainbeginstartsector	equ ((mainbegin-bootblockbegin)/TD_SECTOR)
+mainnumsectors			equ	((mainend-mainbegin)/TD_SECTOR)
+		
+	dc.b	'DOS',0
+	dc.l	0
+	dc.l	880
 
 bootblockcodestart	
+
 	; The code is called with an open trackdisk.device I/O request pointer in A1
 	move.l	a1,a3
 

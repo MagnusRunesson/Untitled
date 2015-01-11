@@ -11,7 +11,7 @@ rendInit:
 	move.w	#DMAF_ALL,dmacon(a2)
 	
 	lea		copperbplpt(pc),a0
-	lea		splashplanar(pc),a1
+	lea		_data_untitled_splash_planar(pc),a1
 	move.l	a1,d0
 	moveq	#4-1,d1
 .bplconloop

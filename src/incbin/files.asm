@@ -1,6 +1,7 @@
 FILEID_UNTITLED_SPLASH_BANK			equ			0
 FILEID_UNTITLED_SPLASH_MAP			equ			1
 FILEID_UNTITLED_SPLASH_PALETTE		equ			2
+FILEID_UNTITLED_SPLASH_PLANAR		equ			3
 
 FileIDMap:
 				dc.w	_data_untitled_splash_bank_pos
@@ -11,6 +12,9 @@ FileIDMap:
 
 				dc.w	_data_untitled_splash_palette_pos
 				dc.w	_data_untitled_splash_palette_length
+				
+				dc.w	_data_untitled_splash_planar_pos
+				dc.w	_data_untitled_splash_planar_length
 				
 				;dc.w	_data_untitled_splash_bank/_chunksize,((_data_untitled_splash_bank_end-_data_untitled_splash_bank)+(_chunksize-1))/_chunksize
 				;dc.w	_data_untitled_splash_map/_chunksize,((_data_untitled_splash_map_end-_data_untitled_splash_map)+(_chunksize-1))/_chunksize
