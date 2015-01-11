@@ -223,8 +223,8 @@ public class TileMap
 		//
 		int w = _sourceImage.m_width;
 		int h = _sourceImage.m_height;
-		m_width = (_sourceImage.m_width+7) >> 3;
-		m_height = (_sourceImage.m_height+7) >> 3;
+		m_width = 64;//(_sourceImage.m_width+7) >> 3;
+		m_height = 32;//(_sourceImage.m_height+7) >> 3;
 		int sourceWidth = w >> 3;
 		int sourceHeight = h >> 3;
 
