@@ -10,6 +10,7 @@ bootblockend
 mainbegin	
 	include		"../src/structs.asm"
 	include		"../src/macros.asm"
+	include		"../src/platform/amiga/sys.asm"
 	include		"../src/main.asm"
 	include		"../src/core/mem.asm"
 	include		"../src/platform/amiga/inp.asm"

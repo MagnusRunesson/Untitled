@@ -1,5 +1,4 @@
 main:
-	jsr			rendInit(pc)
 	move.l		#0,d2					; d2 = x scroll position for background layer
 	move.l		#0,d3					; d3 = y scroll position for background layer
 
