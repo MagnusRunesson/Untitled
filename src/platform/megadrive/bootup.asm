@@ -147,6 +147,7 @@
 	;
 	move.l		#$0,sp						; Set stack pointer to 0, and it decrements so the first long value will be stored at $fffffc (decrement first, then write)
 
+	bsr			inpInit
 	jsr			rendInit
 
 	;

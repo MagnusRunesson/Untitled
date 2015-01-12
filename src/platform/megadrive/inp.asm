@@ -15,6 +15,30 @@ INPUT_ACTION2		equ		4
 INPUT_ACTION3		equ		5
 
 
+;
+; Some kind if input init, by M3
+;
+inpInit:
+	moveq	#$40,d0
+	; Init code from sgdk, converted to assembler by me.
+
+	lea			$a10009,a0
+	move.b		d0,(a0)
+	addq.w		#2,a0
+	move.b		d0,(a0)
+	addq.w		#2,a0
+	move.b		d0,(a0)
+
+	lea			$a10003,a0
+	move.b		d0,(a0)
+	addq.w		#2,a0
+	move.b		d0,(a0)
+	addq.w		#2,a0
+	move.b		d0,(a0)
+
+	rts
+
+
 ;==============================================================================
 ; Read joypad 1
 ;
