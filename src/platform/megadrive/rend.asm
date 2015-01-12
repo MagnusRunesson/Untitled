@@ -10,8 +10,8 @@ rendInit:
 	;move.l		#$12223242,$fffff8		; Write some magic values so we know we've reached this far
 
 	;jsr			LoadPatterns
-	jsr			FillPlaneA
-	jsr			FillPlaneB
+	;jsr			FillPlaneA
+	;jsr			FillPlaneB
 
 	jsr			LoadSprites
 	;move.l		#$12223344,$fffffc		; Write some magic values so we know we've reached this far
@@ -85,29 +85,69 @@ rendSetScrollXY:
 ; Load a tile bank into VRAM
 ;
 ; d0=file ID of tile bank file to load into VRAM
-; d1=offset into VRAM where the tile bank should be loaded
 ;
 ;==============================================================================
 rendLoadTileBank:
 	; Push the VRAM offset onto the stack
+	;move.l		d1,-(sp)
+
+	; fileLoad accept the file ID as d0, so no need to do any tricks here
+	jsr			fileLoad
+	; a0 is the return address from fileLoad, so it is set to the source address now
+
+	; Load the number of tiles to copy from the bank data
+    move.l 	  	#109*8,d1
+
+	; Now fetch the VRAM offset argument
+	move.l		#$40000000,d0
+
+	; d0=destination offset
+	; d1=size to copy
+	; a0=source address
+	jsr			_rendCopyToVRAM
+
+	rts
+
+
+;==============================================================================
+;
+; Load a tile map into VRAM
+;
+; d0=file ID of tile bank file to load into VRAM
+; d1=Which slot to store the map in.
+;		Slot #0 - Background layer (behind sprites)
+;		Slot #1 - Foreground layer (in front of sprites)
+;
+;==============================================================================
+rendLoadTileMap:
+	; Push the slot ID onto the stack
 	move.l		d1,-(sp)
 
 	; fileLoad accept the file ID as d0, so no need to do any tricks here
 	jsr			fileLoad
 	; a0 is the return address from fileLoad, so it is set to the source address now
 
-	; d0 is set to the size of the file but rendCopyToVRAM expect it to be in d1
-	move.l		d0,d1
+	; d0 is set to the size of the file but _rendCopyToVRAM expect it to be in d1
+	;move.l		d0,d1
+	move.l		#64*32/2,d1		; How many longs to copy
 
-	; Now fetch the VRAM offset argument
+	; Now fetch the slot argument and convert to a VRAM destination address
 	move.l		(sp)+,d0
+	lea			.SlotAddresses,a1
+	add.l		d0,a1
+	move.l		(a1),d0
 
 	; d0=destination offset
 	; d1=size to copy
 	; a0=source address
-	jsr			rendCopyToVRAM
+	jsr			_rendCopyToVRAM
 
 	rts
+
+.SlotAddresses:
+	dc.l		$40000003
+	dc.l		$60000002	; Untested destination address
+
 
 
 ;==============================================================================
@@ -119,17 +159,15 @@ rendLoadTileBank:
 ; d1=size to copy
 ;
 ;==============================================================================
-rendCopyToVRAM:
+_rendCopyToVRAM:
 	move.l		#$00C00004,a1
 
     move.w  	#$8F02,(a1)				; Set autoincrement (register 15) to 2
-    move.l  	#$40000000,(a1)			; Point data port to start of VRAM
+    move.l  	d0,(a1)					; Point data port to start of VRAM
 
 	move.l		#$00C00000,a1
 
-	;move.l		d1,d0
-    move.l 	  	#109*8,d0				; We'll load 4 patterns, each 8 longs wide
-    ;lea     	TestPatterns,a0			; Load address of Patterns into A0
+	move.l		d1,d0
 
 .1:
 	move.l  	(a0)+,(a1)				; Move long word from patterns into VDP
@@ -138,6 +176,36 @@ rendCopyToVRAM:
 										; back to 1
     
     rts									; Return to caller
+
+
+
+;==============================================================================
+;
+; Translate a regular integer to a Mega Drive VRAM address
+;
+; Input:
+; d0 = original address
+;
+; Output:
+; d0 = Mega Drive "scrambled" address
+;
+;==============================================================================
+;_rendIntegerToVRAMAddress:
+	; This
+	;move.l	d0,d1
+	; code
+	;and		#$3ff,d0
+	; is
+	;asr		#14,d1
+	; not
+	;and		#3,d1
+	; tested
+	;or		d1,d0
+	; at
+	;or		#$40000000,d0
+	; all
+	;rts
+
 
 
 
