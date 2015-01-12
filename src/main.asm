@@ -31,14 +31,14 @@ main:
 	;move.l		#_data_untitled_splash_bank_pos,d0
 
 	printt		'-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-'
-	printt		'_data_untitled_splash_bank_pos:'
-	printv		_data_untitled_splash_bank_pos
-	printt		''
-	printt		'_data_untitled_splash_bank_length:'
-	printv		_data_untitled_splash_bank_length
-	printt		''
 	printt		'_data_untitled_splash_bank:'
 	printv		_data_untitled_splash_bank
+	printt		''
+	printt		'_data_untitled_splash_map:'
+	printv		_data_untitled_splash_map
+	printt		''
+	printt		'_data_untitled_splash_palette:'
+	printv		_data_untitled_splash_palette
 	printt		''
 
 	nop
