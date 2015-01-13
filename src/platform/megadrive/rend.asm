@@ -6,7 +6,7 @@ rendInit:
 	jsr			InitVDP
 	;move.l		#$11213141,$fffff4		; Write some magic values so we know we've reached this far
 
-	jsr			LoadPalettes
+	;jsr			LoadPalettes
 	;move.l		#$12223242,$fffff8		; Write some magic values so we know we've reached this far
 
 	;jsr			LoadPatterns
@@ -133,6 +133,7 @@ rendLoadTileMap:
 
 	; Now fetch the slot argument and convert to a VRAM destination address
 	move.l		(sp)+,d0
+	lsl			#2,d0		; Multiply by 4 because we read longs from a1
 	lea			.SlotAddresses,a1
 	add.l		d0,a1
 	move.l		(a1),d0
@@ -148,6 +149,46 @@ rendLoadTileMap:
 	dc.l		$40000003
 	dc.l		$60000002	; Untested destination address
 
+
+;==============================================================================
+;
+; Load a palette map into CRAM
+;
+; d0=file ID of palette file to load into CRAM
+; d1=Which slot index to store the palette in
+;	Allowed slot indices are 0 to 3 inclusive
+;
+;==============================================================================
+rendLoadPalette:
+	; Push the slot index onto the stack
+	move.l		d1,-(sp)
+
+	; fileLoad accept the file ID as d0, so no need to do any tricks here
+	jsr			fileLoad
+	; a0 is the return address from fileLoad, so it is set to the source address now
+
+	; How many longs to copy
+	move.l		#32/4,d1
+
+	; Now fetch the slot argument and convert to a CRAM destination address
+	move.l		(sp)+,d0
+	lsl			#2,d0		; Multiply by 4 because we read longs from a1
+	lea			.SlotAddresses,a1
+	add.l		d0,a1
+	move.l		(a1),d0
+
+	; d0=destination offset
+	; d1=size to copy
+	; a0=source address
+	jsr			_rendCopyToVRAM
+
+	rts
+
+.SlotAddresses:
+	dc.l		$C0000000	; Slot index 0
+	dc.l		$C0200000	; Slot index 1 - untested
+	dc.l		$C0400000	; Slot index 2 - untested
+	dc.l		$C0600000	; Slot index 3 - untested
 
 
 ;==============================================================================
