@@ -109,7 +109,10 @@ public class TileBank
 {
 	public List<Tile> m_tiles;
 
-	public TileBank( PalettizedImage _image )
+	//
+	// Optimized tile bank means to remove duplicates
+	//
+	public TileBank( PalettizedImage _image, bool _optimized )
 	{
 		//
 		m_tiles = new List<Tile>();
@@ -122,22 +125,29 @@ public class TileBank
 
 		//
 		int x, y;
-		for( y=0; y<tiles_h; y++ )
+		for( x=0; x<tiles_w; x++ )
 		{
-			for( x=0; x<tiles_w; x++ )
+			for( y=0; y<tiles_h; y++ )
 			{
 				int pixel_x = x*Tile.Width;
 				int pixel_y = y*Tile.Height;
 
 				Tile newTile = new Tile( _image, pixel_x, pixel_y );
 
-				if( HaveIdenticalTile( newTile ) == false )
+				if( _optimized )
 				{
-					//Debug.Log ("Adding tile from coordinates "+pixel_x+","+pixel_y );
-					AddTile( newTile );
+					if( HaveIdenticalTile( newTile ) == false )
+					{
+						//Debug.Log ("Adding tile from coordinates "+pixel_x+","+pixel_y );
+						AddTile( newTile );
+					} else
+					{
+						//Debug.Log ("Ignoring tile from coordinates "+pixel_x+","+pixel_y );
+					}
 				} else
 				{
-					//Debug.Log ("Ignoring tile from coordinates "+pixel_x+","+pixel_y );
+					// If we're not building an optimized tile bank we always export all tiles
+					AddTile( newTile );
 				}
 			}
 		}
@@ -145,7 +155,6 @@ public class TileBank
 
 	void AddTile( Tile _tile )
 	{
-
 		m_tiles.Add( _tile );
 	}
 
