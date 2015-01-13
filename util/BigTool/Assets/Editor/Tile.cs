@@ -124,6 +124,13 @@ public class TileBank
 		int tiles_h = h >> 3;
 
 		//
+		// Normally I write loops that iterate on Y first and then X, but sprites on Mega Drive should actually be
+		// exported Y first then X, so if we do the Y in the inner loop that means the first two tiles are at 0,0
+		// and 0,8, which means Y down. So instead of reordering anything at export time I reorder here instead.
+		//
+		// Oooh, I just realized this probably isn't true for sprite animation frames, so I probably still need to
+		// do some clever iterations and stuff here. ARGH!
+		//
 		int x, y;
 		for( x=0; x<tiles_w; x++ )
 		{
