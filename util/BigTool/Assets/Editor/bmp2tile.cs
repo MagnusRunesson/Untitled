@@ -25,6 +25,7 @@ public class bmp2tile : EditorWindow
 
 	Rect m_tileBankWindowRect;
 	Rect m_paletteRemapRect;
+	Rect m_imageSettingsRect;
 	Rect m_projectWindowRect;
 
 	const float m_windowTop = 30.0f;
@@ -132,12 +133,13 @@ public class bmp2tile : EditorWindow
 		{
 			m_tileBankWindowRect = GUI.Window( 0, m_tileBankWindowRect, OnDrawTileBank, m_openImageName );
 			m_paletteRemapRect = GUI.Window( 1, m_paletteRemapRect, OnDrawColorRemapTable, "Color remap" );
+			m_imageSettingsRect = GUI.Window( 2, m_imageSettingsRect, OnDrawImageSettings, "Image settings" );
 		}
 
 		if( m_project != null )
 		{
 			// Show the project window.
-			m_projectWindowRect = GUI.Window( 2, m_projectWindowRect, OnDrawProject, "Project" );
+			m_projectWindowRect = GUI.Window( 100, m_projectWindowRect, OnDrawProject, "Project" );
 		}
 		
 		EndWindows();
@@ -241,6 +243,21 @@ public class bmp2tile : EditorWindow
 		GUI.DragWindow();
 	}
 
+	void OnDrawImageSettings( int _id )
+	{
+		bool dirty = false;
+
+		bool before = m_imageConfig.m_importAsSprite;
+		m_imageConfig.m_importAsSprite = GUILayout.Toggle( before, "Import as sprite" );
+		if( m_imageConfig.m_importAsSprite != before )
+			dirty = true;
+
+		if( dirty )
+		{
+			m_imageConfig.Save();
+		}
+	}
+
 	void OnDrawProject( int _id )
 	{
 		string[] imageFiles = m_project.m_imageFiles;
@@ -287,8 +304,9 @@ public class bmp2tile : EditorWindow
 		{
 			m_openImageName = System.IO.Path.GetFileNameWithoutExtension( _path );
 			m_tileBankWindowRect = new Rect( m_projectWindowWidth + (m_windowPadding*2.0f), m_windowTop, m_imageData.m_width*2.0f+10.0f, m_imageData.m_height*2.0f+10.0f+15.0f );
-			m_paletteRemapRect = new Rect( m_tileBankWindowRect.x + m_tileBankWindowRect.width + m_windowPadding, m_tileBankWindowRect.y, 100.0f, 15.0f + (16.0f * 30.0f) );
-			
+			m_imageSettingsRect = new Rect( m_tileBankWindowRect.x + m_tileBankWindowRect.width + m_windowPadding, m_tileBankWindowRect.y, 200.0f, 100.0f );
+			m_paletteRemapRect = new Rect( m_imageSettingsRect.x + m_imageSettingsRect.width + m_windowPadding, m_imageSettingsRect.y, 100.0f, 15.0f + (16.0f * 30.0f) );
+
 			//
 			int numberOfBitplanesIsHardcodedForNow = 4;
 			m_planarImage = new PlanarImage( m_imageData, numberOfBitplanesIsHardcodedForNow);
