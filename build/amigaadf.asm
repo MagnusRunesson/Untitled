@@ -21,7 +21,8 @@ mainbegin
 	
 	include		"../src/incbin/files.asm"
 	include		"../src/incbin/untitled_splash_image.asm"	
-	
+	include		"../src/incbin/testtiles_image.asm"
+
 	include		"../src/incbin/data.asm" ; not really!
 mainend
 

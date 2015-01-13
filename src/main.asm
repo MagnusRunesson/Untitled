@@ -53,6 +53,12 @@ main:
 .loop:
 	jsr			inpUpdate				; Return the currently pressed buttons in d7
 
+	btst		#INPUT_ACTION,D0
+	beq			.change_picture_0
+
+	btst		#INPUT_ACTION2,D0
+	beq			.change_picture_1
+
 	btst		#INPUT_LEFT,d0
 	beq			.scroll_left
 
@@ -85,6 +91,17 @@ main:
 .scroll_down:
 	addq.w		#1,d3
 	bra			.done
+
+.change_picture_0
+	lea			testtiles_image,a0
+	bsr.w		imgLoad
+	bra			.done
+
+.change_picture_1
+	lea			untitled_splash_image,a0
+	bsr.w		imgLoad
+	bra			.done
+
 
 .done:
 	jsr			rendWaitVSync(pc)
