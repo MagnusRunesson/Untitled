@@ -108,6 +108,53 @@ rendLoadTileBank:
 
 	rts
 
+; a15=1
+; a13=1
+
+;==============================================================================
+;
+; Load a tile bank into VRAM
+;
+; d0=file ID of tile bank file to load into VRAM
+;
+;==============================================================================
+rendLoadSprite:
+	; fileLoad accept the file ID as d0, so no need to do any tricks here
+	jsr			fileLoad
+	; a0 is the return address from fileLoad, so it is set to the source address now
+
+	move.l		#$a000,d0
+	;move.l		#0,d0
+	;move.l		#64,d0
+	move.l		a0,-(sp)
+
+	nop
+	nop
+	nop
+	nop
+
+	jsr			_rendIntegerToVRAMAddress
+
+	nop
+	nop
+	nop
+	nop
+
+	move.l		(sp)+,a0
+
+	; Now fetch the VRAM offset argument
+	;move.l		#$40000000,d0
+
+	; Load the number of tiles to copy from the bank data
+	move.l 	  	#128/4,d1
+
+	; d0=destination offset
+	; d1=size to copy
+	; a0=source address
+	jsr			_rendCopyToVRAM
+
+	rts
+
 
 ;==============================================================================
 ;
@@ -230,22 +277,30 @@ _rendCopyToVRAM:
 ; Output:
 ; d0 = Mega Drive "scrambled" address
 ;
+; Source bits look like this
+; A31 A30 A29 A28 A27 A26 A25 A24 A23 A22 A21 A20 A19 A18 A17 A16
+; A15 A14 A13 A12 A11 A10 A09 A08 A07 A06 A05 A04 A03 A02 A01 A00
+;
+; Destination bits look like this
+; CD1 CD0 A13 A12 A11 A10 A09 A08 A07 A06 A05 A04 A03 A02 A01 A00
+;   0   0   0   0   0   0   0   0   0   0   0 CD2   0   0 A15 A14
+;
+; So only the bottom 16 bits of the source are used, and they are
+; shuffled around. Then a mask is added on top of that to indicate
+; a VRAM write.
+;
 ;==============================================================================
-;_rendIntegerToVRAMAddress:
-	; This
-	;move.l	d0,d1
-	; code
-	;and		#$3ff,d0
-	; is
-	;asr		#14,d1
-	; not
-	;and		#3,d1
-	; tested
-	;or		d1,d0
-	; at
-	;or		#$40000000,d0
-	; all
-	;rts
+_rendIntegerToVRAMAddress:
+	move.l	d0,d1
+	and.l	#$3fff,d0
+	lsr.l	#7,d1		; Shift 14 bits right, but since it isn't possible to shift
+	lsr.l	#7,d1		; more than 8 bits at a time I do two instructions instead
+	lsl.l	#8,d0		; Shift 16 bits to the left
+	lsl.l	#8,d0
+	and.l	#3,d1
+	or.l	d1,d0
+	or.l	#$40000000,d0
+	rts
 
 
 
@@ -415,8 +470,8 @@ LoadSprites:
 	
 SpriteSetting:
 	dc.w		$0080
-	dc.w		$0f00
-	dc.w		$0000
+	dc.w		$0500
+	dc.w		$0500
 	dc.w		$0080
 
 

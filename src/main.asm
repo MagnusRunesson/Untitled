@@ -5,6 +5,9 @@ main:
 	jsr			memGetUserBaseAddress(pc)	;
 	move.l		a0,a2					; a2 will be user mem from now on
 
+	lea			testtiles_image,a0
+	bsr.w		imgLoad
+
 	nop
 	nop
 	nop
@@ -22,8 +25,8 @@ main:
 	nop
 	nop
 
-	lea			untitled_splash_image,a0
-	bsr.w		imgLoad
+	move.l		#FILEID_TESTSPRITE_SPRITE_CHUNKY,d0
+	bsr.w		rendLoadSprite
 
 	;move.l		#FILEID_UNTITLED_SPLASH_PALETTE,d0
 	;bsr.w		fileLoad
