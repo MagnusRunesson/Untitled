@@ -17,13 +17,13 @@ public class PalettizedImage
 		string filename = System.IO.Path.GetFileNameWithoutExtension( _path );
 
 		byte[] imageFile = System.IO.File.ReadAllBytes( _path );
-		Debug.Log("Image header from file '"+filename+"': " + imageFile[ 0 ] + "," + imageFile[ 1 ] + "," + imageFile[ 2 ]);
+		//Debug.Log("Image header from file '"+filename+"': " + imageFile[ 0 ] + "," + imageFile[ 1 ] + "," + imageFile[ 2 ]);
 		int pixelsOffset = ReadInt( imageFile, 0x0a );
 		int width = ReadInt( imageFile, 0x12 );
 		int height = ReadInt( imageFile, 0x16 );
 		int bpp = ReadWord ( imageFile, 0x1c );
 
-		Debug.Log ("width=" + width + ", height=" + height + ", bpp=" + bpp + " (pixels start=" + pixelsOffset + ")" );
+		//Debug.Log ("width=" + width + ", height=" + height + ", bpp=" + bpp + " (pixels start=" + pixelsOffset + ")" );
 
 		PalettizedImage image = new PalettizedImage( width, height );
 		image.SetConfig( _config );
