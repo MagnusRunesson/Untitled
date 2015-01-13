@@ -198,10 +198,17 @@ public class TileBank
 	{
 		Debug.Log ("Exporting tile bank to " + _outfilename );
 
+		int headersize = 2;
+
 		int numTiles = m_tiles.Count;
+
 		// Export size = number of tiles * 64 pixels / 2 (because there are 2 bytes per pixel)
-		int outsize = numTiles * 32;
+		int outsize = headersize + (numTiles * 32);
 		byte[] outBytes = new byte[ outsize ];
+
+		Debug.Log ("exporting " + numTiles + " tiles");
+		outBytes[ 0 ] = (byte)((numTiles>>8) & 0xff);
+		outBytes[ 1 ] = (byte)((numTiles) & 0xff);
 
 		int iTile;
 		for( iTile=0; iTile<numTiles; iTile++ )
@@ -220,7 +227,7 @@ public class TileBank
 					value += (t.m_pixels[ ofs+1 ] & 0xf) << 0;
 
 					int outOffset = (iTile*32) + (y*Tile.Width/2) + x;
-					outBytes[ outOffset ] = (byte)value;
+					outBytes[ headersize + outOffset ] = (byte)value;
 				}
 			}
 		}

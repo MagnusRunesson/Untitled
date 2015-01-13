@@ -95,8 +95,13 @@ rendLoadTileBank:
 	jsr			fileLoad
 	; a0 is the return address from fileLoad, so it is set to the source address now
 
+	move.w		(a0)+,d1
+	lsl			#5-2,d1		; We should shift up 5 bits because each tile is
+							; 32 bytes, but we should also shift down 2 bits
+							; because we copy 4 bytes per copy
+
 	; Load the number of tiles to copy from the bank data
-    move.l 	  	#109*8,d1
+    ;move.l 	  	#109*8,d1
 
 	; Now fetch the VRAM offset argument
 	move.l		#$40000000,d0
@@ -124,29 +129,18 @@ rendLoadSprite:
 	; a0 is the return address from fileLoad, so it is set to the source address now
 
 	move.l		#$a000,d0
-	;move.l		#0,d0
-	;move.l		#64,d0
-	move.l		a0,-(sp)
-
-	nop
-	nop
-	nop
-	nop
-
-	jsr			_rendIntegerToVRAMAddress
-
-	nop
-	nop
-	nop
-	nop
-
-	move.l		(sp)+,a0
-
-	; Now fetch the VRAM offset argument
-	;move.l		#$40000000,d0
+	jsr			_rendIntegerToVRAMAddress	; We should normally push a0 to the
+											; stack since it is a scratch register,
+											; but this sub routine is nice to
+											; the scratch registers.
 
 	; Load the number of tiles to copy from the bank data
-	move.l 	  	#128/4,d1
+	move.w		(a0)+,d1
+	lsl			#5-2,d1		; We should shift up 5 bits because each tile is
+							; 32 bytes, but we should also shift down 2 bits
+							; because we copy 4 bytes per copy
+	;move.l 	  	#128/4,d1
+
 
 	; d0=destination offset
 	; d1=size to copy
