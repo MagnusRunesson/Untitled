@@ -19,10 +19,6 @@
 ;
 ; more information at  http://amigadev.elowar.com/read/ADCD_2.1/Devices_Manual_guide/node015A.html 
 ;
-
-	include "exec/exec.i"
-	include "exec_lib.i"
-	include "devices/trackdisk.i"
 		
 mainbeginstartsector	equ ((mainbegin-bootblockbegin)/TD_SECTOR)
 mainnumsectors			equ	((mainend-mainbegin)/TD_SECTOR)

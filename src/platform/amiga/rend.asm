@@ -1,8 +1,8 @@
 	
-	include		"hardware/custom.i"
-	include		"hardware/dmabits.i"
-	include		"exec_lib.i"
-	include		"graphics_lib.i"
+	; include		"hardware/custom.i"
+	; include		"hardware/dmabits.i"
+	; include		"exec_lib.i"
+	; include		"graphics_lib.i"
 	
 
 

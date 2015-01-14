@@ -1,7 +1,16 @@
-_chunk_size		equ		512			; same as TD_SECTOR (size of sector on floppy)
-_custom			equ 	$dff000
-
-	org 		$0
+	org 			$0
+	
+	include		"hardware/custom.i"
+	include		"hardware/cia.i"
+	include		"hardware/dmabits.i"
+	include		"hardware/intbits.i"
+	include		"exec/exec.i"
+	include		"devices/trackdisk.i"
+	
+	include		"exec_lib.i"
+	include		"graphics_lib.i"
+		
+	include		"../src/platform/amiga/const.asm"
 	
 bootblockbegin
 	include		"../src/platform/amiga/bootblock.asm"
@@ -11,6 +20,8 @@ mainbegin
 	include		"../src/structs.asm"
 	include		"../src/macros.asm"
 	include		"../src/platform/amiga/sys.asm"
+	;include		"../src/platform/amiga/trackloader.asm"
+	;include		"../src/platform/amiga/tl2.asm"
 	include		"../src/main.asm"
 	include		"../src/core/mem.asm"
 	include		"../src/platform/amiga/inp.asm"
@@ -22,13 +33,29 @@ mainbegin
 	include		"../src/incbin/files.asm"
 	include		"../src/incbin/untitled_splash_image.asm"	
 	
-	include		"../src/incbin/data.asm" ; not really!
+	cnop		0,_chunk_size
+	
 mainend
 
 workmembegin
 
+
+Bplmem
+	; incbin		"../src/incbin/untitled_splash_planar.bin"
+	; blk.b		64*64*8*8*4/8,$01
+; mainend
+	
 workmemend
 
-databegin
-	; include		"../src/incbin/data.asm"
+databegin	
+; plbeg
+	;cnop		0,(512*11)
+	;blk.b		(512*11),0
+	;blk.b		(512*11),0
+	;blk.b		(512*11),0
+	; dc.b		"DATABEGIN"
+
+	incbin		"../src/incbin/untitled_splash_planar.bin"
+plend
+	include		"../src/incbin/data.asm"
 dataend

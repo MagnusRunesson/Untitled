@@ -1,4 +1,4 @@
-	include	"hardware/custom.i"
+	; include	"hardware/custom.i"
 
 		
 ;==============================================================================
@@ -36,5 +36,8 @@ inpUpdate:
     add.l   #$01010101,d0
     add.l   d1,d0
 	not.l	d0
+	
+	; 	btst	#CIAB_GAMEPORT1,_ciaa+ciapra
+	;	bne.s	.diskReady	
 	rts
 

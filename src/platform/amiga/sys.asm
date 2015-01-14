@@ -1,50 +1,160 @@
 	
-	include		"hardware/custom.i"
-	include		"hardware/dmabits.i"
-	include		"exec_lib.i"
-	include		"graphics_lib.i"
+; plbeginstartsector		equ ((databegin-bootblockbegin)/TD_SECTOR)
+; plnumsectors			equ	((plend-databegin)/TD_SECTOR)
+	
+; TODO: VBR for interrups
+
+entryPoint:
+
+	; ExecBase
+	; move.l		4.w,a6
+	; move.l		a6,_ExecBase
+
+	; MsgPort
+	; jsr			_LVOCreateMsgPort(a6)
+	; move.l		d0,a5
+	; Uhmm, maybe not!
+	
+	; ; The code is called with an open trackdisk.device I/O request pointer in A1
+	; move.l		a1,a3
+	; lea			Bplmem(pc),a1
+	; move.l		a1,d0
+	; move.l		a3,a1
+	; move.l		#plnumsectors*TD_SECTOR,IO_LENGTH(a1)
+	; move.l		d0,IO_DATA(a1)
+	; move.l		#plbeginstartsector*TD_SECTOR,IO_OFFSET(a1)
+	; move.w 		#CMD_READ,IO_COMMAND(a1)
+	; jsr			_LVODoIO(a6)
+	; tst.l		d0
+	; ; bne.s		.diskReadError
+	
+	
+	
+	
+	
+	lea			_custom,a2
+	; move.w		#DMAF_ALL,dmacon(a2)
+	move.w		#DMAF_ALL|DMAF_MASTER,dmacon(a2)
+	
+	lea			Copper_bplpt(pc),a0
+	; lea			_data_untitled_splash_planar(pc),a1
+	lea			Bplmem(pc),a1
+	move.l		a1,d0
+	moveq		#4-1,d1
+.bplconLoop
+	swap.w		d0
+	move.w		d0,2(a0)
+	swap.w		d0
+	move.w		d0,6(a0)
+	add.l		#320/8,d0
+	add.l		#8,a0	
+	dbra		d1,.bplconLoop
+	
+	; move.w		#$2c81,diwstrt(a2)
+	; move.w		#$0cc1,diwstop(a2)
+	; move.w		#$0038,ddfstrt(a2)
+	; move.w		#$00d0,ddfstop(a2)
+	; move.w		#$0000,bpl1mod(a2)
+	; move.w		#$0000,bpl2mod(a2)
+	
+	lea			Copper(pc),a0
+	move.l		a0,cop1lc(a2)
+	move.w		d0,copjmp1(a2)
+	
+	; lea			copperInterrupt(pc),a0
+	; move.l		a0,_interrupt_vec_copper
+	
+	move.w		#(DMAF_SETCLR|DMAF_COPPER|DMAF_RASTER|DMAF_DISK|DMAF_BLITTER|DMAF_MASTER),dmacon(a2)
+	; MOVE.w		#$83A0,DMACON(a5)	; Enable DMA
+	
 	
 
-	
-entrypoint:
-	lea		_custom,a2
-	move.w	#DMAF_ALL,dmacon(a2)
-	
-	lea		copperbplpt(pc),a0
-	lea		_data_untitled_splash_planar(pc),a1
-	move.l	a1,d0
-	moveq	#4-1,d1
-.bplconloop
-	swap.w	d0
-	move.w	d0,2(a0)
-	swap.w	d0
-	move.w	d0,6(a0)
-	add.l	#320/8,d0
-	add.l	#8,a0	
-	dbra		d1,.bplconloop
-	
-	; move.w	#$2c81,diwstrt(a2)
-	; move.w	#$0cc1,diwstop(a2)
-	; move.w	#$0038,ddfstrt(a2)
-	; move.w	#$00d0,ddfstop(a2)
-	; move.w	#$0000,bpl1mod(a2)
-	; move.w	#$0000,bpl2mod(a2)
-	
-	lea		copper(pc),a0
-	move.l	a0,cop1lc(a2)
-	move.w	d0,copjmp1(a2)
+	; rainbow
+	moveq		#2,d0
+.two
+	moveq		#-1,d1
+.rainbows
+	move.w		d1,$dff180
+	dbf			d1,.rainbows
+	dbf			d0,.two
 	
 	
-	move.w	#(DMAF_SETCLR!DMAF_COPPER|DMAF_RASTER),dmacon(a2)
-
-	jsr		main(pc)
+	; MOVE.w	#$83A0,DMACON(a5)	; Enable DMA		
+	; bsr.w	trackloadMotorOn
+	; bsr.w	trackloadMoveToCylinder0
+	; bsr.w	trackloadMotorOff
+	bsr.w	TLInit
+	
+	
+	; load file FILEID_UNTITLED_SPLASH_PLANAR to bplmem
+	moveq		#6,d0
+	moveq		#7,d1
+	lea			Bplmem(pc),a0
+	; bsr			trackloadLoad
+	bsr.w		TLLoad
+	; bsr.w		hardtl
+	
+	; rainbow
+again
+	moveq		#2,d0
+.two
+	moveq		#-1,d1
+.rainbows
+	move.w		d1,$dff180
+	dbf			d1,.rainbows
+	dbf			d0,.two
+	
+	
+		; d0 = start track (0 - 159) (no check for illegal tracks)
+	; d1 = number of tracks to read (no check for illegal count,
+	;      d1 = 0 moves head to right track).
+	; a0 = data buffer, must be at least 11 * 512 * d1 bytes large
+	
+	jsr			main(pc)
 	
 	; teardown
 	
 	rts
 
+;==============================================================================
+;
+; Interrupts
+;
+;==============================================================================
+; copperInterrupt:
+	; movem.l		d0-a6,-(sp)
+
+	; ; is it a copper interrupt?
+	; ; lea			_custom,a5
+	; ; move.w		intreqr(a5),d0
+	; ; and.w		#$0010,d0		
+	; ; beq.s		.endCopperInterrupt
+
+	; ; ; yes it is 
+	; ; nop
+
+; .endCopperInterrupt:
+	; ; move.w		#$0010,intreq(a5)	; clear copper interrupt bit	
+	; movem.l		(sp)+,d0-a6
+	; rte
+
+
+;==============================================================================
+;
+; Variables
+;
+;==============================================================================
 	cnop	0,4
-copper
+	
+_ExecBase
+	dc.l	0
+
+;==============================================================================
+;
+; Copper
+;
+;==============================================================================
+Copper
 	dc.w	bplcon0,$4200
 	dc.w	bplcon1,$0000
 	dc.w	diwstrt,$2c81
@@ -53,7 +163,7 @@ copper
 	dc.w	ddfstop,$00d0
 	dc.w	bpl1mod,$0078
 	dc.w	bpl2mod,$0078
-copperbplpt
+Copper_bplpt
 	dc.w	bplpt+0,$0000
 	dc.w	bplpt+2,$0000
 	dc.w	bplpt+4,$0000
@@ -62,7 +172,7 @@ copperbplpt
 	dc.w	bplpt+10,$0000
 	dc.w	bplpt+12,$0000
 	dc.w	bplpt+14,$0000
-coppercolor
+Copper_color
 	dc.w	color+0,$0000	
 	dc.w	color+2,$0EEE
 	dc.w	color+4,$0CCC
@@ -71,16 +181,16 @@ coppercolor
 	dc.w	color+10,$0444
 	dc.w	color+12,$0222
 	dc.w	color+14,$0000
-	dc.w	color+16,$0000
-	dc.w	color+18,$0000
-	dc.w	color+20,$0000
-	dc.w	color+22,$0000
-	dc.w	color+24,$0000
-	dc.w	color+26,$0000
-	dc.w	color+28,$0000
-	dc.w	color+30,$0000	
-	dc.w	$FFFF,$FFFE
+	dc.w	color+16,$00F0
+	dc.w	color+18,$000F
+	dc.w	color+20,$0FF0
+	dc.w	color+22,$00FF
+	dc.w	color+24,$0F0F
+	dc.w	color+26,$0F80
+	dc.w	color+28,$008F
+	dc.w	color+30,$0F00
 	
+	dc.w	$FFFF,$FFFE
 
 
 
