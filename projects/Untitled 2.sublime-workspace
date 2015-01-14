@@ -1,0 +1,503 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"_rend",
+				"_rendIntegerToVRAMAddress"
+			],
+			[
+				"VarSpriteT",
+				"VarSpriteTableSize"
+			],
+			[
+				"fun",
+				"function	function"
+			],
+			[
+				"m_",
+				"m_CurrentLevel"
+			],
+			[
+				"GameSe",
+				"GameSettings"
+			],
+			[
+				"use",
+				"use_coordinator"
+			],
+			[
+				"mysql_er",
+				"mysql_error"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "/Users/magnusrunesson/Projects/md/Untitled/src/main.asm",
+			"settings":
+			{
+				"buffer_size": 1892,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/Users/magnusrunesson/Projects/md/Untitled/src/platform/megadrive/mem.asm",
+			"settings":
+			{
+				"buffer_size": 702,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/Users/magnusrunesson/Projects/md/Untitled/src/macros.asm",
+			"settings":
+			{
+				"buffer_size": 825,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/Users/magnusrunesson/Projects/md/Untitled/src/platform/megadrive/rend.asm",
+			"settings":
+			{
+				"buffer_size": 36879,
+				"line_ending": "Unix"
+			}
+		}
+	],
+	"build_system": "",
+	"command_palette":
+	{
+		"height": 392.0,
+		"selected_items":
+		[
+			[
+				"c",
+				"Set Syntax: C#"
+			],
+			[
+				"json",
+				"Set Syntax: JSON"
+			],
+			[
+				"c#",
+				"Set Syntax: C#"
+			]
+		],
+		"width": 392.0
+	},
+	"console":
+	{
+		"height": 0.0
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"file_history":
+	[
+		"/Users/magnusrunesson/Projects/NewGUI/Assets/dynamicfiller.cs",
+		"/Users/magnusrunesson/Projects/Potato/branches/Linematch/Assets/Prefabs/SlowEffect.prefab.meta",
+		"/Users/magnusrunesson/Projects/Potato/branches/Linematch/Assets/Prefabs/LevelSpawner.prefab.meta",
+		"/Users/magnusrunesson/Projects/Potato/branches/Linematch/ProjectSettings/EditorBuildSettings.asset",
+		"/Users/magnusrunesson/Projects/Potato/branches/Linematch/Assets/Scripts/AutoMover.cs",
+		"/Users/magnusrunesson/Projects/Potato/branches/Linematch/Assets/Scripts/AutoMover.cs.meta",
+		"/Users/magnusrunesson/Projects/Potato/branches/Linematch/Assets/Scripts/Cloud/CloudSystem.cs",
+		"/Users/magnusrunesson/Downloads/md-sdk/build-gcc-hacked",
+		"/Users/magnusrunesson/Downloads/md-sdk/download/binutils-2.20.51.0.10.tar.bz2",
+		"/Users/magnusrunesson/Downloads/md-sdk/md-sdk.txt",
+		"/Users/magnusrunesson/Desktop/hej-utf16.txt",
+		"/Users/magnusrunesson/Desktop/hejhej.txt",
+		"/Users/magnusrunesson/Desktop/metafishing parse facebook data.txt",
+		"/Users/magnusrunesson/Projects/Potato/branches/Linematch/Assets/Prefabs/Blocks & Towers/BlockYellow.prefab",
+		"/Users/magnusrunesson/Desktop/Retina vs. icke-retina.txt",
+		"/Users/magnusrunesson/Projects/Potato/datawork/doc/Skärmstorlek.txt",
+		"/Users/magnusrunesson/Desktop/Full rulle notes.txt",
+		"/Users/magnusrunesson/Projects/Potato/branches/Linematch/Datawork/Levels/testie.mtd_level",
+		"/Users/magnusrunesson/Downloads/wandisco-license_0.txt",
+		"/Users/magnusrunesson/Projects/Potato/branches/Linematch/Datawork/Levels/Tutorial_BlueTower.mtd_level",
+		"/Users/magnusrunesson/Desktop/DN Prenumerationsnummer 73323889.txt",
+		"/Users/magnusrunesson/Stuff/kodez.txt",
+		"/Users/magnusrunesson/Desktop/Aktiva färgerna i MTD.txt",
+		"/Users/magnusrunesson/Desktop/PSQ Interns 2014/Erik Bäckström.txt",
+		"/Users/magnusrunesson/Library/Preferences/SmartSVN/8.6/logcache.xml",
+		"/Users/magnusrunesson/Library/Preferences/SmartSVN/8.6/tools.xml",
+		"/Users/magnusrunesson/Library/Preferences/SmartSVN/8.6/settings.xml",
+		"/Users/magnusrunesson/Library/Preferences/SmartSVN/8.6/projects.xml",
+		"/Users/magnusrunesson/Library/Preferences/SmartSVN/8.6/log.txt",
+		"/Users/magnusrunesson/Desktop/PSQ Interns 2014/Jennifer Aston.txt",
+		"/Users/magnusrunesson/Desktop/PSQ Interns 2014/Emil Lindgren.txt",
+		"/Users/magnusrunesson/Desktop/MatchDefence.txt",
+		"/Users/magnusrunesson/Desktop/Bra grejer att återanvända.txt",
+		"/Users/magnusrunesson/Desktop/ECO player progression.txt",
+		"/Users/magnusrunesson/Library/Application Support/Sublime Text 2/Packages/Lua/Comments.tmPreferences",
+		"/Users/magnusrunesson/Projects/ECO/branches/shadertest/ECO/Assets/Scripts/Graphics/Crystals.shader",
+		"/Users/magnusrunesson/Projects/Potato/Unity/Potato/Assets/hejhopp.txt",
+		"/Users/magnusrunesson/Projects/Potato/branches/Linematch/Assets/Scripts/SpawnLogic.cs.meta",
+		"/Users/magnusrunesson/Projects/Potato/Unity/Potato/Assets/Scripts/NewBehaviourScript.cs",
+		"/Users/magnusrunesson/Desktop/Kod reflektion.txt",
+		"/Users/magnusrunesson/Library/Application Support/Sublime Text 2/Packages/Lua/Comments.tmPreferences.cache",
+		"/Users/magnusrunesson/Library/Application Support/Sublime Text 2/Packages/Lua/Lua.tmLanguage",
+		"/Users/magnusrunesson/Projects/ECO/trunk/ECO/Assets/Content/Puzzles/zone_City001_P01.txt",
+		"/Users/magnusrunesson/Projects/ECO/trunk/ECO/Assets/Content/Puzzles/puzzle_prefilled.txt",
+		"/Users/magnusrunesson/Projects/ECO/trunk/ECO/Assets/Scripts/Graphics/Crystals.shader",
+		"/Users/magnusrunesson/Projects/ECO/trunk/ECO/Assets/Content/Puzzles/zone_City001_P02.txt",
+		"/Users/magnusrunesson/Library/Caches/Rovio/ECO/Ploblem.avatar.playerprogression",
+		"/Users/magnusrunesson/Desktop/svn externals.txt",
+		"/Users/magnusrunesson/Projects/Koala/Unity/Koala/external/Fusion/buildtool/schemas/buildtool.json",
+		"/Users/magnusrunesson/Library/Caches/Rovio/ECO/Ploblem.zone6.playerprogression",
+		"/Users/magnusrunesson/Library/Caches/Rovio/ECO/Jonas_09112014_140204.zone6.playerprogression",
+		"/Users/magnusrunesson/Library/Caches/Rovio/ECO/Jonas_09112014_140204.zone9.playerprogression",
+		"/Users/magnusrunesson/Projects/ECO/trunk/ECO/Assets/External/dir_conflicts.prej",
+		"/Users/magnusrunesson/Projects/ECO/trunk/ECO/Assets/Scripts/Game/Time/TimeSpace.cs",
+		"/Users/magnusrunesson/Projects/ECO/trunk/ECO/Assets/Scripts/Game/Ingame/Habitat.cs",
+		"/Users/magnusrunesson/Desktop/PlayerProgression.txt",
+		"/Users/magnusrunesson/Desktop/Kika igenom statiska listor.txt",
+		"/Users/magnusrunesson/Library/Caches/Rovio/ECO/Ploblem.zonelist.playerprogression",
+		"/Users/magnusrunesson/Projects/SeniorSize/Unity/SeniorSize/Assets/Editor/SenorSize.cs",
+		"/Users/magnusrunesson/Documents/Kunskapsbanken/NGUI med Björn.txt",
+		"/Users/magnusrunesson/Projects/ECO/trunk/ECO/Assets/Content/Puzzles/puzzle_000.txt",
+		"/Users/magnusrunesson/Projects/ECO/trunk/ECO/Assets/Content/Puzzles/puzzle_Z01P04.txt",
+		"/Users/magnusrunesson/Desktop/GameSettings.cs",
+		"/Users/magnusrunesson/Desktop/Advanced Unity workshop.txt",
+		"/Users/magnusrunesson/Desktop/Advanced Unity workshop",
+		"/Users/magnusrunesson/Desktop/testie.cs",
+		"/Users/magnusrunesson/Desktop/Tweakdata.cs",
+		"/Users/magnusrunesson/Desktop/AssetLoader.cs",
+		"/Users/magnusrunesson/Desktop/eco",
+		"/Users/magnusrunesson/Desktop/eco.txt",
+		"/Users/magnusrunesson/Desktop/Analytics med Joonas.txt",
+		"/etc/hosts",
+		"/Users/magnusrunesson/Library/Preferences/unity.Rovio.ECO.plist",
+		"/Users/magnusrunesson/Projects/ECO/trunk/ECO/Assets/Content/Creatures/Definitions/Creatures.txt",
+		"/Users/magnusrunesson/Desktop/Gzip.cs",
+		"/Users/magnusrunesson/Library/Caches/Rovio/ECO/Ploblem.creaturelist.playerprogression",
+		"/Users/magnusrunesson/Library/Application Support/com.unity3d.UnityEditor4.x/fusion.registry",
+		"/Users/magnusrunesson/Desktop/warbeast feedback.txt",
+		"/Users/magnusrunesson/Desktop/ECO feedback från F11.txt",
+		"/Users/magnusrunesson/Projects/ECO/trunk/ECO/Assets/External/AssetBundleLoading/Editor/AssetBundleBuilder.cs",
+		"/Users/magnusrunesson/Projects/ECO/trunk/ECO/Assets/Scripts/Game/OrganizePuzzle/PuzzleData.cs",
+		"/Users/magnusrunesson/Projects/ECO/trunk/ECO/Assets/Content/Puzzles/puzzle_001.txt",
+		"/Users/magnusrunesson/Projects/ECO/trunk/ECO/Assets/AssetBundles/buildlist.txt",
+		"/Users/magnusrunesson/Projects/ECO/trunk/ECO/build/buildtool/ios.config.json",
+		"/Users/magnusrunesson/Projects/ECO/trunk/buildanduploadbundles.sh",
+		"/Users/magnusrunesson/New Unity Project/Assets/DefaultCreature/DefaultCreatureController.controller",
+		"/Users/magnusrunesson/Projects/ECO/trunk/ECO/External/Fusion/buildtool/unity/unity_config/ProjectSettings.asset.template4.3",
+		"/Users/magnusrunesson/Desktop/Saker att kolla upp i nya Unity.txt",
+		"/Users/magnusrunesson/Library/Caches/Rovio/ECO/Bosse.creaturelist.dat",
+		"/Users/magnusrunesson/Projects/ECO/Source Assets/Creatures/000010_e05c30d3-e574-4daa-8898-c79ffde99dc2.json",
+		"/Users/magnusrunesson/Library/Caches/Rovio/ECO/Bobcat.zone1.dat",
+		"/Users/magnusrunesson/Desktop/Analytics med Joonas",
+		"/Users/magnusrunesson/Desktop/NGUI med Björn",
+		"/Users/magnusrunesson/Library/Caches/Rovio/ECO/Bobcat.creaturelist.dat",
+		"/Users/magnusrunesson/Projects/ECO/Prototype/ECO/Assets/Scripts/Systems/TouchieFeelie.cs",
+		"/Users/magnusrunesson/Projects/ECO/trunk/ECO/Assets/Content/Habitat/Habitat_01.fbx.meta",
+		"/Users/magnusrunesson/Desktop/UnityMeetup/Creatures/000005_1bbacbf0-de99-41d7-bd5a-1c4e39889052.json",
+		"/Users/magnusrunesson/Desktop/UnityMeetup/Creatures/000001_35ff1b9a-15fa-4ea3-af1a-f973b97c7c4c.json",
+		"/Users/magnusrunesson/Projects/ABBA/trunk/ABBA/Assets/Editor/BuildCoordinator.cs",
+		"/Users/magnusrunesson/Desktop/temp/com.rovio.eco 2014-04-28 14.16.43.996.xcappdata/AppData/Documents/Bobcat.zonelist.dat",
+		"/Users/magnusrunesson/Library/Caches/Rovio/ECO/Bobcat.zonelist.dat",
+		"/Users/magnusrunesson/Library/Caches/Rovio/ECO/Bobcat.zonelist_hejhej.dat",
+		"/Users/magnusrunesson/Library/Caches/Rovio/ECO/Bobcat.creaturelist2.dat",
+		"/Users/magnusrunesson/Projects/ECO/Prototype/ECO/Assets/Fonts/RoadShow80.fnt",
+		"/Users/magnusrunesson/Projects/ECO/Source Assets/Creatures2/000006_19f1e787-9ac8-48b6-b907-7c732f1fb6da.json",
+		"/Users/magnusrunesson/Projects/ECO/Source Assets/Creatures2/000006_38ddd7b9-129b-411a-8370-80a7491e2318.json",
+		"/Users/magnusrunesson/Projects/ECO/Source Assets/Creatures2/000009_3a6ea85d-2107-4845-811c-28f619a80c31.json",
+		"/Users/magnusrunesson/Projects/ECO/Source Assets/Creatures/000000_8175e8b4-e150-4da6-bc92-632477b7d4c4.json",
+		"/Users/magnusrunesson/Projects/ECO/Source Assets/Creatures/000001_adabdf37-b525-475a-ac70-431abcdde37b.json",
+		"/Users/magnusrunesson/Projects/ECO/Source Assets/Creatures/000002_050da639-c86f-4dcd-a51f-48bf2773e25a.json",
+		"/Users/magnusrunesson/Projects/ECO/Source Assets/Creatures/000003_9d59482f-9411-4a56-9977-10973755f641.json",
+		"/Users/magnusrunesson/Projects/ECO/Source Assets/Creatures/000004_67959970-df64-47dc-8aac-92e3106383ea.json",
+		"/Users/magnusrunesson/Projects/ECO/Source Assets/Creatures/000005_54203d00-b6ac-4f45-8367-4ea4dfae123d.json",
+		"/Users/magnusrunesson/Projects/ECO/Source Assets/Creatures/000006_19f1e787-9ac8-48b6-b907-7c732f1fb6da.json",
+		"/Users/magnusrunesson/Projects/MrBuilder2.0/mr-builder/uploadBuiltAssetBundles.py",
+		"/Users/magnusrunesson/Desktop/Bra MySQL.txt",
+		"/Users/magnusrunesson/Projects/ECO/trunk/ECO/Assets/temp/Meshes/Cell_Grassy_01.fbx.meta",
+		"/Users/magnusrunesson/Projects/Old SVN/Stella/CarouselView/Assets/Scripts/System/ResourceManager.cs",
+		"/Users/magnusrunesson/Projects/ABBA/trunk/ABBA/Assets/Code/SaveLoad/SaveLoadModule.cs",
+		"/Users/magnusrunesson/Projects/ECO/Stuff/ECO SVN.txt",
+		"/Users/magnusrunesson/Desktop/TutorialScreen.cs",
+		"/Users/magnusrunesson/Desktop/ECO SVN",
+		"/Users/magnusrunesson/Desktop/build-buildlist.cs",
+		"/Users/magnusrunesson/Desktop/build-listdirs.cs",
+		"/Users/magnusrunesson/Desktop/Mail-mottagare",
+		"/Users/magnusrunesson/Desktop/Kodreview",
+		"/Users/magnusrunesson/Projects/MrBuilder2.0/mr-builder/build.py",
+		"/Users/magnusrunesson/Projects/ABBA/trunk/ABBA/Assets/Resources/ReferenceFiles/PrefabPaths.txt"
+	],
+	"find":
+	{
+		"height": 35.0
+	},
+	"find_in_files":
+	{
+		"height": 0.0,
+		"where_history":
+		[
+			""
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"VarVsync",
+			"GCCOPTS=",
+			"DSTDIR",
+			"GCCOPTS",
+			"BINUTILS_URL",
+			"binutils-2.20.51.0.10",
+			"Prese",
+			"11400008",
+			"Log",
+			"log",
+			"Log",
+			"habitat_puzzle_level",
+			"exploration_radius",
+			"habitat_puzzle_level",
+			"unlocked",
+			"progression",
+			"power_",
+			"num_cap",
+			"shadow_return_timer",
+			"exploration_level",
+			"debug.log",
+			">",
+			"<",
+			"default",
+			"Starting to upload",
+			"icon",
+			"version",
+			"iphone",
+			"android",
+			"bundles.sh",
+			"build.sh",
+			"scale",
+			"0.01",
+			"DoBuild",
+			"json",
+			"output",
+			"VectorConverter",
+			"VectorConverter\nVectorConverter",
+			"VectorConverter",
+			"happy",
+			"fffaff4ab15da084982267d6d875f042",
+			".osx",
+			"include_assetbundles",
+			"run_unit",
+			"method=",
+			"android",
+			"parse_options",
+			"opts",
+			"self.opts",
+			"MRDBG: Asset bundle name=",
+			"&quot;",
+			"menuitem",
+			"uv",
+			"1802197525",
+			"5034",
+			"496221",
+			"1802197525",
+			"844766894",
+			"<<<",
+			"working",
+			"mine",
+			"set_try_direction"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+			"\""
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 3,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "/Users/magnusrunesson/Projects/md/Untitled/src/main.asm",
+					"settings":
+					{
+						"buffer_size": 1892,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								396,
+								396
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/M68k-Assembly/M68k-Assembly.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "/Users/magnusrunesson/Projects/md/Untitled/src/platform/megadrive/mem.asm",
+					"settings":
+					{
+						"buffer_size": 702,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								160,
+								179
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/M68k-Assembly/M68k-Assembly.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "/Users/magnusrunesson/Projects/md/Untitled/src/macros.asm",
+					"settings":
+					{
+						"buffer_size": 825,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								825,
+								825
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/M68k-Assembly/M68k-Assembly.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "/Users/magnusrunesson/Projects/md/Untitled/src/platform/megadrive/rend.asm",
+					"settings":
+					{
+						"buffer_size": 36879,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								3205,
+								3205
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/M68k-Assembly/M68k-Assembly.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 2275.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 0.0
+	},
+	"input":
+	{
+		"height": 0.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"replace":
+	{
+		"height": 64.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"show_minimap": true,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 227.0,
+	"status_bar_visible": true
+}
