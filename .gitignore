@@ -11,3 +11,4 @@ util/BigTool/BigTool-csharp.sln
 util/BigTool/Library
 build/out
 util/BigTool/Temp
+projects/*.sublime-workspace

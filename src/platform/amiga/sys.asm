@@ -83,7 +83,7 @@ entryPoint:
 	; bsr.w	trackloadMotorOn
 	; bsr.w	trackloadMoveToCylinder0
 	; bsr.w	trackloadMotorOff
-	bsr.w	TLInit
+	;bsr.w	TLInit
 	
 	
 	; load file FILEID_UNTITLED_SPLASH_PLANAR to bplmem
@@ -91,7 +91,7 @@ entryPoint:
 	moveq		#7,d1
 	lea			Bplmem(pc),a0
 	; bsr			trackloadLoad
-	bsr.w		TLLoad
+	;bsr.w		TLLoad
 	; bsr.w		hardtl
 	
 	; rainbow

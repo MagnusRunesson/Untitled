@@ -31,7 +31,7 @@ mainbegin
 	include		"../src/platform/amiga/img.asm"
 	
 	include		"../src/incbin/files.asm"
-	include		"../src/incbin/untitled_splash_image.asm"	
+	;include		"../src/incbin/untitled_splash_image.asm"	
 	
 	cnop		0,_chunk_size
 	
@@ -48,7 +48,7 @@ Bplmem
 workmemend
 
 databegin	
-; plbeg
+
 	;cnop		0,(512*11)
 	;blk.b		(512*11),0
 	;blk.b		(512*11),0
@@ -56,6 +56,9 @@ databegin
 	; dc.b		"DATABEGIN"
 
 	incbin		"../src/incbin/untitled_splash_planar.bin"
-plend
+
 	include		"../src/incbin/data.asm"
+	;include		"../src/incbin/files.asm"
+	include		"../src/incbin/untitled_splash_image.asm"
+	include		"../src/incbin/testtiles_image.asm"
 dataend
