@@ -105,7 +105,6 @@ main:
 	bsr.w		imgLoad
 	bra			.done
 
-
 .done:
 	jsr			rendWaitVSync(pc)
 
@@ -116,12 +115,3 @@ main:
 
 	;
 	bra			.loop
-
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
