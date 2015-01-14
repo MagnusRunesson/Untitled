@@ -5,6 +5,11 @@ VarSpriteTable			= platform_renderer_start+12
 VarSpriteTableSize		= 4*80
 VarSpriteLock			= VarSpriteTable+VarSpriteTableSize
 
+move_vram_addr	MACRO
+	move.l	#((((\1)&$3fff)<<16)+(((\1)>>14)&3))|(1<<30),\2
+	ENDM
+
+
 rendInit:
 	jsr			InitVDP
 	jsr			LoadSprites
@@ -75,10 +80,11 @@ rendLoadTileBank:
 							; because we copy 4 bytes per copy
 
 	; Now create the VRAM offset
-	move.l		#VRAM_MapTiles_Start,d0
-	move.l		d1,-(sp)
-	jsr			_rendIntegerToVRAMAddress
-	move.l		(sp)+,d1
+	move_vram_addr		VRAM_MapTiles_Start,d0
+	;move.l		d1,-(sp)
+	;move.l		#VRAM_MapTiles_Start,d0
+	;jsr		_rendIntegerToVRAMAddress
+	;move.l		(sp)+,d1
 
 	; d0=destination offset
 	; d1=size to copy
@@ -100,11 +106,13 @@ rendLoadSprite:
 	jsr			fileLoad
 	; a0 is the return address from fileLoad, so it is set to the source address now
 
-	move.l		#$a000,d0
-	jsr			_rendIntegerToVRAMAddress	; We should normally push a0 to the
+	;move.l		#$a000,d0
+	;jsr			_rendIntegerToVRAMAddress	; We should normally push a0 to the
 											; stack since it is a scratch register,
 											; but this sub routine is nice to
 											; the scratch registers.
+	move_vram_addr		$a000,d1
+
 
 	; Load the number of tiles to copy from the bank data
 	move.w		(a0)+,d1
