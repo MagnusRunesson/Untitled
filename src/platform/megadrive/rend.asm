@@ -1,6 +1,9 @@
-VarVsync equ	$00FF0000	; long
-VarHsync equ	$00FF0004	; long
-
+VarVsync				= platform_renderer_start+0
+VarHsync				= platform_renderer_start+4
+VarSpriteTop			= platform_renderer_start+8
+VarSpriteTable			= platform_renderer_start+12
+VarSpriteTableSize		= 4*80
+VarSpriteLock			= VarSpriteTable+VarSpriteTableSize
 
 rendInit:
 	jsr			InitVDP
@@ -95,16 +98,17 @@ rendLoadTileBank:
 	jsr			fileLoad
 	; a0 is the return address from fileLoad, so it is set to the source address now
 
+	; Create the number of longs to copy, based in the number of tiles from the file
 	move.w		(a0)+,d1
 	lsl			#5-2,d1		; We should shift up 5 bits because each tile is
 							; 32 bytes, but we should also shift down 2 bits
 							; because we copy 4 bytes per copy
 
-	; Load the number of tiles to copy from the bank data
-    ;move.l 	  	#109*8,d1
-
-	; Now fetch the VRAM offset argument
-	move.l		#$40000000,d0
+	; Now create the VRAM offset
+	move.l		#VRAM_MapTiles_Start,d0
+	move.l		d1,-(sp)
+	jsr			_rendIntegerToVRAMAddress
+	move.l		(sp)+,d1
 
 	; d0=destination offset
 	; d1=size to copy
@@ -113,8 +117,6 @@ rendLoadTileBank:
 
 	rts
 
-; a15=1
-; a13=1
 
 ;==============================================================================
 ;
