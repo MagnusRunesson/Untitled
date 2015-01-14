@@ -5,6 +5,9 @@ main:
 	jsr			memGetUserBaseAddress(pc)	;
 	move.l		a0,a2					; a2 will be user mem from now on
 
+	lea			testtiles_image,a0
+	bsr.w		imgLoad
+
 	nop
 	nop
 	nop
@@ -22,24 +25,24 @@ main:
 	nop
 	nop
 
-	lea			untitled_splash_image,a0
-	bsr.w		imgLoad
+	move.l		#FILEID_TESTSPRITE_SPRITE_CHUNKY,d0
+	bsr.w		rendLoadSprite
 
 	;move.l		#FILEID_UNTITLED_SPLASH_PALETTE,d0
 	;bsr.w		fileLoad
 
 	;move.l		#_data_untitled_splash_bank_pos,d0
 
-	printt		'-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-'
-	printt		'_data_untitled_splash_bank:'
-	printv		_data_untitled_splash_bank
-	printt		''
-	printt		'_data_untitled_splash_map:'
-	printv		_data_untitled_splash_map
-	printt		''
-	printt		'_data_untitled_splash_palette:'
-	printv		_data_untitled_splash_palette
-	printt		''
+	;printt		'-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-'
+	;printt		'_data_untitled_splash_bank:'
+	;printv		_data_untitled_splash_bank
+	;printt		''
+	;printt		'_data_untitled_splash_map:'
+	;printv		_data_untitled_splash_map
+	;printt		''
+	;printt		'_data_untitled_splash_palette:'
+	;printv		_data_untitled_splash_palette
+	;printt		''
 
 	nop
 	nop
@@ -52,6 +55,12 @@ main:
 
 .loop:
 	jsr			inpUpdate				; Return the currently pressed buttons in d7
+
+	btst		#INPUT_ACTION,D0
+	beq			.change_picture_0
+
+	btst		#INPUT_ACTION2,D0
+	beq			.change_picture_1
 
 	btst		#INPUT_LEFT,d0
 	beq			.scroll_left
@@ -86,6 +95,16 @@ main:
 	addq.w		#1,d3
 	bra			.done
 
+.change_picture_0
+	lea			testtiles_image,a0
+	bsr.w		imgLoad
+	bra			.done
+
+.change_picture_1
+	lea			untitled_splash_image,a0
+	bsr.w		imgLoad
+	bra			.done
+
 .done:
 	jsr			rendWaitVSync(pc)
 
@@ -96,12 +115,3 @@ main:
 
 	;
 	bra			.loop
-
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop

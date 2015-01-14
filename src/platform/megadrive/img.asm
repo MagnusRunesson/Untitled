@@ -16,10 +16,10 @@ imgLoad:
 	move.l	(sp)+,a0
 
 	; Load palette
-	;move.w	(a0)+,d0			; Fetch file ID of the tile bank and load it
-	;move	#0,d1				; #0 is the background palette
-	;move.l	a0,-(sp)
-	;jsr		rendLoadPalette
-	;move.l	(sp)+,a0
+	move.w	(a0)+,d0			; Fetch file ID of the tile bank and load it
+	move	#0,d1				; #0 is the background palette
+	move.l	a0,-(sp)
+	jsr		rendLoadPalette
+	move.l	(sp)+,a0
 
 	rts

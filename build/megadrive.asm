@@ -16,5 +16,6 @@ _chunk_size		equ		128			; same as TD_SECTOR (size of sector on floppy)
 	include		"../src/incbin/data.asm"
 	include		"../src/incbin/files.asm"
 	include		"../src/incbin/untitled_splash_image.asm"
+	include		"../src/incbin/testtiles_image.asm"
 
 	org			$20000

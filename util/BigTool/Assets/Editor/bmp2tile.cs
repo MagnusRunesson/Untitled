@@ -25,6 +25,7 @@ public class bmp2tile : EditorWindow
 
 	Rect m_tileBankWindowRect;
 	Rect m_paletteRemapRect;
+	Rect m_imageSettingsRect;
 	Rect m_projectWindowRect;
 
 	const float m_windowTop = 30.0f;
@@ -132,12 +133,13 @@ public class bmp2tile : EditorWindow
 		{
 			m_tileBankWindowRect = GUI.Window( 0, m_tileBankWindowRect, OnDrawTileBank, m_openImageName );
 			m_paletteRemapRect = GUI.Window( 1, m_paletteRemapRect, OnDrawColorRemapTable, "Color remap" );
+			m_imageSettingsRect = GUI.Window( 2, m_imageSettingsRect, OnDrawImageSettings, "Image settings" );
 		}
 
 		if( m_project != null )
 		{
 			// Show the project window.
-			m_projectWindowRect = GUI.Window( 2, m_projectWindowRect, OnDrawProject, "Project" );
+			m_projectWindowRect = GUI.Window( 100, m_projectWindowRect, OnDrawProject, "Project" );
 		}
 		
 		EndWindows();
@@ -241,6 +243,21 @@ public class bmp2tile : EditorWindow
 		GUI.DragWindow();
 	}
 
+	void OnDrawImageSettings( int _id )
+	{
+		bool dirty = false;
+
+		bool before = m_imageConfig.m_importAsSprite;
+		m_imageConfig.m_importAsSprite = GUILayout.Toggle( before, "Import as sprite" );
+		if( m_imageConfig.m_importAsSprite != before )
+			dirty = true;
+
+		if( dirty )
+		{
+			m_imageConfig.Save();
+		}
+	}
+
 	void OnDrawProject( int _id )
 	{
 		string[] imageFiles = m_project.m_imageFiles;
@@ -287,12 +304,14 @@ public class bmp2tile : EditorWindow
 		{
 			m_openImageName = System.IO.Path.GetFileNameWithoutExtension( _path );
 			m_tileBankWindowRect = new Rect( m_projectWindowWidth + (m_windowPadding*2.0f), m_windowTop, m_imageData.m_width*2.0f+10.0f, m_imageData.m_height*2.0f+10.0f+15.0f );
-			m_paletteRemapRect = new Rect( m_tileBankWindowRect.x + m_tileBankWindowRect.width + m_windowPadding, m_tileBankWindowRect.y, 100.0f, 15.0f + (16.0f * 30.0f) );
-			
+			m_imageSettingsRect = new Rect( m_tileBankWindowRect.x + m_tileBankWindowRect.width + m_windowPadding, m_tileBankWindowRect.y, 200.0f, 100.0f );
+			m_paletteRemapRect = new Rect( m_imageSettingsRect.x + m_imageSettingsRect.width + m_windowPadding, m_imageSettingsRect.y, 100.0f, 15.0f + (16.0f * 30.0f) );
+
 			//
 			int numberOfBitplanesIsHardcodedForNow = 4;
 			m_planarImage = new PlanarImage( m_imageData, numberOfBitplanesIsHardcodedForNow);
-			m_tileBank = new TileBank( m_imageData );
+			bool OptimizedTilebank = (m_imageConfig.m_importAsSprite == false); // If we import the image as a sprite we should not optimize the tile bank
+			m_tileBank = new TileBank( m_imageData, OptimizedTilebank );
 			m_tileMap = new TileMap( m_tileBank, m_imageData );
 			m_tilePalette = new TilePalette( m_imageData );
 			
@@ -364,21 +383,34 @@ public class bmp2tile : EditorWindow
 				// Convert to tile banks / planar images
 				int numberOfBitplanesIsHardcodedForNow = 4;
 				PlanarImage planarImage = new PlanarImage( imageData, numberOfBitplanesIsHardcodedForNow);
-				TileBank tileBank = new TileBank( imageData );
+				TileBank tileBank = new TileBank( imageData, (imageConfig.m_importAsSprite==false) );
 				TileMap tileMap = new TileMap( tileBank, imageData );
 				TilePalette tilePalette = new TilePalette( imageData );
 
 				// Export it
-				tileBank.Export( outBaseName + "_bank.bin" );
-				tileMap.Export( outBaseName + "_map.bin" );
-				tilePalette.Export( outBaseName + "_palette.bin" );
-				planarImage.Export( outBaseName + "_planar.bin" );
+				if( imageConfig.m_importAsSprite )
+				{
+					tileBank.Export( outBaseName + "_sprite_chunky.bin" );
+					tilePalette.Export( outBaseName + "_palette.bin" );
+					planarImage.Export( outBaseName + "_sprite_planar.bin" );
 
-				//
-				AddFile( ref asmData, ref asmFileList, ref asmFileMap, outFileNameNoExt + "_bank.bin" );
-				AddFile( ref asmData, ref asmFileList, ref asmFileMap, outFileNameNoExt + "_map.bin" );
-				AddFile( ref asmData, ref asmFileList, ref asmFileMap, outFileNameNoExt + "_palette.bin" );
-				AddFile( ref asmData, ref asmFileList, ref asmFileMap, outFileNameNoExt + "_planar.bin" );
+					AddFile( ref asmData, ref asmFileList, ref asmFileMap, outFileNameNoExt + "_sprite_chunky.bin" );
+					AddFile( ref asmData, ref asmFileList, ref asmFileMap, outFileNameNoExt + "_palette.bin" );
+					AddFile( ref asmData, ref asmFileList, ref asmFileMap, outFileNameNoExt + "_sprite_planar.bin" );
+				}
+				else
+				{
+					tileBank.Export( outBaseName + "_bank.bin" );
+					tileMap.Export( outBaseName + "_map.bin" );
+					tilePalette.Export( outBaseName + "_palette.bin" );
+					planarImage.Export( outBaseName + "_planar.bin" );
+
+					//
+					AddFile( ref asmData, ref asmFileList, ref asmFileMap, outFileNameNoExt + "_bank.bin" );
+					AddFile( ref asmData, ref asmFileList, ref asmFileMap, outFileNameNoExt + "_map.bin" );
+					AddFile( ref asmData, ref asmFileList, ref asmFileMap, outFileNameNoExt + "_palette.bin" );
+					AddFile( ref asmData, ref asmFileList, ref asmFileMap, outFileNameNoExt + "_planar.bin" );
+				}
 			}
 		}
 

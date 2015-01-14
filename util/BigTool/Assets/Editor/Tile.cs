@@ -109,7 +109,10 @@ public class TileBank
 {
 	public List<Tile> m_tiles;
 
-	public TileBank( PalettizedImage _image )
+	//
+	// Optimized tile bank means to remove duplicates
+	//
+	public TileBank( PalettizedImage _image, bool _optimized )
 	{
 		//
 		m_tiles = new List<Tile>();
@@ -121,23 +124,37 @@ public class TileBank
 		int tiles_h = h >> 3;
 
 		//
+		// Normally I write loops that iterate on Y first and then X, but sprites on Mega Drive should actually be
+		// exported Y first then X, so if we do the Y in the inner loop that means the first two tiles are at 0,0
+		// and 0,8, which means Y down. So instead of reordering anything at export time I reorder here instead.
+		//
+		// Oooh, I just realized this probably isn't true for sprite animation frames, so I probably still need to
+		// do some clever iterations and stuff here. ARGH!
+		//
 		int x, y;
-		for( y=0; y<tiles_h; y++ )
+		for( x=0; x<tiles_w; x++ )
 		{
-			for( x=0; x<tiles_w; x++ )
+			for( y=0; y<tiles_h; y++ )
 			{
 				int pixel_x = x*Tile.Width;
 				int pixel_y = y*Tile.Height;
 
 				Tile newTile = new Tile( _image, pixel_x, pixel_y );
 
-				if( HaveIdenticalTile( newTile ) == false )
+				if( _optimized )
 				{
-					//Debug.Log ("Adding tile from coordinates "+pixel_x+","+pixel_y );
-					AddTile( newTile );
+					if( HaveIdenticalTile( newTile ) == false )
+					{
+						//Debug.Log ("Adding tile from coordinates "+pixel_x+","+pixel_y );
+						AddTile( newTile );
+					} else
+					{
+						//Debug.Log ("Ignoring tile from coordinates "+pixel_x+","+pixel_y );
+					}
 				} else
 				{
-					//Debug.Log ("Ignoring tile from coordinates "+pixel_x+","+pixel_y );
+					// If we're not building an optimized tile bank we always export all tiles
+					AddTile( newTile );
 				}
 			}
 		}
@@ -145,7 +162,6 @@ public class TileBank
 
 	void AddTile( Tile _tile )
 	{
-
 		m_tiles.Add( _tile );
 	}
 
@@ -182,10 +198,17 @@ public class TileBank
 	{
 		Debug.Log ("Exporting tile bank to " + _outfilename );
 
+		int headersize = 2;
+
 		int numTiles = m_tiles.Count;
+
 		// Export size = number of tiles * 64 pixels / 2 (because there are 2 bytes per pixel)
-		int outsize = numTiles * 32;
+		int outsize = headersize + (numTiles * 32);
 		byte[] outBytes = new byte[ outsize ];
+
+		Debug.Log ("exporting " + numTiles + " tiles");
+		outBytes[ 0 ] = (byte)((numTiles>>8) & 0xff);
+		outBytes[ 1 ] = (byte)((numTiles) & 0xff);
 
 		int iTile;
 		for( iTile=0; iTile<numTiles; iTile++ )
@@ -204,7 +227,7 @@ public class TileBank
 					value += (t.m_pixels[ ofs+1 ] & 0xf) << 0;
 
 					int outOffset = (iTile*32) + (y*Tile.Width/2) + x;
-					outBytes[ outOffset ] = (byte)value;
+					outBytes[ headersize + outOffset ] = (byte)value;
 				}
 			}
 		}
