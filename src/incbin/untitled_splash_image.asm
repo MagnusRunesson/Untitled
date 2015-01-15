@@ -1,4 +1,4 @@
 untitled_splash_image:
-					dc.w		FILEID_UNTITLED_SPLASH_BANK
-					dc.w		FILEID_UNTITLED_SPLASH_MAP
-					dc.w		FILEID_UNTITLED_SPLASH_PALETTE
+					dc.w		fileid_untitled_splash_bank
+					dc.w		fileid_untitled_splash_map
+					dc.w		fileid_untitled_splash_palette

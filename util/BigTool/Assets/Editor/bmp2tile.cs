@@ -450,8 +450,9 @@ public class bmp2tile : EditorWindow
 
 	void AddFile( ref string _asmData, ref string _asmFileList, ref string _asmFileMap, string _filename )
 	{
-		string asmFileName = System.IO.Path.GetFileNameWithoutExtension( _filename ).Replace( ' ', '_' );
-		string label = "_data_" + asmFileName;
+		//string asmFileName = System.IO.Path.GetFileNameWithoutExtension( _filename ).Replace( ' ', '_' );
+		string label = GetLabelNameFromFileName( _filename );
+		string constant = GetConstantNameFromFileName( _filename );
 
 		// Append to data.asm
 		_asmData += "\n\n; " + _filename + "\n\n";
@@ -463,11 +464,11 @@ public class bmp2tile : EditorWindow
 		_asmData += label + "_end:\n";
 
 		// Append to files.asm
-		_asmFileList += ("FILEID_" + asmFileName.ToUpper()).PadRight( 40 ) + "equ " + m_exportedFileListIndex + "\n";
+		_asmFileList += constant.PadRight( 40 ) + "equ " + m_exportedFileListIndex + "\n";
 		_asmFileMap += "\tdc.w\t" + label + "_pos," + label + "_length\n";
 		m_exportedFileListIndex++;
-
 /*
+ * This is what we want to output to data.asm
 
 	cnop		0,_chunk_size
 
@@ -478,7 +479,27 @@ _data_untitled_splash_bank_length			equ ((_data_untitled_splash_bank_end-_data_u
 _data_untitled_splash_bank_end:
 
 */
-		                             }
+	}
+
+	string GetLabelNameFromFileName( string _sourceFileName )
+	{
+		string ret = "_data_";
+		ret += System.IO.Path.GetFileNameWithoutExtension( _sourceFileName );
+		ret = ret.Replace( ' ', '_' );
+		ret = ret.ToLower();
+		
+		return ret;
+	}
+
+	string GetConstantNameFromFileName( string _sourceFileName )
+	{
+		string ret = "fileid_";
+		ret += System.IO.Path.GetFileNameWithoutExtension( _sourceFileName );
+		ret = ret.Replace( ' ', '_' );
+		ret = ret.ToLower();
+
+		return ret;
+	}
 }
 
 
