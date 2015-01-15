@@ -252,6 +252,18 @@ public class bmp2tile : EditorWindow
 		if( m_imageConfig.m_importAsSprite != before )
 			dirty = true;
 
+		if( m_imageConfig.m_importAsSprite )
+		{
+			GUILayout.BeginHorizontal();
+			GUILayout.Label( "Num frames" );
+			string beforeString = m_imageConfig.m_spriteFramesString;
+			m_imageConfig.m_spriteFramesString = GUILayout.TextField( beforeString );
+			GUILayout.EndHorizontal();
+
+			if( beforeString != m_imageConfig.m_spriteFramesString )
+				dirty = true;
+		}
+
 		if( dirty )
 		{
 			m_imageConfig.Save();
