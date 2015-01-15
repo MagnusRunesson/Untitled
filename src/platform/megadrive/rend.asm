@@ -111,7 +111,7 @@ rendLoadSprite:
 											; stack since it is a scratch register,
 											; but this sub routine is nice to
 											; the scratch registers.
-	move_vram_addr		$a000,d1
+	move_vram_addr		$a000,d0
 
 
 	; Load the number of tiles to copy from the bank data
