@@ -12,7 +12,11 @@ public class PalettizedImageConfig
 
 	public Dictionary<int,int> m_colorRemapSourceToDest;
 	public bool m_importAsSprite;
-	public string m_spriteFramesString;
+
+	int m_spriteFrames;
+	int m_spriteWidth;
+	int m_spriteHeight;
+	PalettizedImage m_imageData;
 
 	public PalettizedImageConfig( string _path )
 	{
@@ -29,7 +33,7 @@ public class PalettizedImageConfig
 
 		LoadColorMapTable( (Dictionary<string,object>)dict[ JSONKEY_COLORREMAPTABLE ]);
 		LoadBool( ref m_importAsSprite, JSONKEY_IMPORTASSPRITE, dict );
-		LoadString( ref m_spriteFramesString, JSONKEY_SPRITENUMFRAMES, dict );
+		LoadInt( ref m_spriteFrames, JSONKEY_SPRITENUMFRAMES, dict );
 	}
 
 	public void Save()
@@ -38,12 +42,46 @@ public class PalettizedImageConfig
 		Dictionary<string,object> jsonDict = new Dictionary<string, object>();
 		jsonDict[ JSONKEY_COLORREMAPTABLE ] = m_colorRemapSourceToDest;
 		jsonDict[ JSONKEY_IMPORTASSPRITE ] = m_importAsSprite;
-		jsonDict[ JSONKEY_SPRITENUMFRAMES ] = m_spriteFramesString;
+		jsonDict[ JSONKEY_SPRITENUMFRAMES ] = m_spriteFrames;
 
 		// Generate JSON string from settings dictionary
 		string jsonString = MiniJSON.Json.Serialize( jsonDict );
 
 		System.IO.File.WriteAllText( m_fileName, jsonString );
+	}
+
+	public void SetImage( PalettizedImage _imageData )
+	{
+		Debug.Log ("====] setting image");
+		m_imageData = _imageData;
+		RefreshInternalThings();
+	}
+
+	public int GetSpriteWidth()
+	{
+		return m_spriteWidth;
+	}
+	
+	public int GetSpriteHeight()
+	{
+		return m_spriteHeight;
+	}
+
+	public void SetNumFrames( int _newFrameCount )
+	{
+		m_spriteFrames = _newFrameCount;
+		RefreshInternalThings();
+	}
+
+	public int GetNumFrames()
+	{
+		return m_spriteFrames;
+	}
+	
+	void RefreshInternalThings()
+	{
+		m_spriteWidth = m_imageData.m_width;
+		m_spriteHeight = m_imageData.m_height / m_spriteFrames;
 	}
 
 	void SetupDefaults()
@@ -62,7 +100,7 @@ public class PalettizedImageConfig
 		// Sprite settings
 		//
 		m_importAsSprite = false;
-		m_spriteFramesString = "1";
+		m_spriteFrames = 1;
 	}
 
 	void LoadColorMapTable( Dictionary<string,object> _table )
@@ -85,6 +123,14 @@ public class PalettizedImageConfig
 		if( _json.ContainsKey( _key ))
 		{
 			_out = (bool)_json[ _key ];
+		}
+	}
+
+	void LoadInt( ref int _out, string _key, Dictionary<string,object> _json )
+	{
+		if( _json.ContainsKey( _key ))
+		{
+			_out = (int)(long)_json[ _key ];
 		}
 	}
 

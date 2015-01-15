@@ -8,8 +8,9 @@ public class bmp2tile : EditorWindow
 	const string PPKEY_LAST_OPEN_DIRECTORY = "bmp2tile_last_open_directory";
 	const string PPKEY_LAST_EXPORT_DIRECTORY = "bmp2tile_last_export_directory";
 
-	PalettizedImage m_imageData;
-	PalettizedImageConfig m_imageConfig;
+	PalettizedImage m_currentImageData;
+	PalettizedImageConfig m_currentImageConfig;
+	string m_currentFramesString;
 
 	string m_lastOpenDirectory;
 	string m_lastExportDirectory;
@@ -61,7 +62,7 @@ public class bmp2tile : EditorWindow
 			m_lastExportDirectory = Application.dataPath;
 
 		m_imageTexture = null;
-		m_imageData = null;
+		m_currentImageData = null;
 		m_tileBank = null;
 		m_tileMap = null;
 	}
@@ -200,15 +201,15 @@ public class bmp2tile : EditorWindow
 		int i1;
 		for( i1=0; i1<16; i1++ )
 		{
-			int i2 = m_imageConfig.m_colorRemapSourceToDest[ i1 ];
+			int i2 = m_currentImageConfig.m_colorRemapSourceToDest[ i1 ];
 
-			Color c1 = m_imageData.m_palette[ i1 ];
+			Color c1 = m_currentImageData.m_palette[ i1 ];
 			if( c1.a > 0.5f )
 				EditorGUI.DrawRect( r1, c1 );
 			else
 				GUI.Box( r1, "" );
 
-			Color c2 = m_imageData.m_palette[ i2 ];
+			Color c2 = m_currentImageData.m_palette[ i2 ];
 			if( c2.a > 0.5f )
 				EditorGUI.DrawRect( r2, c2 );
 			else
@@ -224,13 +225,13 @@ public class bmp2tile : EditorWindow
 			//Handles.DrawLine( v1, v2 );
 			Handles.DrawBezier( v1, v2, v1+Vector3.right*30.0f, v2+Vector3.left*30.0f, Color.white, null, 2.0f );
 
-			if( m_imageData.m_colorUsed[ i1 ] == false )
+			if( m_currentImageData.m_colorUsed[ i1 ] == false )
 			{
 				Handles.color = Color.red;
 				Handles.DrawLine( new Vector2( r1.x, r1.y ), new Vector2( r1.x+r1.width, r1.y+r1.height ));
 			}
 			
-			if( m_imageData.m_colorUsed[ i2 ] == false )
+			if( m_currentImageData.m_colorUsed[ i2 ] == false )
 			{
 				Handles.color = Color.red;
 				Handles.DrawLine( new Vector2( r2.x, r2.y ), new Vector2( r2.x+r2.width, r2.y+r2.height ));
@@ -247,26 +248,36 @@ public class bmp2tile : EditorWindow
 	{
 		bool dirty = false;
 
-		bool before = m_imageConfig.m_importAsSprite;
-		m_imageConfig.m_importAsSprite = GUILayout.Toggle( before, "Import as sprite" );
-		if( m_imageConfig.m_importAsSprite != before )
+		bool before = m_currentImageConfig.m_importAsSprite;
+		m_currentImageConfig.m_importAsSprite = GUILayout.Toggle( before, "Import as sprite" );
+		if( m_currentImageConfig.m_importAsSprite != before )
 			dirty = true;
 
-		if( m_imageConfig.m_importAsSprite )
+		if( m_currentImageConfig.m_importAsSprite )
 		{
 			GUILayout.BeginHorizontal();
 			GUILayout.Label( "Num frames" );
-			string beforeString = m_imageConfig.m_spriteFramesString;
-			m_imageConfig.m_spriteFramesString = GUILayout.TextField( beforeString );
+			string beforeString = m_currentFramesString;
+			string newstring = GUILayout.TextField( beforeString );
 			GUILayout.EndHorizontal();
+			m_currentFramesString = newstring;
 
-			if( beforeString != m_imageConfig.m_spriteFramesString )
-				dirty = true;
+			if( beforeString.CompareTo( newstring ) != 0 )
+			{
+				int newint;
+				if( int.TryParse( newstring, out newint ))
+				{
+					m_currentImageConfig.SetNumFrames( newint );
+					dirty = true;
+				}
+			}
+
+			GUILayout.Label( "Sprite w=" + m_currentImageConfig.GetSpriteWidth() + ", h=" + m_currentImageConfig.GetSpriteHeight() );
 		}
 
 		if( dirty )
 		{
-			m_imageConfig.Save();
+			m_currentImageConfig.Save();
 		}
 	}
 
@@ -309,28 +320,35 @@ public class bmp2tile : EditorWindow
 		m_openImageName = "<Untitled>";
 
 		// Load corresponding config first as it have information on how the image should be loaded
-		m_imageConfig = new PalettizedImageConfig( _path + ".config" );
+		m_currentImageConfig = new PalettizedImageConfig( _path + ".config" );
 		
-		m_imageData = PalettizedImage.LoadBMP( _path, m_imageConfig );
-		if( m_imageData != null )
+		m_currentImageData = PalettizedImage.LoadBMP( _path, m_currentImageConfig );
+		if( m_currentImageData != null )
 		{
+			//
+			m_currentImageConfig.SetImage( m_currentImageData );
+			
+			//
+			m_currentFramesString = m_currentImageConfig.GetNumFrames().ToString();
+
+			//
 			m_openImageName = System.IO.Path.GetFileNameWithoutExtension( _path );
-			m_tileBankWindowRect = new Rect( m_projectWindowWidth + (m_windowPadding*2.0f), m_windowTop, m_imageData.m_width*2.0f+10.0f, m_imageData.m_height*2.0f+10.0f+15.0f );
+			m_tileBankWindowRect = new Rect( m_projectWindowWidth + (m_windowPadding*2.0f), m_windowTop, m_currentImageData.m_width*2.0f+10.0f, m_currentImageData.m_height*2.0f+10.0f+15.0f );
 			m_imageSettingsRect = new Rect( m_tileBankWindowRect.x + m_tileBankWindowRect.width + m_windowPadding, m_tileBankWindowRect.y, 200.0f, 100.0f );
 			m_paletteRemapRect = new Rect( m_imageSettingsRect.x + m_imageSettingsRect.width + m_windowPadding, m_imageSettingsRect.y, 100.0f, 15.0f + (16.0f * 30.0f) );
 
 			//
 			int numberOfBitplanesIsHardcodedForNow = 4;
-			m_planarImage = new PlanarImage( m_imageData, numberOfBitplanesIsHardcodedForNow);
-			bool OptimizedTilebank = (m_imageConfig.m_importAsSprite == false); // If we import the image as a sprite we should not optimize the tile bank
-			m_tileBank = new TileBank( m_imageData, OptimizedTilebank );
-			m_tileMap = new TileMap( m_tileBank, m_imageData );
-			m_tilePalette = new TilePalette( m_imageData );
+			m_planarImage = new PlanarImage( m_currentImageData, numberOfBitplanesIsHardcodedForNow);
+			bool OptimizedTilebank = (m_currentImageConfig.m_importAsSprite == false); // If we import the image as a sprite we should not optimize the tile bank
+			m_tileBank = new TileBank( m_currentImageData, OptimizedTilebank );
+			m_tileMap = new TileMap( m_tileBank, m_currentImageData );
+			m_tilePalette = new TilePalette( m_currentImageData );
 			
 			//
 			int w, h;
-			w = m_imageData.m_width;
-			h = m_imageData.m_height;
+			w = m_currentImageData.m_width;
+			h = m_currentImageData.m_height;
 			
 			//
 			m_imageTexture = new Texture2D( w, h, TextureFormat.ARGB32, false );
@@ -343,8 +361,8 @@ public class bmp2tile : EditorWindow
 				for( x=0; x<w; x++ )
 				{
 					int ii = ((h-1-y)*w)+x;
-					int ic = m_imageData.m_image[ ii ];
-					Color col = m_imageData.m_palette[ ic ];
+					int ic = m_currentImageData.m_image[ ii ];
+					Color col = m_currentImageData.m_palette[ ic ];
 					m_imageTexture.SetPixel( x, y, col );
 				}
 			}
@@ -392,6 +410,9 @@ public class bmp2tile : EditorWindow
 			//
 			if( imageData != null )
 			{
+				//
+				imageConfig.SetImage( imageData );
+
 				// Convert to tile banks / planar images
 				int numberOfBitplanesIsHardcodedForNow = 4;
 				PlanarImage planarImage = new PlanarImage( imageData, numberOfBitplanesIsHardcodedForNow);
@@ -402,7 +423,7 @@ public class bmp2tile : EditorWindow
 				// Export it
 				if( imageConfig.m_importAsSprite )
 				{
-					tileBank.Export( outBaseName + "_sprite_chunky.bin" );
+					tileBank.Export( outBaseName + "_sprite_chunky.bin", imageConfig );
 					tilePalette.Export( outBaseName + "_palette.bin" );
 					planarImage.Export( outBaseName + "_sprite_planar.bin" );
 
@@ -412,7 +433,7 @@ public class bmp2tile : EditorWindow
 				}
 				else
 				{
-					tileBank.Export( outBaseName + "_bank.bin" );
+					tileBank.Export( outBaseName + "_bank.bin", imageConfig );
 					tileMap.Export( outBaseName + "_map.bin" );
 					tilePalette.Export( outBaseName + "_palette.bin" );
 					planarImage.Export( outBaseName + "_planar.bin" );

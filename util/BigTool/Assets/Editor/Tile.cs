@@ -194,7 +194,7 @@ public class TileBank
 		return null;
 	}
 
-	public void Export( string _outfilename )
+	public void Export( string _outfilename, PalettizedImageConfig _imageConfig )
 	{
 		Debug.Log ("Exporting tile bank to " + _outfilename );
 
