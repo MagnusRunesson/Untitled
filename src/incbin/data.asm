@@ -20,6 +20,16 @@ _data_testsprite_palette_length         equ ((_data_testsprite_palette_end-_data
 _data_testsprite_palette_end:
 
 
+; testsprite_sprite.bin
+
+	cnop		0,_chunk_size
+_data_testsprite_sprite:
+	incbin	"../src/incbin/testsprite_sprite.bin"
+_data_testsprite_sprite_pos             equ _data_testsprite_sprite/_chunk_size
+_data_testsprite_sprite_length          equ ((_data_testsprite_sprite_end-_data_testsprite_sprite)+(_chunk_size-1))/_chunk_size
+_data_testsprite_sprite_end:
+
+
 ; testsprite_sprite_planar.bin
 
 	cnop		0,_chunk_size
@@ -48,6 +58,16 @@ _data_testsprite2_palette:
 _data_testsprite2_palette_pos           equ _data_testsprite2_palette/_chunk_size
 _data_testsprite2_palette_length        equ ((_data_testsprite2_palette_end-_data_testsprite2_palette)+(_chunk_size-1))/_chunk_size
 _data_testsprite2_palette_end:
+
+
+; testsprite2_sprite.bin
+
+	cnop		0,_chunk_size
+_data_testsprite2_sprite:
+	incbin	"../src/incbin/testsprite2_sprite.bin"
+_data_testsprite2_sprite_pos            equ _data_testsprite2_sprite/_chunk_size
+_data_testsprite2_sprite_length         equ ((_data_testsprite2_sprite_end-_data_testsprite2_sprite)+(_chunk_size-1))/_chunk_size
+_data_testsprite2_sprite_end:
 
 
 ; testsprite2_sprite_planar.bin
