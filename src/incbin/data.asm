@@ -30,6 +30,36 @@ _data_testsprite_sprite_planar_length   equ ((_data_testsprite_sprite_planar_end
 _data_testsprite_sprite_planar_end:
 
 
+; testsprite2_sprite_chunky.bin
+
+	cnop		0,_chunk_size
+_data_testsprite2_sprite_chunky:
+	incbin	"../src/incbin/testsprite2_sprite_chunky.bin"
+_data_testsprite2_sprite_chunky_pos     equ _data_testsprite2_sprite_chunky/_chunk_size
+_data_testsprite2_sprite_chunky_length  equ ((_data_testsprite2_sprite_chunky_end-_data_testsprite2_sprite_chunky)+(_chunk_size-1))/_chunk_size
+_data_testsprite2_sprite_chunky_end:
+
+
+; testsprite2_palette.bin
+
+	cnop		0,_chunk_size
+_data_testsprite2_palette:
+	incbin	"../src/incbin/testsprite2_palette.bin"
+_data_testsprite2_palette_pos           equ _data_testsprite2_palette/_chunk_size
+_data_testsprite2_palette_length        equ ((_data_testsprite2_palette_end-_data_testsprite2_palette)+(_chunk_size-1))/_chunk_size
+_data_testsprite2_palette_end:
+
+
+; testsprite2_sprite_planar.bin
+
+	cnop		0,_chunk_size
+_data_testsprite2_sprite_planar:
+	incbin	"../src/incbin/testsprite2_sprite_planar.bin"
+_data_testsprite2_sprite_planar_pos     equ _data_testsprite2_sprite_planar/_chunk_size
+_data_testsprite2_sprite_planar_length  equ ((_data_testsprite2_sprite_planar_end-_data_testsprite2_sprite_planar)+(_chunk_size-1))/_chunk_size
+_data_testsprite2_sprite_planar_end:
+
+
 ; testtiles_bank.bin
 
 	cnop		0,_chunk_size
