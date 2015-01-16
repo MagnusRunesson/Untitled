@@ -52,7 +52,6 @@ public class PalettizedImageConfig
 
 	public void SetImage( PalettizedImage _imageData )
 	{
-		Debug.Log ("====] setting image");
 		m_imageData = _imageData;
 		RefreshInternalThings();
 	}
@@ -80,8 +79,8 @@ public class PalettizedImageConfig
 	
 	void RefreshInternalThings()
 	{
-		m_spriteWidth = m_imageData.m_width;
-		m_spriteHeight = m_imageData.m_height / m_spriteFrames;
+		m_spriteWidth = m_imageData.m_width / m_spriteFrames;
+		m_spriteHeight = m_imageData.m_height;
 	}
 
 	void SetupDefaults()
