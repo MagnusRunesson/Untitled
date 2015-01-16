@@ -2,6 +2,20 @@
 using System.Collections;
 using System.Collections.Generic;
 
+public class Halp
+{
+	public static void Write8( byte[] _outBytes, int _offset, int _value )
+	{
+		_outBytes[ _offset ] = (byte)(_value & 0xff);
+	}
+	
+	public static void Write16( byte[] _outBytes, int _offset, int _value )
+	{
+		_outBytes[ _offset+0 ] = (byte)((_value>>8) & 0xff);
+		_outBytes[ _offset+1 ] = (byte)((_value) & 0xff);
+	}
+}
+
 public class Tile
 {
 	public const int Width = 8;
@@ -194,7 +208,7 @@ public class TileBank
 		return null;
 	}
 
-	public void Export( string _outfilename, PalettizedImageConfig _imageConfig )
+	public void Export( string _outfilename )
 	{
 		Debug.Log ("Exporting tile bank to " + _outfilename );
 
@@ -207,8 +221,7 @@ public class TileBank
 		byte[] outBytes = new byte[ outsize ];
 
 		Debug.Log ("exporting " + numTiles + " tiles");
-		outBytes[ 0 ] = (byte)((numTiles>>8) & 0xff);
-		outBytes[ 1 ] = (byte)((numTiles) & 0xff);
+		Halp.Write16( outBytes, 0, numTiles );
 
 		int iTile;
 		for( iTile=0; iTile<numTiles; iTile++ )
@@ -421,5 +434,33 @@ blått
 		a /= 32;
 		a *= 32;
 		return ((float)a) / 255.0f;
+	}
+}
+
+public class Sprite
+{
+	PalettizedImage m_imageData;
+	PalettizedImageConfig m_imageConfig;
+
+	public Sprite( PalettizedImage _imageData, PalettizedImageConfig _imageConfig )
+	{
+		m_imageData = _imageData;
+		m_imageConfig = _imageConfig;
+
+	}
+
+	public void Export( string _outfilename )
+	{
+		Debug.Log ("Exporting sprite to " + _outfilename );
+		
+		int outsize = 6;
+		byte[] outBytes = new byte[ outsize ];
+		Halp.Write8( outBytes, 0, m_imageConfig.GetSpriteWidth() );
+		Halp.Write8( outBytes, 1, m_imageConfig.GetSpriteHeight() );
+		Halp.Write8( outBytes, 2, m_imageConfig.GetNumFrames() );
+		Halp.Write8( outBytes, 3, 0 ); // To pad to 4 bytes
+		Halp.Write16( outBytes, 4, 0xdead );
+
+		System.IO.File.WriteAllBytes( _outfilename, outBytes );
 	}
 }
