@@ -417,23 +417,27 @@ public class bmp2tile : EditorWindow
 				int numberOfBitplanesIsHardcodedForNow = 4;
 				PlanarImage planarImage = new PlanarImage( imageData, numberOfBitplanesIsHardcodedForNow);
 				TileBank tileBank = new TileBank( imageData, (imageConfig.m_importAsSprite==false) );
-				TileMap tileMap = new TileMap( tileBank, imageData );
 				TilePalette tilePalette = new TilePalette( imageData );
 
 				// Export it
 				if( imageConfig.m_importAsSprite )
 				{
-					tileBank.Export( outBaseName + "_sprite_chunky.bin", imageConfig );
+					Sprite sprite = new Sprite( imageData, imageConfig );
+					tileBank.Export( outBaseName + "_sprite_chunky.bin" );
 					tilePalette.Export( outBaseName + "_palette.bin" );
+					sprite.Export( outBaseName + "_sprite.bin" );
 					planarImage.Export( outBaseName + "_sprite_planar.bin" );
 
 					AddFile( ref asmData, ref asmFileList, ref asmFileMap, outFileNameNoExt + "_sprite_chunky.bin" );
 					AddFile( ref asmData, ref asmFileList, ref asmFileMap, outFileNameNoExt + "_palette.bin" );
+					AddFile( ref asmData, ref asmFileList, ref asmFileMap, outFileNameNoExt + "_sprite.bin" );
 					AddFile( ref asmData, ref asmFileList, ref asmFileMap, outFileNameNoExt + "_sprite_planar.bin" );
 				}
 				else
 				{
-					tileBank.Export( outBaseName + "_bank.bin", imageConfig );
+					TileMap tileMap = new TileMap( tileBank, imageData );
+
+					tileBank.Export( outBaseName + "_bank.bin" );
 					tileMap.Export( outBaseName + "_map.bin" );
 					tilePalette.Export( outBaseName + "_palette.bin" );
 					planarImage.Export( outBaseName + "_planar.bin" );
