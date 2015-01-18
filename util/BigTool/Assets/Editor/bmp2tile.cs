@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEditor;
 using System.Collections;
 using System.Collections.Generic;
@@ -17,8 +17,11 @@ public class bmp2tile : EditorWindow
 	string m_lastOpenDirectory;
 	string m_lastExportDirectory;
 	Texture2D m_imageTexture;
+	Texture2D m_mapTexture;
 
 	string m_openImageName;
+	string m_openMapName;
+
 	Project m_project;
 
 	TileBank m_tileBank;
@@ -31,6 +34,7 @@ public class bmp2tile : EditorWindow
 	Rect m_imageSettingsRect;
 	Rect m_projectWindowRect;
 	Vector2 m_spriteFrameTimeScroll;
+	Rect m_mapWindowRect;
 
 	const float m_windowTop = 30.0f;
 	const float m_windowPadding = 10.0f;
@@ -135,9 +139,14 @@ public class bmp2tile : EditorWindow
 		BeginWindows();
 		if( m_tileBank != null )
 		{
-			m_tileBankWindowRect = GUI.Window( 0, m_tileBankWindowRect, OnDrawTileBank, m_openImageName );
+			m_tileBankWindowRect = GUI.Window( 0, m_tileBankWindowRect, OnDrawTileBank, "Tiles: " + m_openImageName );
 			m_paletteRemapRect = GUI.Window( 1, m_paletteRemapRect, OnDrawColorRemapTable, "Color remap" );
 			m_imageSettingsRect = GUI.Window( 2, m_imageSettingsRect, OnDrawImageSettings, "Image settings" );
+		}
+
+		if( m_mapTexture != null )
+		{
+			m_mapWindowRect = GUI.Window( 200, m_mapWindowRect, OnDrawMapWindow, "Map: " + m_openMapName );
 		}
 
 		if( m_project != null )
@@ -188,6 +197,48 @@ public class bmp2tile : EditorWindow
 
 		GUI.DragWindow();
 	}
+
+	void OnDrawMapWindow( int _id )
+	{
+		if( m_mapTexture != null )
+		{
+			float left = 5.0f;
+			float top = 20.0f;
+			
+			float draw_scale = 1.0f;
+			float src_w = m_mapTexture.width;
+			float src_h = m_mapTexture.height;
+			float draw_w = src_w * draw_scale;
+			float draw_h = src_h * draw_scale;
+			Rect r = new Rect( left, top, draw_w, draw_h );
+			GUI.DrawTexture( r, m_mapTexture );
+
+			/*
+			Color c = Color.gray;
+			c.a = 0.25f;
+			
+			int numTilesW = (int)src_w;
+			int numTilesH = (int)src_h;
+			numTilesW >>= 3;
+			numTilesH >>= 3;
+			int tx, ty;
+			for( ty=0; ty<numTilesH; ty++ )
+			{
+				for( tx=0; tx<numTilesW; tx++ )
+				{
+					float dx = tx*8.0f*draw_scale;
+					float dy = ty*8.0f*draw_scale;
+					Rect r2 = new Rect( left+dx, top+dy, 8.0f*draw_scale, 8.0f*draw_scale );
+					GUI.Box( r2, "" );
+				}
+			}
+			*/
+		}
+		
+		GUI.DragWindow();
+	}
+	
+
 
 	void OnDrawColorRemapTable( int _id )
 	{
@@ -326,6 +377,7 @@ public class bmp2tile : EditorWindow
 			string name = System.IO.Path.GetFileName( fullPath );
 			if( GUILayout.Button( name ))
 			{
+				m_mapTexture = null;
 				LoadBMP( fullPath );
 			}
 		}
@@ -337,7 +389,7 @@ public class bmp2tile : EditorWindow
 			string name = System.IO.Path.GetFileName( fullPath );
 			if( GUILayout.Button( name ))
 			{
-				//LoadBMP( fullPath );
+				LoadMap( fullPath );
 			}
 		}
 
@@ -424,6 +476,136 @@ public class bmp2tile : EditorWindow
 			//
 			m_imageTexture.Apply();
 		}
+	}
+
+	void LoadMap( string _path )
+	{
+		string jsonString = System.IO.File.ReadAllText( _path );
+		Dictionary<string,object> json = (Dictionary<string,object>)MiniJSON.Json.Deserialize( jsonString );
+		m_mapTexture = null;
+
+		m_openMapName = System.IO.Path.GetFileNameWithoutExtension( _path );
+		if( json.ContainsKey( "tilesets" ) == false )
+			return;
+
+		//
+		// Load tile bank (only one tile bank for each map for now)
+		//
+		List<object> tilesetsJson = (List<object>)json[ "tilesets" ];
+		Dictionary<string,object> tilesetJson = (Dictionary<string,object>)tilesetsJson[ 0 ];
+		//Debug.Log ("we have tilesets" );
+		//Debug.Log ("tilesets=" + tilesetsJson );
+		//Debug.Log ("tileset=" + tilesetJson );
+		string imageFileName = (string)tilesetJson[ "image" ];
+		string imageFullPath = System.IO.Path.GetDirectoryName( _path ) + System.IO.Path.DirectorySeparatorChar + imageFileName;
+		//Debug.Log ("image file name=" + imageFileName + ", imagefullpath=" + imageFullPath );
+		LoadBMP( imageFullPath );
+
+		// Create map texture
+		int map_tiles_w = ((int)(long)json[ "width" ]);
+		int map_tiles_h = ((int)(long)json[ "height" ]);
+		int map_pixels_w = map_tiles_w * 8;
+		int map_pixels_h = map_tiles_h * 8;
+		m_mapTexture = new Texture2D( map_pixels_w, map_pixels_h, TextureFormat.ARGB32, false );
+		m_mapTexture.filterMode = FilterMode.Point;
+		m_mapWindowRect = new Rect( m_tileBankWindowRect.x, m_tileBankWindowRect.y, 10+map_pixels_w, 25+map_pixels_h );
+		float add = m_mapWindowRect.x + m_mapWindowRect.width - m_projectWindowWidth - m_windowPadding;
+		m_tileBankWindowRect.x += add;
+		m_paletteRemapRect.x += add;
+		m_imageSettingsRect.x += add;
+		//m_projectWindowRect.x += add;
+
+		// Find each layer
+		List<object> layersJson = (List<object>)json[ "layers" ];
+		Dictionary<string,object> layerJson = (Dictionary<string,object>)layersJson[ 0 ];
+		List<object> layerData = (List<object>)layerJson[ "data" ];
+		int tile_x, tile_y;
+		for( tile_y=0; tile_y<map_tiles_h; tile_y++ )
+		{
+			for( tile_x=0; tile_x<map_tiles_w; tile_x++ )
+			{
+				int i = tile_y*map_tiles_w + tile_x;
+				int tile_id = (int)(long)layerData[i];
+				tile_id--;
+				TileInstance tileInstance = m_tileBank.m_allTileInstances[ tile_id ];
+
+				int tile_pixel_x;
+				int tile_pixel_y;
+				for( tile_pixel_y=0; tile_pixel_y<8; tile_pixel_y++ )
+				{
+					for( tile_pixel_x=0; tile_pixel_x<8; tile_pixel_x++ )
+					{
+						int tile_pixel_i = (tile_pixel_y*8)+tile_pixel_x;
+						byte palindex = tileInstance.m_tile.m_pixels[ tile_pixel_i ];
+						Color col = m_currentImageData.m_palette[ palindex ];
+
+						int dst_x = (tile_x*8) + tile_pixel_x;
+						int dst_y = (tile_y*8) + tile_pixel_y;
+
+						m_mapTexture.SetPixel( dst_x, map_pixels_h - 1 - dst_y, col );
+					}
+				}
+			}
+		}
+
+		m_mapTexture.Apply();
+
+
+		/*
+		m_openImageName = "<Untitled>";
+		
+		// Load corresponding config first as it have information on how the image should be loaded
+		m_currentImageConfig = new PalettizedImageConfig( _path + ".config" );
+		
+		m_currentImageData = PalettizedImage.LoadBMP( _path, m_currentImageConfig );
+		if( m_currentImageData != null )
+		{
+			//
+			m_currentImageConfig.SetImage( m_currentImageData );
+			
+			//
+			m_currentFramesString = m_currentImageConfig.GetNumFrames().ToString();
+			
+			//
+			m_openImageName = System.IO.Path.GetFileNameWithoutExtension( _path );
+			m_tileBankWindowRect = new Rect( m_projectWindowWidth + (m_windowPadding*2.0f), m_windowTop, m_currentImageData.m_width*2.0f+10.0f, m_currentImageData.m_height*2.0f+10.0f+15.0f );
+			m_imageSettingsRect = new Rect( m_tileBankWindowRect.x + m_tileBankWindowRect.width + m_windowPadding, m_tileBankWindowRect.y, 200.0f, 100.0f );
+			m_paletteRemapRect = new Rect( m_imageSettingsRect.x + m_imageSettingsRect.width + m_windowPadding, m_imageSettingsRect.y, 100.0f, 15.0f + (16.0f * 30.0f) );
+			
+			//
+			int numberOfBitplanesIsHardcodedForNow = 4;
+			m_planarImage = new PlanarImage( m_currentImageData, numberOfBitplanesIsHardcodedForNow);
+			bool OptimizedTilebank = (m_currentImageConfig.m_importAsSprite == false); // If we import the image as a sprite we should not optimize the tile bank
+			m_tileBank = new TileBank( m_currentImageData, OptimizedTilebank );
+			m_tileMap = new TileMap( m_tileBank, m_currentImageData );
+			m_tilePalette = new TilePalette( m_currentImageData );
+			
+			//
+			int w, h;
+			w = m_currentImageData.m_width;
+			h = m_currentImageData.m_height;
+			
+			//
+			m_imageTexture = new Texture2D( w, h, TextureFormat.ARGB32, false );
+			m_imageTexture.filterMode = FilterMode.Point;
+			
+			//
+			int x, y;
+			for( y=0; y<h; y++ )
+			{
+				for( x=0; x<w; x++ )
+				{
+					int ii = ((h-1-y)*w)+x;
+					int ic = m_currentImageData.m_image[ ii ];
+					Color col = m_currentImageData.m_palette[ ic ];
+					m_imageTexture.SetPixel( x, y, col );
+				}
+			}
+			
+			//
+			m_imageTexture.Apply();
+		}
+		*/
 	}
 
 	//
