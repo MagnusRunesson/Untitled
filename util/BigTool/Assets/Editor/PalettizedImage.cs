@@ -11,6 +11,7 @@ public class PalettizedImage
 	public byte[] m_image;
 	public string m_fileName;
 	public PalettizedImageConfig m_config;
+	int m_coloursInPalette;
 
 	static public PalettizedImage LoadBMP( string _path, PalettizedImageConfig _config )
 	{
@@ -22,10 +23,12 @@ public class PalettizedImage
 		int width = ReadInt( imageFile, 0x12 );
 		int height = ReadInt( imageFile, 0x16 );
 		int bpp = ReadWord ( imageFile, 0x1c );
+		int coloursInPalette = ReadWord ( imageFile, 0x2e );
+		Debug.Log ("width=" + width + ", height=" + height + ", bpp=" + bpp + " (pixels start=" + pixelsOffset + ") Colours in palette=" + coloursInPalette );
 
-		//Debug.Log ("width=" + width + ", height=" + height + ", bpp=" + bpp + " (pixels start=" + pixelsOffset + ")" );
-
-		PalettizedImage image = new PalettizedImage( width, height );
+		if( coloursInPalette == 0 )
+			coloursInPalette = 256;
+		PalettizedImage image = new PalettizedImage( width, height, coloursInPalette );
 		image.SetConfig( _config );
 		image.m_fileName = filename;
 		if( image.ReadPalette( imageFile, 0x36 ) == false )
@@ -37,13 +40,14 @@ public class PalettizedImage
 		return image;
 	}
 
-	PalettizedImage( int _width, int _height )
+	PalettizedImage( int _width, int _height, int _coloursInPalette )
 	{
 		m_width = _width;
 		m_height = _height;
 		m_palette = new List<Color>();
 		m_colorUsed = new List<bool>();
 		m_image = new byte[ m_width * m_height ];
+		m_coloursInPalette = _coloursInPalette;
 	}
 
 	void SetConfig( PalettizedImageConfig _config )
@@ -54,7 +58,7 @@ public class PalettizedImage
 	bool ReadPalette( byte[] _array, int _offset )
 	{
 		int c;
-		for( c=0; c<256; c++ )
+		for( c=0; c<m_coloursInPalette; c++ )
 		{
 			int c2 = c;
 			if( m_config.m_colorRemapSourceToDest.ContainsKey( c ))
@@ -81,6 +85,13 @@ public class PalettizedImage
 			Color col = new Color( fr, fg, fb, fa );
 			m_palette.Add( col );
 			m_colorUsed.Add( false );
+		}
+
+		while( c < 16 )
+		{
+			m_palette.Add( new Color( 1.0f, 0.0f, 1.0f, 1.0f ));
+			m_colorUsed.Add( false );
+			c++;
 		}
 
 		return true;
