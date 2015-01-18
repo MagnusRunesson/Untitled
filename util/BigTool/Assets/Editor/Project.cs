@@ -11,7 +11,7 @@ public class Project
 	string m_projectFileName;
 
 	public string[] m_imageFiles;
-	//public string[] m_mapFiles;
+	public string[] m_mapFiles;
 
 	public Project( string _path )
 	{
@@ -95,6 +95,25 @@ public class Project
 	public void ScanFiles()
 	{
 		m_imageFiles = System.IO.Directory.GetFiles( m_path, "*.bmp" );
-		//m_mapFiles = System.IO.Directory.GetFiles( m_path, "*.bmp" );
+		m_mapFiles = System.IO.Directory.GetFiles( m_path, "*.json" );
+
+		VerifyMapFiles();
+	}
+
+	// Filter out all found JSON files that aren't Tiled data
+	void VerifyMapFiles()
+	{
+		List<string> actualMapFiles = new List<string>();
+
+		foreach( string mapFile in m_mapFiles )
+		{
+			string jsonString = System.IO.File.ReadAllText( mapFile );
+			Dictionary<string,object> json = (Dictionary<string,object>)MiniJSON.Json.Deserialize( jsonString );
+			if( json.ContainsKey( "tilesets" ))
+				actualMapFiles.Add( mapFile );
+		}
+
+		//
+		m_mapFiles = actualMapFiles.ToArray();
 	}
 }
