@@ -122,6 +122,7 @@ public class Tile
 public class TileBank
 {
 	public List<Tile> m_tiles;
+	public Dictionary<int,TileInstance> m_allTileInstances;
 
 	//
 	// Optimized tile bank means to remove duplicates
@@ -136,6 +137,9 @@ public class TileBank
 		int h = _image.m_height;
 		int tiles_w = w >> 3;
 		int tiles_h = h >> 3;
+
+		//
+		m_allTileInstances = new Dictionary<int, TileInstance>();
 
 		//
 		// Normally I write loops that iterate on Y first and then X, but sprites on Mega Drive should actually be
@@ -157,21 +161,34 @@ public class TileBank
 
 				if( _optimized )
 				{
-					if( HaveIdenticalTile( newTile ) == false )
+					TileInstance tileInstance = GetTileInstance( newTile );
+					if( tileInstance == null )
 					{
 						//Debug.Log ("Adding tile from coordinates "+pixel_x+","+pixel_y );
 						AddTile( newTile );
+
+						// Get the newly created instance
+						tileInstance = GetTileInstance( newTile );
 					} else
 					{
 						//Debug.Log ("Ignoring tile from coordinates "+pixel_x+","+pixel_y );
 					}
+					int i = (y*tiles_w) + x;
+					m_allTileInstances[ i ] = tileInstance;
 				} else
 				{
 					// If we're not building an optimized tile bank we always export all tiles
 					AddTile( newTile );
+
+					// Get the newly created instance
+					TileInstance tileInstance = GetTileInstance( newTile );
+					int i = (y*tiles_w) + x;
+					m_allTileInstances[ i ] = tileInstance;
 				}
 			}
 		}
+
+		Debug.Log ("tile instances=" + m_allTileInstances.Count );
 	}
 
 	void AddTile( Tile _tile )
