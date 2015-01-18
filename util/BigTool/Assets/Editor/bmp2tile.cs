@@ -283,6 +283,7 @@ public class bmp2tile : EditorWindow
 
 	void OnDrawProject( int _id )
 	{
+		GUILayout.Label( "Images:" );
 		string[] imageFiles = m_project.m_imageFiles;
 		foreach( string fullPath in imageFiles )
 		{
@@ -290,6 +291,17 @@ public class bmp2tile : EditorWindow
 			if( GUILayout.Button( name ))
 			{
 				LoadBMP( fullPath );
+			}
+		}
+
+		GUILayout.Label( "Tile maps: ");
+		string[] mapFiles = m_project.m_mapFiles;
+		foreach( string fullPath in mapFiles )
+		{
+			string name = System.IO.Path.GetFileName( fullPath );
+			if( GUILayout.Button( name ))
+			{
+				//LoadBMP( fullPath );
 			}
 		}
 
