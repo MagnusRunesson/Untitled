@@ -6,3 +6,4 @@ floppy_drive_0 = out\untitled.adf
 fade_in_duration = 0
 fade_out_duration = 0
 console_debugger = 1
+automatic_input_grab = 0 
