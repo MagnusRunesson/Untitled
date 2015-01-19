@@ -1,12 +1,14 @@
 	org 			$0
 	
-	include		"hardware/custom.i"
+
+	include		"hardware/adkbits.i"
+	include		"hardware/blit.i"
 	include		"hardware/cia.i"
+	include		"hardware/custom.i"
 	include		"hardware/dmabits.i"
 	include		"hardware/intbits.i"
 	include		"exec/exec.i"
 	include		"devices/trackdisk.i"
-	
 	include		"exec_lib.i"
 	include		"graphics_lib.i"
 		
