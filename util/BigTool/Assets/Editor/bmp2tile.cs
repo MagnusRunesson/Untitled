@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEditor;
 using System.Collections;
+using System.Collections.Generic;
 
 public class bmp2tile : EditorWindow
 {
@@ -11,6 +12,7 @@ public class bmp2tile : EditorWindow
 	PalettizedImage m_currentImageData;
 	PalettizedImageConfig m_currentImageConfig;
 	string m_currentFramesString;
+	Dictionary<int,string> m_currentFrameTimesString;
 
 	string m_lastOpenDirectory;
 	string m_lastExportDirectory;
@@ -28,6 +30,7 @@ public class bmp2tile : EditorWindow
 	Rect m_paletteRemapRect;
 	Rect m_imageSettingsRect;
 	Rect m_projectWindowRect;
+	Vector2 m_spriteFrameTimeScroll;
 
 	const float m_windowTop = 30.0f;
 	const float m_windowPadding = 10.0f;
@@ -246,6 +249,7 @@ public class bmp2tile : EditorWindow
 
 	void OnDrawImageSettings( int _id )
 	{
+		m_spriteFrameTimeScroll = GUILayout.BeginScrollView( m_spriteFrameTimeScroll );
 		bool dirty = false;
 
 		bool before = m_currentImageConfig.m_importAsSprite;
@@ -255,6 +259,8 @@ public class bmp2tile : EditorWindow
 
 		if( m_currentImageConfig.m_importAsSprite )
 		{
+			GUILayout.Label( "Sprite w=" + m_currentImageConfig.GetSpriteWidth() + ", h=" + m_currentImageConfig.GetSpriteHeight() );
+
 			GUILayout.BeginHorizontal();
 			GUILayout.Label( "Num frames" );
 			string beforeString = m_currentFramesString;
@@ -272,13 +278,43 @@ public class bmp2tile : EditorWindow
 				}
 			}
 
-			GUILayout.Label( "Sprite w=" + m_currentImageConfig.GetSpriteWidth() + ", h=" + m_currentImageConfig.GetSpriteHeight() );
+			GUILayout.Label("");
+			GUILayout.Label("Frame times");
+
+			int i;
+			for( i=0; i<m_currentImageConfig.GetNumFrames(); i++ )
+			{
+				int time = m_currentImageConfig.GetFrameTime( i );
+
+				GUILayout.BeginHorizontal();
+				GUILayout.Label ("Frame " + i + ":" );
+				if( m_currentFrameTimesString.ContainsKey( i ) == false )
+				{
+					m_currentFrameTimesString[ i ] = m_currentImageConfig.GetFrameTime( i ).ToString();
+				}
+				beforeString = m_currentFrameTimesString[ i ];
+				string newString = GUILayout.TextField( beforeString );;
+				m_currentFrameTimesString[ i ] = newString;
+				if( beforeString != newString )
+				{
+					int newValue;
+					if( int.TryParse( newString, out newValue ))
+					{
+						m_currentImageConfig.SetFrameTime( i, newValue );
+						dirty = true;
+					}
+				}
+				GUILayout.EndHorizontal();
+			}
 		}
 
 		if( dirty )
 		{
 			m_currentImageConfig.Save();
 		}
+		GUI.DragWindow();
+
+		GUILayout.EndScrollView();
 	}
 
 	void OnDrawProject( int _id )
@@ -342,11 +378,17 @@ public class bmp2tile : EditorWindow
 			
 			//
 			m_currentFramesString = m_currentImageConfig.GetNumFrames().ToString();
+			m_currentFrameTimesString = new Dictionary<int, string>();
+			int iFrame;
+			for( iFrame=0; iFrame<m_currentImageConfig.GetNumFrames(); iFrame++ )
+			{
+				m_currentFrameTimesString[ iFrame ] = m_currentImageConfig.GetFrameTime( iFrame ).ToString();
+			}
 
 			//
 			m_openImageName = System.IO.Path.GetFileNameWithoutExtension( _path );
 			m_tileBankWindowRect = new Rect( m_projectWindowWidth + (m_windowPadding*2.0f), m_windowTop, m_currentImageData.m_width*2.0f+10.0f, m_currentImageData.m_height*2.0f+10.0f+15.0f );
-			m_imageSettingsRect = new Rect( m_tileBankWindowRect.x + m_tileBankWindowRect.width + m_windowPadding, m_tileBankWindowRect.y, 200.0f, 100.0f );
+			m_imageSettingsRect = new Rect( m_tileBankWindowRect.x + m_tileBankWindowRect.width + m_windowPadding, m_tileBankWindowRect.y, 200.0f, 200.0f );
 			m_paletteRemapRect = new Rect( m_imageSettingsRect.x + m_imageSettingsRect.width + m_windowPadding, m_imageSettingsRect.y, 100.0f, 15.0f + (16.0f * 30.0f) );
 
 			//
