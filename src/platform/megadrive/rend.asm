@@ -1,16 +1,31 @@
 VarVsync				= platform_renderer_start+0
 VarHsync				= platform_renderer_start+4
-VarSpriteTop			= platform_renderer_start+8
-VarSpriteTable			= platform_renderer_start+12
-VarSpriteTableSize		= 4*80
+VarNextSpriteAddress	= platform_renderer_start+8				; This variable hold the address where the last loaded sprite was loaded to.
+VarLockedSpriteAddress	= platform_renderer_start+12			; This address can be used to avoid having to reload sprites that are shared across multiple rooms.
+VarNextSpriteSlot		= platform_renderer_start+16			; This variable hold the next available sprite slot in the attributes table.
+VarLockedSpriteSlot		= platform_renderer_start+20			; This variable hold the locked sprite slot
+VarSpriteTable			= platform_renderer_start+$100			; This table hold an exact mirror of the sprite attribute that is in VRAM.
+VarSpriteTableSize		= 4*80									; 4*80 evaluates to 320 ($140)
 VarSpriteLock			= VarSpriteTable+VarSpriteTableSize
 
 move_vram_addr	MACRO
-	move.l	#((((\1)&$3fff)<<16)+(((\1)>>14)&3))|(1<<30),\2
+	move.l		#((((\1)&$3fff)<<16)+(((\1)>>14)&3))|(1<<30),\2
 	ENDM
 
+push			MACRO
+	move.l		\1,-(sp)
+	ENDM
+
+pop				MACRO
+	move.l		(sp)+,\1
+	ENDM
 
 rendInit:
+	move.l		#0,(VarNextSpriteSlot)
+	move.l		#0,(VarLockedSpriteSlot)
+	move.l		#$a000,(VarNextSpriteAddress)
+	move.l		#$a000,(VarLockedSpriteAddress)
+
 	jsr			InitVDP
 	jsr			LoadSprites
 	rts
@@ -106,20 +121,33 @@ rendLoadSprite:
 	jsr			fileLoad
 	; a0 is the return address from fileLoad, so it is set to the source address now
 
+	; Load the number of tiles to copy from the bank data
+	move.w		(a0)+,d1
+	lsl			#5,d1		; Now we have the byte size of the
+							; tiles that should be loaded
+
+	; Find VRAM address to load the tiles to
+	move.l		(VarNextSpriteAddress),d0
+	sub.l		d1,d0
+
+	; Retain the new address for future uses
+	move.l		d0,(VarNextSpriteAddress)
+
+	push		d1
+	jsr			_rendIntegerToVRAMAddress
+	pop			d1
+
 	;move.l		#$a000,d0
 	;jsr			_rendIntegerToVRAMAddress	; We should normally push a0 to the
 											; stack since it is a scratch register,
 											; but this sub routine is nice to
 											; the scratch registers.
-	move_vram_addr		$a000,d0
+	;move_vram_addr		$a000,d0
+	;move.l		(VarNextSpriteAddress),d0
 
 
-	; Load the number of tiles to copy from the bank data
-	move.w		(a0)+,d1
-	lsl			#5-2,d1		; We should shift up 5 bits because each tile is
-							; 32 bytes, but we should also shift down 2 bits
-							; because we copy 4 bytes per copy
-
+	lsr			#2,d1		; d1 is the size of the tiles in bytes, but it
+							; should be the size in longs for _rendCopyToVRAM
 
 	; d0=destination offset
 	; d1=size to copy
@@ -343,5 +371,5 @@ LoadSprites:
 SpriteSetting:
 	dc.w		$0080
 	dc.w		$0500
-	dc.w		$0500
+	dc.w		$04fc
 	dc.w		$0080
