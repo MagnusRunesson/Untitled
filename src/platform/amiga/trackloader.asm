@@ -36,6 +36,9 @@ trackdiskInit
 	bsr			_stopMotor
 	;;;;;;;;;bsr			_waitDiskReady
 
+	move.b		#0,d6
+	bsr			_trackdiskSelectSide
+
 	movem.l		(sp)+,d2-d7/a2-a6	
 	rts
 
