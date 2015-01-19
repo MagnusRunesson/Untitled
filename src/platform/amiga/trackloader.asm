@@ -144,6 +144,14 @@ _trackdiskPrepareRegisters
 ;
 ;==============================================================================
 _trackdiskLoadTrack
+	move.l		d5,-(sp)
+
+	move.w		__TrackdiskCurrentCylinder(a2),d5
+	lsl.l		#1,d5
+	or.b		__TrackdiskCurrentSide(a2),d5
+	cmp.w		d6,d5
+	beq.w		.done
+
 	move.l		d6,d4
 	lsr.l		#1,d6
 	bsr			_trackdiskSeekCylinder
@@ -151,8 +159,6 @@ _trackdiskLoadTrack
 	move.l		d4,d6
 	and.b		#$01,d6
 	bsr			_trackdiskSelectSide
-
-
 
 .readTrack
 	move.w		#_track_settle_delay_time_15_ms,d7
@@ -171,9 +177,6 @@ _trackdiskLoadTrack
 	move.w		#_dsklen_dma_off,dsklen(a5)
 	move.w		#DMAF_DISK,dmacon(a5)	; OFF!
 
-
-	rts
-
 .mfmDecode
 	move.l		#_mfm_mask,d5
 	moveq.l		#11-1,d4
@@ -187,11 +190,6 @@ _trackdiskLoadTrack
 	move.l		(a1)+,d3						; MFM coded sector header to d3...
 	move.l		(a1),d2							; ...and d2
 
-
-
-
-	;rts
-
 	bsr.s		.mfmDecodeRegs
 	andi.l		#$0000ff00,d2
 	add.l		d2,d2
@@ -204,10 +202,10 @@ _trackdiskLoadTrack
 	bsr.s		.mfmDecodeRegs
 	move.l		d2,(a3)+
 	dbra		d6,.decodeSectorContent
-	adda.w		#516,a1		;skip to next sector header
+	adda.w		#516,a1
 	dbra		d4,.decodSector
-	;adda.w		#5632,a2		;move main pointer past the sector data just decoded (11 sectors * 512 decode bytes each = 5632 bytes)
-	;bsr.s		.mfmDecodeRegs
+.done
+	move.l		(sp)+,d5
 	rts
 
 .mfmDecodeRegs
