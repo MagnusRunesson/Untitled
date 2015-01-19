@@ -156,7 +156,7 @@ _trackdiskLoadTrack
 	bsr			_trackdiskWaitTimer
 
 	move.w		#INTF_DSKBLK,intreq(a5)
-	lea			_TrackdiskMfmBufer,a1
+	lea			_TrackdiskMfmBufer(pc),a1
 	move.l		a1,dskpt(a5)
 	move.w		#(DMAF_SETCLR|DMAF_DISK),dmacon(a5)
 	move.w		#_dsklen_dma_off,dsklen(a5)
@@ -174,7 +174,7 @@ _trackdiskLoadTrack
 	move.l		#_mfm_mask,d5
 	moveq.l		#11-1,d4
 .decodSector
-	lea			_TrackdiskTrackBuffer,a3
+	lea			_TrackdiskTrackBuffer(pc),a3
 .findSectorSync
 	cmp.w		#_mfm_sync_pattern,(a1)+		; find start of sector
 	bne.s		.findSectorSync
@@ -354,6 +354,10 @@ _trackdiskSelectSide
 
 ; d6.w=cylinder
 _trackdiskSeekCylinder
+
+	;broken!
+	;must move current to Dx, and compare d6 to Dx. while adding d5 to Dx
+	movem.l		d4-d5,-(sp)
 	cmp.w		(_TrackdiskCurrentCylinder),d6
 	beq.s		.done
 	bgt.s		.seekOutwards
@@ -363,14 +367,17 @@ _trackdiskSeekCylinder
 .seekOutwards
 	moveq		#1,d5
 .doSeek
-	bra			_trackdiskSetDirection
+	bsr			_trackdiskSetDirection
+	move.w		(_TrackdiskCurrentCylinder),d4
 .seekLoop
 	bsr			_trackdiskStepHeadAndWait
-	add.w		d5,d6
-	cmp.w		(_TrackdiskCurrentCylinder),d6
+	add.w		d5,d4
+	cmp.w		d4,d6
 	bne.s		.seekLoop
 .done
 	move.w		d6,_TrackdiskCurrentCylinder
+
+	movem.l		(sp)+,d4-d5
 	rts
 
 ;==============================================================================
