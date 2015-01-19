@@ -33,13 +33,6 @@ bootblockcodestart
 	; The code is called with an open trackdisk.device I/O request pointer in A1
 	move.l	a1,a3
 
-	moveq	#-1,d0
-.rainbow
-	move.w	d0,d1
-	and.w	#$00F0,d1
-	move.w	d1,$DFF180
-	dbf		d0,.rainbow
-
 	move.w	#$0F0F,$DFF180
 	
 	; allocate memory
