@@ -423,7 +423,7 @@ _TrackdiskVarsSizeof		rs.b	0
 	dc.w	-1	; __TrackdiskCurrentCylinder
 	dc.w	0	; __TrackdiskCurrentDirection
 	dc.b	-1	; __TrackdiskCurrentSide
-
+	cnop	0,2
 
 
 _TrackdiskMfmBufer
