@@ -34,7 +34,6 @@ trackdiskInit
 	move.w		#0,__TrackdiskCurrentCylinder(a2)
 
 	bsr			_stopMotor
-	;;;;;;;;;bsr			_waitDiskReady
 
 	move.b		#0,d6
 	bsr			_trackdiskSelectSide
@@ -109,13 +108,12 @@ trackdiskLoadBlock
 	swap.w		d5			; ...sector done
 
 
-	;bsr			_trackdiskSetSide
+
 
 	addq.l		#1,d0
 	dbf			d1,.sectorLoop
 
 	bsr			_stopMotor
-	;bsr			_waitDiskReady
 
 	movem.l		(sp)+,d2-d7/a2-a6
 	rts
@@ -359,8 +357,6 @@ _trackdiskSelectSide
 	rts
 
 ; d6.w=cylinder
-	dc.b		"BREAKPNT"
-
 _trackdiskSeekCylinder
 	movem.l		d4-d5,-(sp)
 	move.w		__TrackdiskCurrentCylinder(a2),d4
