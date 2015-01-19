@@ -64,8 +64,10 @@ bootblockcodestart
 	
 	; goto code
 	move.l	d7,a0
-	moveq	#0,d0
-	rts
+	jmp		(a0)
+	;move.l	d7,a0	; Doesn't work on winuae (dead beef!)
+	;moveq	#0,d0
+	;rts
 
 .outofmemerror
 	moveq	#1,d0
