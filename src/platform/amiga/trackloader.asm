@@ -31,7 +31,7 @@ trackdiskInit
 .atTrackZero:	
 	bsr			_trackdiskSetDirectionCenter
 
-	move.w		#0,_TrackdiskCurrentCylinder
+	move.w		#0,__TrackdiskCurrentCylinder(a2)
 
 	bsr			_stopMotor
 	;;;;;;;;;bsr			_waitDiskReady
@@ -123,6 +123,7 @@ trackdiskLoadBlock
 ;
 ;==============================================================================
 _trackdiskPrepareRegisters
+	lea			_TrackdiskVars(pc),a2
 	lea			_custom,a5
 	lea			_ciaa,a4 ; _ciaa is on an ODD address (e.g. the low byte) -- $bfe001
 	lea			_ciab,a6 ; _ciab is on an EVEN address (e.g. the high byte) -- $bfd000
@@ -151,6 +152,7 @@ _trackdiskLoadTrack
 	bsr			_trackdiskSelectSide
 
 
+
 .readTrack
 	move.w		#_track_settle_delay_time_15_ms,d7
 	bsr			_trackdiskWaitTimer
@@ -168,7 +170,8 @@ _trackdiskLoadTrack
 	move.w		#_dsklen_dma_off,dsklen(a5)
 	move.w		#DMAF_DISK,dmacon(a5)	; OFF!
 
-	;rts
+
+	rts
 
 .mfmDecode
 	move.l		#_mfm_mask,d5
@@ -244,12 +247,12 @@ _trackdiskSetDirectionOutwardNoCheck
 	move.w		#_step_wait_time_3_ms,d7
 	bsr			_trackdiskWaitTimer
 
-	move.w		#1,_TrackdiskCurrentDirection
+	move.w		#-1,__TrackdiskCurrentDirection(a2)
 
 	rts
 
 _trackdiskSetDirectionOutward
-	cmp.w		#1,_TrackdiskCurrentDirection
+	cmp.w		#-1,__TrackdiskCurrentDirection(a2)
 	beq.s		.alreadyOutward
 
 	bset.b		#CIAB_DSKDIREC,ciaprb(a6)
@@ -257,12 +260,12 @@ _trackdiskSetDirectionOutward
 	move.w		#_step_wait_time_3_ms,d7
 	bsr			_trackdiskWaitTimer
 
-	move.w		#1,_TrackdiskCurrentDirection
+	move.w		#-1,__TrackdiskCurrentDirection(a2)
 .alreadyOutward
 	rts
 
 _trackdiskSetDirectionCenter
-	cmp.w		#-1,_TrackdiskCurrentDirection
+	cmp.w		#1,__TrackdiskCurrentDirection(a2)
 	beq.w		.alreadyCenter
 
 	bclr.b		#CIAB_DSKDIREC,ciaprb(a6)
@@ -270,15 +273,15 @@ _trackdiskSetDirectionCenter
 	move.w		#_step_wait_time_3_ms,d7
 	bsr			_trackdiskWaitTimer
 
-	move.w		#-1,_TrackdiskCurrentDirection	
+	move.w		#1,__TrackdiskCurrentDirection(a2)	
 .alreadyCenter
 	rts	
 
 _trackdiskSetDirection
-	cmp.w		(_TrackdiskCurrentDirection),d5
+	cmp.w		__TrackdiskCurrentDirection(a2),d5
 	beq.w		.alreadyOk
 
-	cmp.b		#-1,d5
+	cmp.b		#1,d5
 	beq.s		.center
 .outwards
 	bset.b		#CIAB_DSKDIREC,ciaprb(a6)
@@ -289,7 +292,7 @@ _trackdiskSetDirection
 	move.w		#_step_wait_time_3_ms,d7
 	bsr			_trackdiskWaitTimer
 
-	move.w		d5,_TrackdiskCurrentDirection	
+	move.w		d5,__TrackdiskCurrentDirection(a2)	
 .alreadyOk
 	rts	
 
@@ -324,19 +327,19 @@ _trackdiskStepHeadAndWait
 ;	bset.b		#CIAB_DSKSIDE,ciaprb(a6)
 ;	moveq.l		#_select_head_wait_time_0_1_ms,d7
 ;	bsr			_trackdiskWaitTimer
-;	move.b		#0,_TrackdiskCurrentSide
+;	move.b		#0,__TrackdiskCurrentSide(a2)
 ;	rts
 
 ;_trackdiskSelectUpperHeadAndWait
 ;	bclr.b		#CIAB_DSKSIDE,ciaprb(a6)
 ;	moveq.l		#_select_head_wait_time_0_1_ms,d7
 ;	bsr			_trackdiskWaitTimer
-;	move.b		#1,_TrackdiskCurrentSide
+;	move.b		#1,__TrackdiskCurrentSide(a2)
 ;	rts	
 
 ; d6.b=side
 _trackdiskSelectSide
-	cmp.b		(_TrackdiskCurrentSide),d6
+	cmp.b		__TrackdiskCurrentSide(a2),d6
 	beq.s		.done
 	cmp.b		#1,d6
 	beq.s		.upperHead
@@ -349,34 +352,35 @@ _trackdiskSelectSide
 	moveq.l		#_select_head_wait_time_0_1_ms,d7
 	bsr			_trackdiskWaitTimer
 .done
-	move.b		d6,_TrackdiskCurrentSide
+	move.b		d6,__TrackdiskCurrentSide(a2)
 	rts
 
 ; d6.w=cylinder
-_trackdiskSeekCylinder
+	dc.b		"BREAKPNT"
 
-	;broken!
-	;must move current to Dx, and compare d6 to Dx. while adding d5 to Dx
+_trackdiskSeekCylinder
 	movem.l		d4-d5,-(sp)
-	cmp.w		(_TrackdiskCurrentCylinder),d6
+	move.w		__TrackdiskCurrentCylinder(a2),d4
+	cmp.w		d6,d4
 	beq.s		.done
+	cmp.w		d6,d4
 	bgt.s		.seekOutwards
 .seekCenter
-	moveq		#-1,d5
+	moveq		#1,d5
 	bra.s		.doSeek
 .seekOutwards
-	moveq		#1,d5
+	moveq		#-1,d5
 .doSeek
 	bsr			_trackdiskSetDirection
-	move.w		(_TrackdiskCurrentCylinder),d4
+	
 .seekLoop
 	bsr			_trackdiskStepHeadAndWait
 	add.w		d5,d4
 	cmp.w		d4,d6
 	bne.s		.seekLoop
-.done
-	move.w		d6,_TrackdiskCurrentCylinder
 
+	move.w		d6,__TrackdiskCurrentCylinder(a2)
+.done
 	movem.l		(sp)+,d4-d5
 	rts
 
@@ -409,19 +413,23 @@ _trackdiskWaitTimer
 	rts	
 
 
-_TrackdiskCurrentCylinder
-	dc.w	-1
+_TrackdiskVars	RSRESET
+__TrackdiskCurrentCylinder	rs.w	1
+__TrackdiskCurrentDirection	rs.w	1	; [1=center, -1=outward]
+__TrackdiskCurrentSide		rs.b	1	; [0=lower head, 1=upper head]
+							rs.b	1	; pad
+_TrackdiskVarsSizeof		rs.b	0
 
-_TrackdiskCurrentDirection ; [-1=center, 1=outward]
-	dc.w	0
+	dc.w	-1	; __TrackdiskCurrentCylinder
+	dc.w	0	; __TrackdiskCurrentDirection
+	dc.b	-1	; __TrackdiskCurrentSide
 
-_TrackdiskCurrentSide	; [0=lower head, 1=upper head]
-	dc.b	-1
 
-	cnop		0,4
 
 _TrackdiskMfmBufer
 	dcb.b		12800,$bb
+	;dcb.b		6800,$bb ; some more
 
 _TrackdiskTrackBuffer
 	dcb.b		512*11,$cc
+	;dcb.b		512*5,$cc ; som emore
