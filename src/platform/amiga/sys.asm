@@ -31,6 +31,19 @@ entryPoint:
 	
 	
 	
+	; rainbow
+;	moveq		#4,d0
+;.two
+;	moveq		#-1,d1
+;.rainbows
+;	move.w		d1,d2
+;	and.w		#$0F00,d2
+;	move.w		d2,$dff180
+;	;move.w		#$0FFF,$dff180
+;	dbf			d1,.rainbows
+;	dbf			d0,.two
+;
+;firstAbove
 	
 	lea			_custom,a2
 	; move.w		#DMAF_ALL,dmacon(a2)
@@ -64,17 +77,20 @@ entryPoint:
 	; lea			copperInterrupt(pc),a0
 	; move.l		a0,_interrupt_vec_copper
 	
-	move.w		#(DMAF_SETCLR|DMAF_COPPER|DMAF_RASTER|DMAF_DISK|DMAF_BLITTER|DMAF_MASTER),dmacon(a2)
+	move.w		#(DMAF_SETCLR|DMAF_COPPER|DMAF_RASTER|DMAF_BLITTER|DMAF_MASTER),dmacon(a2)
 	; MOVE.w		#$83A0,DMACON(a5)	; Enable DMA
 	
 	
 
 	; rainbow
-	moveq		#2,d0
+	moveq		#4,d0
 .two
 	moveq		#-1,d1
 .rainbows
-	move.w		d1,$dff180
+	move.w		d1,d2
+	and.w		#$0F0F,d2
+	move.w		d2,$dff180
+	;move.w		#$0FFF,$dff180
 	dbf			d1,.rainbows
 	dbf			d0,.two
 	
@@ -87,20 +103,27 @@ entryPoint:
 	
 	
 	; load file FILEID_UNTITLED_SPLASH_PLANAR to bplmem
-	moveq		#6,d0
-	moveq		#7,d1
+
+	bsr			trackdiskInit
+
+	moveq		#44,d0				; 
+	moveq		#(35840/512),d1		; 70
 	lea			Bplmem(pc),a0
-	; bsr			trackloadLoad
+
+	bsr			trackdiskLoadBlock
 	;bsr.w		TLLoad
 	; bsr.w		hardtl
 	
 	; rainbow
 again
-	moveq		#2,d0
+	moveq		#6,d0
 .two
 	moveq		#-1,d1
 .rainbows
-	move.w		d1,$dff180
+	move.w		d1,d2
+	and.w		#$00FF,d2
+	move.w		d2,$dff180
+	;move.w		#$0FFF,$dff180	
 	dbf			d1,.rainbows
 	dbf			d0,.two
 	

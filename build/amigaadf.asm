@@ -22,8 +22,7 @@ mainbegin
 	include		"../src/structs.asm"
 	include		"../src/macros.asm"
 	include		"../src/platform/amiga/sys.asm"
-	;include		"../src/platform/amiga/trackloader.asm"
-	;include		"../src/platform/amiga/tl2.asm"
+	include		"../src/platform/amiga/trackloader.asm"
 	include		"../src/main.asm"
 	include		"../src/core/mem.asm"
 	include		"../src/platform/amiga/inp.asm"
@@ -51,12 +50,15 @@ workmemend
 
 databegin	
 
-	;cnop		0,(512*11)
-	;blk.b		(512*11),0
-	;blk.b		(512*11),0
-	;blk.b		(512*11),0
-	; dc.b		"DATABEGIN"
-
+	cnop		0,(512*11) 		; end of track 0
+	blk.b		(512*11),0 		; this is track 1
+	blk.b		(512*11)*140,0 		; this is track 2
+	blk.b		(512*11)-8,0	; this is track 3
+	dc.b		"DATABEGN"		; final marker on track 3
+	cnop		0,(512)
+	printt "untitled_splash_planar.bin is located here:"
+	printv *
+	printv */512
 	incbin		"../src/incbin/untitled_splash_planar.bin"
 
 	include		"../src/incbin/data.asm"

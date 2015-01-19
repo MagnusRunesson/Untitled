@@ -22,6 +22,7 @@
 		
 mainbeginstartsector	equ ((mainbegin-bootblockbegin)/TD_SECTOR)
 mainnumsectors			equ	((mainend-mainbegin)/TD_SECTOR)
+	printv mainnumsectors
 		
 	dc.b	'DOS',0
 	dc.l	0
@@ -32,6 +33,15 @@ bootblockcodestart
 	; The code is called with an open trackdisk.device I/O request pointer in A1
 	move.l	a1,a3
 
+	moveq	#-1,d0
+.rainbow
+	move.w	d0,d1
+	and.w	#$00F0,d1
+	move.w	d1,$DFF180
+	dbf		d0,.rainbow
+
+	move.w	#$0F0F,$DFF180
+	
 	; allocate memory
 	move.l	#(487*1024),d0	; 487k is max alloc (at least on fs-uae a500)
 	moveq	#MEMF_CHIP,d1
@@ -42,7 +52,9 @@ bootblockcodestart
 
 	; load code
 	move.l	a3,a1
-	move.l	#mainnumsectors*TD_SECTOR,IO_LENGTH(a1)
+	;move.l	#mainnumsectors*TD_SECTOR,IO_LENGTH(a1)
+	move.l	#112640,IO_LENGTH(a1)
+	
 	move.l	d0,IO_DATA(a1)
 	move.l	#mainbeginstartsector*TD_SECTOR,IO_OFFSET(a1)
 	move.w 	#CMD_READ,IO_COMMAND(a1)
