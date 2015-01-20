@@ -107,6 +107,15 @@ trackdiskLoadBlock
 	clr.w		d5
 	swap.w		d5			; ...sector done
 
+	lsl.l		#7,d5
+	lsl.l		#2,d5
+	lea			_TrackdiskTrackBuffer(pc),a3
+	add.l		d5,a3
+	moveq		#(512/4)-1,d4
+.copyLoop
+	move.l		(a3)+,(a0)+
+	dbf			d4,.copyLoop
+
 
 
 
