@@ -106,7 +106,7 @@ entryPoint:
 
 	bsr			trackdiskInit
 
-	moveq		#44,d0				; 
+	move.l		#1606,d0				; 
 	moveq		#(35840/512),d1		; 70
 	lea			Bplmem(pc),a0
 
