@@ -137,13 +137,18 @@ rendLoadTileBank:
 ;
 ; Load a tile bank into VRAM
 ;
-; d0=file ID of tile bank file to load into VRAM
+; Input
+;	d0=file ID of tile bank file to load into VRAM
+;	d1=file ID of the sprite file that configures
+;
+; Output
+;	d0=Sprite handle
 ;
 ;==============================================================================
 rendLoadSprite:
 	; fileLoad accept the file ID as d0, so no need to do any tricks here
 	jsr			fileLoad
-	; a0 is the return address from fileLoad, so it is set to the source address now
+	; a0 is the return address from fileLoad
 
 	; Load the number of tiles to copy from the bank data
 	move.w		(a0)+,d1
@@ -153,22 +158,11 @@ rendLoadSprite:
 	; Find VRAM address to load the tiles to
 	move.l		(VarNextSpriteAddress),d0
 	sub.l		d1,d0
-
-	; Retain the new address for future uses
-	move.l		d0,(VarNextSpriteAddress)
+	; d0 is now the VRAM address to load the sprite tiles to
 
 	push		d1
 	jsr			_rendIntegerToVRAMAddress
 	pop			d1
-
-	;move.l		#$a000,d0
-	;jsr			_rendIntegerToVRAMAddress	; We should normally push a0 to the
-											; stack since it is a scratch register,
-											; but this sub routine is nice to
-											; the scratch registers.
-	;move_vram_addr		$a000,d0
-	;move.l		(VarNextSpriteAddress),d0
-
 
 	lsr			#2,d1		; d1 is the size of the tiles in bytes, but it
 							; should be the size in longs for _rendCopyToVRAM
@@ -178,6 +172,43 @@ rendLoadSprite:
 	; a0=source address
 	jsr			_rendCopyToVRAM
 
+	; Fetch the next available sprite slot and allocate one
+	move.l		(VarNextSpriteSlot),d1
+	add.l		#1,(VarNextSpriteSlot)
+
+	; Find address of sprite attributes mirror and renderer sprite data
+	;move.l		d3,d2
+	mulu		#hw_sprite_byte_size,d1
+	add.l		#VarHWSprites,d1
+	move.l		d1,a0
+	; Now a0 points to somewhere in the sprite attributes mirror table
+
+	; d0 still points to the VRAM address, in bytes, that the tiles
+	; was copied to. Lets convert that into a tile ID and store in
+	; the sprite hw mirror table.
+	lsr			#5,d0
+
+	; d0=Tile ID of the sprite tile bank where the data was loaded to
+	; a0=Address of the sprite hw attribute table mirror for the sprite that was allocated
+	jsr			_rendSetSpriteTileID_Address
+
+	rts
+
+
+;==============================================================================
+;
+; Set the tile ID of a sprite in the hw mirror table
+;
+; Input
+;	d0 = new tile ID
+;	a0 = the address of the sprite to modify
+;
+;==============================================================================
+_rendSetSpriteTileID_Address:
+	move.w		4(a0),d1
+	and.w		$f800,d0		; Binary: 1111 1000 0000 0000
+	or.w		d0,d1
+	move.w		d1,4(a0)
 	rts
 
 
