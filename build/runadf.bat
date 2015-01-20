@@ -1,3 +1,4 @@
 @echo off
-
-C:\Users\Krister\AppData\Local\fs-uae\fs-uae.exe uae\untitledadf.fs-uae
+cd uae
+"C:\Program Files (x86)\WinUAE\winuae.exe" -f "untitledadf.uae"
+cd..
