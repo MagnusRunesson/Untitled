@@ -6,29 +6,30 @@
 ;
 ; Renderer sprite information
 ;
-	rsreset
-sRendSprite_TileID:			rs.l	1
-sRendSprite_FileID:			rs.w	1
-sRendSprite_Size:			rs.b	1
+;	rsreset
+;sRendSprite_TileID:			rs.l	1
+;sRendSprite_FileID:			rs.w	1
+;sRendSprite_Size:			rs.b	1
 
 ;
 ; Constants
 ;
 rend_num_sprites		= 80
+hw_sprite_byte_size		= 8
 
 
 ;
 ; Memory map
 ;
 	setso				platform_renderer_start
-VarVsync				so.l 	1									; Vertical sync counter
-VarHsync				so.l	1									; Horizontal sync counter
-VarNextSpriteAddress	so.l	1									; The address where the last loaded sprite tiles was loaded to
-VarLockedSpriteAddress	so.l	1									; Locked address where we can free tiles to
-VarNextSpriteSlot		so.l	1									; Next available sprite index in our sprite tables
-VarLockedSpriteSlot		so.l	1									; Locked sprite index for free
-VarHWSprites			so.b	8*rend_num_sprites					; This will never be greater than $280. The hardware sprite attribute size won't change and there will never be more than 80 sprites.
-VarRendSprites			so.b	sRendSprite_Size*rend_num_sprites	; Our local table of sprites that holds information about which tile a sprite was loaded to, etc..
+VarVsync				so.l 	1										; Vertical sync counter
+VarHsync				so.l	1										; Horizontal sync counter
+VarNextSpriteAddress	so.l	1										; The address where the last loaded sprite tiles was loaded to
+VarLockedSpriteAddress	so.l	1										; Locked address where we can free tiles to
+VarNextSpriteSlot		so.l	1										; Next available sprite index in our sprite tables
+VarLockedSpriteSlot		so.l	1										; Locked sprite index for free
+VarHWSprites			so.b	hw_sprite_byte_size*rend_num_sprites	; This will never be greater than $280. The hardware sprite attribute size won't change and there will never be more than 80 sprites.
+;VarRendSprites			so.b	sRendSprite_Size*rend_num_sprites		; Our local table of sprites that holds information about which tile a sprite was loaded to, etc..
 	clrso
 
 move_vram_addr	MACRO
