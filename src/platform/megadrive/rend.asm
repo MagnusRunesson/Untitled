@@ -1,12 +1,35 @@
-VarVsync				= platform_renderer_start+0
-VarHsync				= platform_renderer_start+4
-VarNextSpriteAddress	= platform_renderer_start+8				; This variable hold the address where the last loaded sprite was loaded to.
-VarLockedSpriteAddress	= platform_renderer_start+12			; This address can be used to avoid having to reload sprites that are shared across multiple rooms.
-VarNextSpriteSlot		= platform_renderer_start+16			; This variable hold the next available sprite slot in the attributes table.
-VarLockedSpriteSlot		= platform_renderer_start+20			; This variable hold the locked sprite slot
-VarSpriteTable			= platform_renderer_start+$100			; This table hold an exact mirror of the sprite attribute that is in VRAM.
-VarSpriteTableSize		= 4*80									; 4*80 evaluates to 320 ($140)
-VarSpriteLock			= VarSpriteTable+VarSpriteTableSize
+;==============================================================================
+;
+; Structures
+;
+;==============================================================================
+;
+; Renderer sprite information
+;
+	rsreset
+sRendSprite_TileID:			rs.l	1
+sRendSprite_FileID:			rs.w	1
+sRendSprite_Size:			rs.b	1
+
+;
+; Constants
+;
+rend_num_sprites		= 80
+
+
+;
+; Memory map
+;
+	setso				platform_renderer_start
+VarVsync				so.l 	1									; Vertical sync counter
+VarHsync				so.l	1									; Horizontal sync counter
+VarNextSpriteAddress	so.l	1									; The address where the last loaded sprite tiles was loaded to
+VarLockedSpriteAddress	so.l	1									; Locked address where we can free tiles to
+VarNextSpriteSlot		so.l	1									; Next available sprite index in our sprite tables
+VarLockedSpriteSlot		so.l	1									; Locked sprite index for free
+VarHWSprites			so.b	8*rend_num_sprites					; This will never be greater than $280. The hardware sprite attribute size won't change and there will never be more than 80 sprites.
+VarRendSprites			so.b	sRendSprite_Size*rend_num_sprites	; Our local table of sprites that holds information about which tile a sprite was loaded to, etc..
+	clrso
 
 move_vram_addr	MACRO
 	move.l		#((((\1)&$3fff)<<16)+(((\1)>>14)&3))|(1<<30),\2
