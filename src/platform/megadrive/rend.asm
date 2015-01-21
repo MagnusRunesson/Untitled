@@ -57,11 +57,19 @@ pop				MACRO
 rendInit:
 	move.l		#0,(VarNextSpriteSlot)
 	move.l		#0,(VarLockedSpriteSlot)
-	move.l		#$a000,(VarNextSpriteAddress)
-	move.l		#$a000,(VarLockedSpriteAddress)
+	move.l		#VRAM_SpriteTiles_Start,(VarNextSpriteAddress)
+	move.l		#VRAM_SpriteTiles_Start,(VarLockedSpriteAddress)
 
 	jsr			InitVDP
+	nop
+	nop
+	nop
+
 	jsr			LoadSprites
+	nop
+	nop
+	nop
+
 	rts
 
 ;==============================================================================
@@ -145,7 +153,8 @@ rendLoadTileBank:
 
 ;==============================================================================
 ;
-; Load a tile bank into VRAM
+; Loads a sprite into memory. Both allocates a sprite attribute slot and load
+; the sprite tiles into VRAM.
 ;
 ; Input
 ;	d0=file ID of tile bank file to load into VRAM
@@ -156,6 +165,8 @@ rendLoadTileBank:
 ;
 ;==============================================================================
 rendLoadSprite:
+	push		d1			; Push #0
+
 	; fileLoad accept the file ID as d0, so no need to do any tricks here
 	jsr			fileLoad
 	; a0 is the return address from fileLoad
@@ -170,6 +181,7 @@ rendLoadSprite:
 	sub.l		d1,d0
 	; d0 is now the VRAM address to load the sprite tiles to
 
+	push		d0
 	push		d1
 	jsr			_rendIntegerToVRAMAddress
 	pop			d1
@@ -181,13 +193,15 @@ rendLoadSprite:
 	; d1=size to copy
 	; a0=source address
 	jsr			_rendCopyToVRAM
+	pop			d0
 
-	; Fetch the next available sprite slot and allocate one
+	; Fetch the next available sprite slot
 	move.l		(VarNextSpriteSlot),d1
+
+	; And allocate one
 	add.l		#1,(VarNextSpriteSlot)
 
 	; Find address of sprite attributes mirror and renderer sprite data
-	;move.l		d3,d2
 	mulu		#hw_sprite_byte_size,d1
 	add.l		#VarHWSprites,d1
 	move.l		d1,a0
@@ -201,6 +215,38 @@ rendLoadSprite:
 	; d0=Tile ID of the sprite tile bank where the data was loaded to
 	; a0=Address of the sprite hw attribute table mirror for the sprite that was allocated
 	jsr			_rendSetSpriteTileID_Address
+
+	; Load the sprite information file to get the dimensions of the sprite
+	pop			d0			; Popping push #0: The sprite information file ID was
+							; pushed as d1 but needs to be in d0 when we get into
+							; fileLoad, so we pop it straight to d0
+
+	; Retain the address to the sprite mirror table for this sprite
+	push		a0
+
+	; d0=File ID of the sprite information file
+	jsr			fileLoad
+	; d0 is now the size of the sprites file
+	; a0 is the address to the sprite information
+
+	move.b		(a0)+,d0	; Fetch sprite width in pixels
+	move.b		(a0)+,d1	; Fetch sprite height in pixels
+	lsr			#3,d0		; Convert width from pixels to tiles
+	lsr			#3,d1		; Convert height from pixels to tiles
+
+	; Also, on the Mega Drive, the width and size are defined from 0-3,
+	; where 0 means 1 tile wide, and 3 means 4 tiles wide) So we need
+	; to subtract one from the tile dimensions
+	sub			#1,d0
+	sub			#1,d1
+
+	; Fetch the sprite mirror table address
+	pop			a0
+
+	; d0=Sprite width, in tiles
+	; d1=Sprite height, in tiles
+	; a0=Sprite mirror table address
+	jsr			_rendSetSpriteDimensions_Address
 
 	rts
 
@@ -219,6 +265,27 @@ _rendSetSpriteTileID_Address:
 	and.w		$f800,d0		; Binary: 1111 1000 0000 0000
 	or.w		d0,d1
 	move.w		d1,4(a0)
+	rts
+
+
+;==============================================================================
+;
+; Set the width and height of a sprite in the hw mirror table
+;
+; Input
+;	d0 = width, in tiles
+;	d1 = height, in tiles
+;	a0 = the address of the sprite to modify
+;
+;==============================================================================
+_rendSetSpriteDimensions_Address:
+	push		d2
+	move.b		#0,d2
+	or			d1,d2
+	lsl			#2,d0
+	or			d0,d2
+	move.b		d2,2(a0)
+	pop			d2
 	rts
 
 
@@ -398,7 +465,9 @@ VDPRegs:
 	;dc.w		$8440						; Reg.  4: Plane B is at $10000 (disable?)
 	dc.w		$8407						; Reg.  4: Plane B is at $E000
 	;dc.w		$8430						; Reg.  4: Plane B is at $C000
-	dc.w		$8570						; Reg.  5: Sprite attribute table is at $E000
+	;dc.w		$8570						; Reg.  5: Sprite attribute table is at $E000
+	dc.b		$85
+	dc.b		VRAM_SpriteAttributes_Start>>9	; Reg.  5: Sprite attribute table
 	dc.w		$8600						; Reg.  6: always zero
 	dc.w		$8700						; Reg.  7: Background color: palette 0, color 0
 	dc.w		$8800						; Reg.  8: always zero
@@ -425,16 +494,18 @@ LoadSprites:
 	move.l		#$00C00004,a5
 
 	move.w		#$8F02,(a5)			; Set autoincrement (register 15) to 2
-	move.l		#$60000003,(a5)
+	move_vram_addr	VRAM_SpriteAttributes_Start,(a5)
+	;move.l		#$60000003,(a5)
 	lea			SpriteSetting,a0
 
 	move.l		(a0)+,(a4)			; Sprite setting should be 0 (1x1 sprite, tile index 4, no more sprites)
 	move.l		(a0)+,(a4)			; Sprite setting should be 0 (1x1 sprite, tile index 4, no more sprites)
 
 	rts
-	
+
 SpriteSetting:
 	dc.w		$0080
 	dc.w		$0500
 	dc.w		$04fc
+	;dc.w		$03bd
 	dc.w		$0080

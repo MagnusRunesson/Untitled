@@ -26,6 +26,7 @@ main:
 	nop
 
 	move.l		#fileid_testsprite_sprite_chunky,d0
+	move.l		#fileid_testsprite2_sprite,d1
 	bsr.w		rendLoadSprite
 
 	;move.l		#FILEID_UNTITLED_SPLASH_PALETTE,d0
