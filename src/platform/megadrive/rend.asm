@@ -105,14 +105,16 @@ rendSetScrollXY:
 	; Setup CPU registers and VDP auto increment register
 	move.l		#$00C00000,a0		; Throughout all my code I'll use A4
 	move.l		#$00C00004,a1		; for the VDP data port and A5 for the
-	move.w		#$8F00,(a1)			; Disable autoincrement
+	move.w		#$8F02,(a1)			; Disable autoincrement
 
 	; Set horizontal scroll
 	move.l		#$50000003,(a1)		; Point the VDP data port to the horizontal scroll table
 	move.w		d0,(a0)
+	move.w		d0,(a0)
 
 	; Set vertical scroll
 	move.l		#$40000010,(a1)		; Point the VDP data port to the vertical scroll table
+	move.w		d1,(a0)
 	move.w		d1,(a0)
 
 	rts
