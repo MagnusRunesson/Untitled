@@ -19,7 +19,7 @@ hw_sprite_byte_size		= 8
 
 
 ;
-; Memory map
+; CPU Memory map
 ;
 	setso				platform_renderer_start
 VarVsync				so.l 	1										; Vertical sync counter
@@ -31,6 +31,16 @@ VarLockedSpriteSlot		so.l	1										; Locked sprite index for free
 VarHWSprites			so.b	hw_sprite_byte_size*rend_num_sprites	; This will never be greater than $280. The hardware sprite attribute size won't change and there will never be more than 80 sprites.
 ;VarRendSprites			so.b	sRendSprite_Size*rend_num_sprites		; Our local table of sprites that holds information about which tile a sprite was loaded to, etc..
 	clrso
+
+;
+; VRAM memory map
+;
+VRAM_MapTiles_Start				= $0000
+VRAM_SpriteTiles_Start			= $a000		; This one goes down when allocated, so it should be the same as another VRAM tag
+VRAM_SpriteAttributes_Start		= $e000		; There are requirements as to what this address can be! (Only the top 6 bits are used when in 40 cell mode, top 7 bits when in 32 cell mode)
+VRAM_TileMap0_Start				= $c000
+VRAM_TileMap1_Start				= $e000
+
 
 move_vram_addr	MACRO
 	move.l		#((((\1)&$3fff)<<16)+(((\1)>>14)&3))|(1<<30),\2
