@@ -181,6 +181,7 @@ rendLoadSprite:
 	; Find VRAM address to load the tiles to
 	move.l		(VarNextSpriteAddress),d0
 	sub.l		d1,d0
+	move.l		d0,(VarNextSpriteAddress)
 	; d0 is now the VRAM address to load the sprite tiles to
 
 	push		d0
