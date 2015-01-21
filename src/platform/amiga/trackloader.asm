@@ -38,6 +38,11 @@ trackdiskInit
 	move.b		#0,d6
 	bsr			_trackdiskSelectSide
 
+	_get_workmem_ptr TrackdiskMfmBuffer,a1
+	move.l		a1,__TrackdiskMfmBufferPtr(a2)
+	_get_workmem_ptr TrackdiskTrackBuffer,a1
+	move.l		a1,__TrackdiskTrackBufferPtr(a2)
+
 	movem.l		(sp)+,d2-d7/a2-a6	
 	rts
 
@@ -73,7 +78,7 @@ trackdiskLoadBlock
 .copyData
 	lsl.l		#7,d5
 	lsl.l		#2,d5
-	lea			_TrackdiskTrackBuffer(pc),a3
+	move.l		__TrackdiskTrackBufferPtr(a2),a3
 	add.l		d5,a3
 	moveq		#(512/4)-1,d4
 .copyLoop
@@ -135,7 +140,7 @@ _trackdiskLoadTrack
 	bsr			_trackdiskWaitTimer
 
 	move.w		#INTF_DSKBLK,intreq(a5)
-	lea			_TrackdiskMfmBufer(pc),a1
+	move.l		__TrackdiskMfmBufferPtr(a2),a1
 	move.l		a1,dskpt(a5)
 	move.w		#(DMAF_SETCLR|DMAF_DISK),dmacon(a5)
 	move.w		#_dsklen_dma_off,dsklen(a5)
@@ -151,7 +156,7 @@ _trackdiskLoadTrack
 	move.l		#_mfm_mask,d5
 	moveq.l		#11-1,d4
 .decodeSector
-	lea			_TrackdiskTrackBuffer(pc),a3
+	move.l		__TrackdiskTrackBufferPtr(a2),a3
 .findSectorSync
 	cmp.w		#_mfm_sync_pattern,(a1)+		; find start of sector
 	bne.s		.findSectorSync
@@ -369,22 +374,18 @@ _trackdiskWaitTimer
 
 
 _TrackdiskVars	RSRESET
+__TrackdiskMfmBufferPtr		rs.l	1
+__TrackdiskTrackBufferPtr	rs.l	1
 __TrackdiskCurrentCylinder	rs.w	1
 __TrackdiskCurrentDirection	rs.w	1	; [1=center, -1=outward]
 __TrackdiskCurrentSide		rs.b	1	; [0=lower head, 1=upper head]
 							rs.b	1	; pad
 _TrackdiskVarsSizeof		rs.b	0
 
+	dc.l	0	; __TrackdiskMfmBufferPtr
+	dc.l	0	; __TrackdiskTrackBufferPtr
 	dc.w	-1	; __TrackdiskCurrentCylinder
 	dc.w	0	; __TrackdiskCurrentDirection
 	dc.b	-1	; __TrackdiskCurrentSide
 	cnop	0,2
 
-
-_TrackdiskMfmBufer
-	dcb.b		12800,$bb
-	;dcb.b		6800,$bb ; some more
-
-_TrackdiskTrackBuffer
-	dcb.b		512*11,$cc
-	;dcb.b		512*5,$cc ; som emore
