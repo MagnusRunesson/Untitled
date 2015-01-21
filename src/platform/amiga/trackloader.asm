@@ -50,7 +50,6 @@ trackdiskInit
 ; a0=Target memory
 ;
 ;==============================================================================
-
 trackdiskLoadBlock
 	movem.l		d2-d7/a2-a6,-(sp)
 
@@ -61,36 +60,6 @@ trackdiskLoadBlock
 
 	subq.l		#1,d1		; -1 for dbf
 .sectorLoop
-	;move.w		d1,d6
-	;move.w		#_reverse_direction_delay_time_18_ms,d7
-	;bsr			_trackdiskWaitTimer
-
-	;Block	sector	side	cylinder 
-	;--------------------------------
-	;0		0		0		0
-	;1		1		0		0
-	;2		2		0		0
-	;10		10		0		0
-	;11		0		1		0
-	;20		9		1		0
-	;21		10		1		0
-	;22		0		0		1
-	;23		1		0		1
-	;24		2		0		1
-	;1759	10		1		79
-	;120	10		0		5
-	;122	1		1		5
-	;123 	2		1		5
-
-	; sector=remainder(block/11)	=> d5
-	; track=(block/11)				=> d6
-	;
-	; side=track % 0x0001
-	; cylinder=track >> 1
-
-	; side=(block/11)%0x0001		=> d5
-	; cylinder=(block/11)>>1		=> d7
-
 	move.l		d0,d5		; d5=sector...
 	divu.w		#11,d5
 	
@@ -99,14 +68,9 @@ trackdiskLoadBlock
 	
 	bsr			_trackdiskLoadTrack
 
-	;lsr.w		#1,d7		; ...cylinder done
-
-	;move.w		d6,d5		; d5=side...
-	;and.l		#$0001,d5	; ...side done
-
 	clr.w		d5
 	swap.w		d5			; ...sector done
-
+.copyData
 	lsl.l		#7,d5
 	lsl.l		#2,d5
 	lea			_TrackdiskTrackBuffer(pc),a3
@@ -115,9 +79,6 @@ trackdiskLoadBlock
 .copyLoop
 	move.l		(a3)+,(a0)+
 	dbf			d4,.copyLoop
-
-
-
 
 	addq.l		#1,d0
 	dbf			d1,.sectorLoop
@@ -189,7 +150,7 @@ _trackdiskLoadTrack
 .mfmDecode
 	move.l		#_mfm_mask,d5
 	moveq.l		#11-1,d4
-.decodSector
+.decodeSector
 	lea			_TrackdiskTrackBuffer(pc),a3
 .findSectorSync
 	cmp.w		#_mfm_sync_pattern,(a1)+		; find start of sector
@@ -212,7 +173,7 @@ _trackdiskLoadTrack
 	move.l		d2,(a3)+
 	dbra		d6,.decodeSectorContent
 	adda.w		#516,a1
-	dbra		d4,.decodSector
+	dbra		d4,.decodeSector
 .done
 	move.l		(sp)+,d5
 	rts
@@ -331,20 +292,6 @@ _trackdiskStepHeadAndWait
 	bsr			_trackdiskWaitTimer
 	rts
 
-;_trackdiskSelectLowerHeadAndWait:	
-;	bset.b		#CIAB_DSKSIDE,ciaprb(a6)
-;	moveq.l		#_select_head_wait_time_0_1_ms,d7
-;	bsr			_trackdiskWaitTimer
-;	move.b		#0,__TrackdiskCurrentSide(a2)
-;	rts
-
-;_trackdiskSelectUpperHeadAndWait
-;	bclr.b		#CIAB_DSKSIDE,ciaprb(a6)
-;	moveq.l		#_select_head_wait_time_0_1_ms,d7
-;	bsr			_trackdiskWaitTimer
-;	move.b		#1,__TrackdiskCurrentSide(a2)
-;	rts	
-
 ; d6.b=side
 _trackdiskSelectSide
 	cmp.b		__TrackdiskCurrentSide(a2),d6
@@ -357,7 +304,7 @@ _trackdiskSelectSide
 .upperHead
 	bclr.b		#CIAB_DSKSIDE,ciaprb(a6)
 .wait
-	moveq.l		#_select_head_wait_time_0_1_ms,d7
+	moveq		#_select_head_wait_time_0_1_ms,d7
 	bsr			_trackdiskWaitTimer
 .done
 	move.b		d6,__TrackdiskCurrentSide(a2)
@@ -398,14 +345,15 @@ _trackdiskSeekCylinder
 ;==============================================================================	
 
 _trackdiskWaitTimer
-    ;move.b  	ciacra(a6),d0
-    ;and.b   	#(CIACRBF_ALARM|CIACRBF_IN_TA),d0
-    ;or.b    	#CIACRBF_RUNMODE,d0
-    ;move.b  	d0,ciacra(a6)
+	move.l		d0,-(sp)
 
-    and.b   	#(CIACRBF_ALARM|CIACRBF_IN_TA),ciacra(a6)
-    or.b    	#CIACRBF_RUNMODE,ciacra(a6)
+    move.b  	ciacra(a6),d0
+    and.b   	#(CIACRBF_ALARM|CIACRBF_IN_TA),d0
+    or.b    	#CIACRBF_RUNMODE,d0
+    move.b  	d0,ciacra(a6)
 
+    ;and.b   	#(CIACRBF_ALARM|CIACRBF_IN_TA),ciacra(a6)
+    ;or.b    	#CIACRBF_RUNMODE,ciacra(a6)
 
     move.b  	#(CIAICRF_FLG|CIAICRF_SP|CIAICRF_ALRM|CIAICRF_TB|CIAICRF_TA),ciaicr(a6)
 
@@ -416,6 +364,7 @@ _trackdiskWaitTimer
 	move.w  	d6,$dff180
     btst.b  	#CIAICRB_TA,ciaicr(a6)
     beq.s   	.wait
+    move.l		(sp)+,d0
 	rts	
 
 
