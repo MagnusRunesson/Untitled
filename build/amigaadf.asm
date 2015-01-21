@@ -1,6 +1,6 @@
 	org 			$0
 	
-
+	; commodore includes
 	include		"hardware/adkbits.i"
 	include		"hardware/blit.i"
 	include		"hardware/cia.i"
@@ -9,10 +9,13 @@
 	include		"hardware/intbits.i"
 	include		"exec/exec.i"
 	include		"devices/trackdisk.i"
+	; ..and my includes created from commodores C-header files
 	include		"exec_lib.i"
 	include		"graphics_lib.i"
-		
+	
 	include		"../src/platform/amiga/const.asm"
+	include		"../src/platform/amiga/macros.asm"
+
 	
 bootblockbegin
 	include		"../src/platform/amiga/bootblock.asm"
@@ -32,7 +35,9 @@ mainbegin
 	include		"../src/platform/amiga/img.asm"
 	
 	include		"../src/incbin/files.asm"
-	;include		"../src/incbin/untitled_splash_image.asm"	
+
+	include		"../src/incbin/untitled_splash_image.asm"
+	include		"../src/incbin/testtiles_image.asm"
 	
 	cnop		0,_chunk_size
 	
@@ -40,29 +45,30 @@ mainend
 
 workmembegin
 
+TrackdiskMfmBuffer
+	dcb.w		12800 /2,$FBFF	; mFmBuFFer
+	;dcb.b		6800,$bf ; some more
 
-Bplmem
-	; incbin		"../src/incbin/untitled_splash_planar.bin"
-	; blk.b		64*64*8*8*4/8,$01
-; mainend
-	
+TrackdiskTrackBuffer
+	dcb.w		512*11 /2,$ACBF	; trACkBuFfer
+	;dcb.b		512*5,$cb ; som emore
+
+BitplaneMem
+	;incbin		"../src/incbin/untitled_splash_planar.bin"
+	;blk.b		(64*64*8*8*4/8)-(*-Bplmem),$01
+	dcb.w		64*64*8*8*4/8 /2,$BAEE	; BitplAnEmEm
+
+TilebankMem
+	dcb.w		100/2,$EBAE		; tilEBAnkmEm
+
+MapMem
+	dcb.w		64*64*2/2,$AEAE		; mApmEm
+
+PaletteMem
+	dcb.w		512/2,$AEEE		; pAlEttEmEm
+
 workmemend
 
 databegin	
-
-	cnop		0,(512*11) 		; end of track 0
-	blk.b		(512*11),0 		; this is track 1
-	blk.b		(512*11)*140,0 		; this is track 2
-	blk.b		(512*11)-8,0	; this is track 3
-	dc.b		"DATABEGN"		; final marker on track 3
-	cnop		0,(512)
-	printt "untitled_splash_planar.bin is located here:"
-	printv *
-	printv */512
-	incbin		"../src/incbin/untitled_splash_planar.bin"
-
 	include		"../src/incbin/data.asm"
-	;include		"../src/incbin/files.asm"
-	include		"../src/incbin/untitled_splash_image.asm"
-	include		"../src/incbin/testtiles_image.asm"
 dataend
