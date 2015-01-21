@@ -328,7 +328,7 @@ rendLoadTileMap:
 
 .SlotAddresses:
 	dc.l		$40000003
-	dc.l		$60000002	; Untested destination address
+	dc.l		$60000003	; Untested destination address
 
 
 ;==============================================================================
