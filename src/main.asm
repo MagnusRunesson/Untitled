@@ -5,7 +5,7 @@ main:
 	jsr			memGetUserBaseAddress(pc)	;
 	move.l		a0,a2					; a2 will be user mem from now on
 
-	lea			testtiles_image,a0
+	lea			testtiles_image(pc),a0
 	bsr.w		imgLoad
 
 	nop
@@ -55,12 +55,12 @@ main:
 	nop
 
 .loop:
-	jsr			inpUpdate				; Return the currently pressed buttons in d7
+	jsr			inpUpdate(pc)				; Return the currently pressed buttons in d0
 
-	btst		#INPUT_ACTION,D0
+	btst		#INPUT_ACTION,d0
 	beq			.change_picture_0
 
-	btst		#INPUT_ACTION2,D0
+	btst		#INPUT_ACTION2,d0
 	beq			.change_picture_1
 
 	btst		#INPUT_LEFT,d0
@@ -97,12 +97,12 @@ main:
 	bra			.done
 
 .change_picture_0
-	lea			testtiles_image,a0
+	lea			testtiles_image(pc),a0
 	bsr.w		imgLoad
 	bra			.done
 
 .change_picture_1
-	lea			untitled_splash_image,a0
+	lea			untitled_splash_image(pc),a0
 	bsr.w		imgLoad
 	bra			.done
 
