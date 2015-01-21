@@ -45,8 +45,7 @@ bootblockcodestart
 
 	; load code
 	move.l	a3,a1
-	;move.l	#mainnumsectors*TD_SECTOR,IO_LENGTH(a1)
-	move.l	#112640,IO_LENGTH(a1)
+	move.l	#mainnumsectors*TD_SECTOR,IO_LENGTH(a1)
 	
 	move.l	d0,IO_DATA(a1)
 	move.l	#mainbeginstartsector*TD_SECTOR,IO_OFFSET(a1)
