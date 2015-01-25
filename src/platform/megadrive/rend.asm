@@ -390,12 +390,12 @@ _rendCopyToVRAM:
 
 	move.l		#$00C00000,a1
 
-	move.l		d1,d0
+	sub.l		#1,d1
 
 .1:
 	move.l  	(a0)+,(a1)				; Move long word from patterns into VDP
 										; port and increment A0 by 4
-	dbra    	d0,.1					; If D0 is not zero decrement and jump
+	dbra    	d1,.1					; If D1 is not zero decrement and jump
 										; back to 1
     
     rts									; Return to caller
