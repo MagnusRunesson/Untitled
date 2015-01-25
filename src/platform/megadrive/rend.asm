@@ -509,6 +509,5 @@ LoadSprites:
 SpriteSetting:
 	dc.w		$0080
 	dc.w		$0500
-	dc.w		$04fc
-	;dc.w		$03bd
+	dc.w		(VRAM_SpriteTiles_Start-$100)/32
 	dc.w		$0080
