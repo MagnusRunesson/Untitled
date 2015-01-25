@@ -65,7 +65,7 @@ rendInit:
 	nop
 	nop
 
-	jsr			LoadSprites
+	;jsr			LoadSprites
 	nop
 	nop
 	nop
@@ -251,6 +251,18 @@ rendLoadSprite:
 	; a0=Sprite mirror table address
 	jsr			_rendSetSpriteDimensions_Address
 
+	; Obv. d0 shouldn't be hardcoded
+	nop
+	nop
+	nop
+
+	move.l		#0,d0
+	jsr			_rendCopySpriteToVRAM_Index
+
+	nop
+	nop
+	nop
+
 	rts
 
 
@@ -289,6 +301,62 @@ _rendSetSpriteDimensions_Address:
 	or			d0,d2
 	move.b		d2,2(a0)
 	pop			d2
+	rts
+
+
+;==============================================================================
+;
+; Set the X and Y coordinate of a sprite into the mirror table
+;
+; Input
+;	d0 = X position, in pixels. 0 is left most pixel on screen
+;	d1 = Y position, in pixels. 0 is top line on screen
+;	a0 = the address of the sprite to modify
+;
+;==============================================================================
+_rendSetSpritePosition_Address:
+	add.l		#$80,d0
+	add.l		#$80,d1
+	move.w		d0,(a0)
+	move.w		d1,6(a0)
+	rts
+
+
+;==============================================================================
+;
+; Copy the sprite mirror table entry from CPU RAM to VRAM
+;
+; Input
+;	d0 = Sprite entry index. Allowed range is 0-79
+;
+;==============================================================================
+_rendCopySpriteToVRAM_Index:
+	push		d0
+
+	move.l		#VRAM_SpriteAttributes_Start,d1
+	mulu		#8,d0
+	add.l		d1,d0
+	jsr			_rendIntegerToVRAMAddress
+	; Now d0 is the destination address in VRAM
+
+	move.l		#$00C00004,a0
+	move.w		#$8F02,(a0)			; Set autoincrement (register 15) to 2
+	move.l		d0,(a0)				; Set destination address in VRAM
+
+	; Get the source address
+	pop			d0
+	mulu		#8,d0
+	add.l		#VarHWSprites,d0
+	move.l		d0,a0
+	; Now a0 is the source
+
+	; Data write register
+	move.l		#$00C00000,a1
+
+	; Copy the sprite settings
+	move.l		(a0)+,(a1)
+	move.l		(a0)+,(a1)
+
 	rts
 
 
@@ -492,22 +560,22 @@ VDPRegs:
 
 
 
-LoadSprites:
-	move.l		#$00C00000,a4
-	move.l		#$00C00004,a5
-
-	move.w		#$8F02,(a5)			; Set autoincrement (register 15) to 2
-	move_vram_addr	VRAM_SpriteAttributes_Start,(a5)
-	;move.l		#$60000003,(a5)
-	lea			SpriteSetting,a0
-
-	move.l		(a0)+,(a4)			; Sprite setting should be 0 (1x1 sprite, tile index 4, no more sprites)
-	move.l		(a0)+,(a4)			; Sprite setting should be 0 (1x1 sprite, tile index 4, no more sprites)
-
-	rts
-
-SpriteSetting:
-	dc.w		$0080
-	dc.w		$0500
-	dc.w		(VRAM_SpriteTiles_Start-$100)/32
-	dc.w		$0080
+;LoadSprites:
+;	move.l		#$00C00000,a4
+;	move.l		#$00C00004,a5
+;
+;	move.w		#$8F02,(a5)			; Set autoincrement (register 15) to 2
+;	move_vram_addr	VRAM_SpriteAttributes_Start,(a5)
+;	;move.l		#$60000003,(a5)
+;	lea			SpriteSetting,a0
+;
+;	move.l		(a0)+,(a4)			; Sprite setting should be 0 (1x1 sprite, tile index 4, no more sprites)
+;	move.l		(a0)+,(a4)			; Sprite setting should be 0 (1x1 sprite, tile index 4, no more sprites)
+;
+;	rts
+;
+;SpriteSetting:
+;	dc.w		$0080
+;	dc.w		$0500
+;	dc.w		(VRAM_SpriteTiles_Start-$100)/32
+;	dc.w		$0080
