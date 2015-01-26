@@ -60,6 +60,15 @@ rendInit:
 	move.l		#VRAM_SpriteTiles_Start,(VarNextSpriteAddress)
 	move.l		#VRAM_SpriteTiles_Start,(VarLockedSpriteAddress)
 
+	; Clear all mirror sprites
+	move.l		#0,d0
+	move.l		#(hw_sprite_byte_size*rend_num_sprites/4)-1,d1
+	move.l		#VarHWSprites,a0
+
+.clear_loop:
+	move.l  	d0,(a0)+
+	dbra    	d1,.clear_loop
+
 	jsr			InitVDP
 	nop
 	nop
