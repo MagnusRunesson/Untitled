@@ -41,6 +41,21 @@ rendSetScrollXY:
 
 ;==============================================================================
 ;
+; Set the screen coordinate of a sprite given its ID
+;
+; Input
+;	d0 = Sprite ID
+;	d1 = X position. 0 is leftmost pixel on screen, negative allowed
+;	d2 = Y position. 0 is topmost pixel on screen, negative allowed
+;
+;==============================================================================
+
+rendSetSpritePosition:
+	rts
+
+
+;==============================================================================
+;
 ; Load a sprite from disk to VRAM. This function is responsible for allocating
 ; VRAM for the sprite and return some form of handle back to the game so the
 ; game have a way to modify sprite properties such as position.
