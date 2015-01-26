@@ -332,8 +332,8 @@ _rendSetSpriteDimensions_Address:
 _rendSetSpritePosition_Address:
 	add.l		#$80,d0
 	add.l		#$80,d1
-	move.w		d0,(a0)
-	move.w		d1,6(a0)
+	move.w		d1,(a0)
+	move.w		d0,6(a0)
 	rts
 
 
