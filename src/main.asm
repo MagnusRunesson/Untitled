@@ -25,9 +25,14 @@ main:
 	nop
 	nop
 
+	move.l		#fileid_herotest_sprite_chunky,d0
+	move.l		#fileid_herotest_sprite,d1
+	bsr.w		rendLoadSprite
+
 	move.l		#fileid_testsprite2_sprite_chunky,d0
 	move.l		#fileid_testsprite2_sprite,d1
 	bsr.w		rendLoadSprite
+
 
 	;move.l		#FILEID_UNTITLED_SPLASH_PALETTE,d0
 	;bsr.w		fileLoad
@@ -72,11 +77,11 @@ main:
 	bra			.scroll_updown
 
 .scroll_left:
-	addq.w		#1,d2
+	subq.w		#1,d2
 	bra			.scroll_updown
 
 .scroll_right:
-	subq.w		#1,d2
+	addq.w		#1,d2
 	bra			.scroll_updown
 
 .scroll_updown:
@@ -109,10 +114,29 @@ main:
 .done:
 	jsr			rendWaitVSync(pc)
 
+	;push		d2
+	move.l		d2,-(sp)
+
+	nop
+	nop
+	nop
+
+	move		#0,d0		; d0 should be sprite index
+	move.l		d2,d1		; d1 should be x position
+	move.l		d3,d2		; d2 should be y position
+	jsr			rendSetSpritePosition(pc)
+
+	nop
+	nop
+	nop
+
 	; Update scrolling position
-	move.l		d2,d0					; x position
-	move.l		d3,d1					; y position
-	jsr			rendSetScrollXY(pc)			; d0=x position, d1=y position
+	;move.l		d2,d0					; x position
+	;move.l		d3,d1					; y position
+	;jsr			rendSetScrollXY(pc)			; d0=x position, d1=y position
+
+	;pop			d2
+	move.l		(sp)+,d2
 
 	;
 	bra			.loop
