@@ -282,6 +282,43 @@ rendLoadSprite:
 
 ;==============================================================================
 ;
+; Set the screen coordinate of a sprite given its ID
+;
+; Input
+;	d0 = Sprite ID
+;	d1 = X position. 0 is leftmost pixel on screen, negative allowed
+;	d2 = Y position. 0 is topmost pixel on screen, negative allowed
+;
+;==============================================================================
+rendSetSpritePosition:
+	push		d3
+	push		d1					; Push X coordinate to stack
+
+	move.l		d0,d3				; Retain the sprite slot index in d3
+	mulu		#8,d0				; Calculate the byte offset to the sprite data
+
+	;
+	move.l		#VarHWSprites,d1	; Get base address to the sprite mirror table
+	add			d0,d1				; Add the offset to the sprite index before d0
+	move.l		d1,a0				; We want to address it
+
+	; a0 is now the address to the sprite slot in the sprite mirror table
+	; d0 is garbage
+	; d1 is garbage
+	; d2 is the Y position
+	pop			d0					; Pop X coordinate from stack
+	move.l		d2,d1
+	jsr			_rendSetSpritePosition_Address
+
+	; Refresh data in VRAM
+	move.l		d3,d0
+	jsr			_rendCopySpriteToVRAM_Index
+
+	pop			d3
+	rts
+
+;==============================================================================
+;
 ; Set the tile ID of a sprite in the hw mirror table
 ;
 ; Input
