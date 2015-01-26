@@ -176,6 +176,8 @@ rendLoadTileBank:
 ;
 ;==============================================================================
 rendLoadSprite:
+	push		d3
+
 	push		d1			; Push #0
 
 	; fileLoad accept the file ID as d0, so no need to do any tricks here
@@ -209,6 +211,7 @@ rendLoadSprite:
 
 	; Fetch the next available sprite slot
 	move.l		(VarNextSpriteSlot),d1
+	move.l		d1,d3
 
 	; And allocate one
 	add.l		#1,(VarNextSpriteSlot)
@@ -260,23 +263,25 @@ rendLoadSprite:
 	; a0=Sprite mirror table address
 	jsr			_rendSetSpriteDimensions_Address
 
-	; Obv. d0 shouldn't be hardcoded
-	nop
-	nop
-	nop
-
 	; Set sprite coordinates
 	move.l		#0,d0
 	move.l		#0,d1
 	jsr			_rendSetSpritePosition_Address
 
-	move.l		#0,d0
+	move.l		d3,d0		; d3 is the sprite slot ID
 	jsr			_rendCopySpriteToVRAM_Index
 
-	nop
-	nop
-	nop
+	; Sprite 0 is always rendered. But if this sprite isn't sprite 0 then
+	; it needs to be added to the linked list of sprites to render
+	cmp.l		#0,d3
+	beq			.already_connected
 
+	move.l		d3,d0		; d3 is the sprite slot ID
+	jsr			_rendAddSprite_Index
+
+.already_connected:
+
+	pop			d3
 	rts
 
 
