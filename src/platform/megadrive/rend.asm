@@ -377,6 +377,42 @@ _rendCopySpriteToVRAM_Index:
 
 ;==============================================================================
 ;
+; Add sprite with index d0 to the render list.
+;
+; Input
+;	d0 = The sprite slot ID that should be added to the render list
+;
+;==============================================================================
+_rendAddSprite_Index:
+	push		d2
+	move.l		d0,d2				; Retain the sprite slot index in d2
+
+	sub.l		#1,d0				; We actually want to modify
+									; the sprite BEFORE this
+	mulu		#8,d0				; Calculate the byte offset to the sprite data
+
+	;
+	move.l		#VarHWSprites,d1	; Get base address to the sprite mirror table
+	add			d0,d1				; Add the offset to the sprite index before d0
+	move.l		d1,a0				; We want to address it
+
+	; a0 is now the address to the sprite slot in the sprite mirror table
+	; d2 is the sprite index
+
+	move.b		d2,3(a0)
+
+	; Refresh data in VRAM
+	move.l		d2,d0
+	sub			#1,d0
+	jsr			_rendCopySpriteToVRAM_Index
+
+	pop			d2
+	rts
+
+
+
+;==============================================================================
+;
 ; Load a tile map into VRAM
 ;
 ; d0=file ID of tile bank file to load into VRAM
