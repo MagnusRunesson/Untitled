@@ -286,7 +286,8 @@ rendLoadSprite:
 ;==============================================================================
 _rendSetSpriteTileID_Address:
 	move.w		4(a0),d1
-	and.w		$f800,d0		; Binary: 1111 1000 0000 0000
+	and.w		#$07ff,d0		; Binary: 0000 0111 1111 1111
+	and.w		#$f800,d1		; Binary: 1111 1000 0000 0000
 	or.w		d0,d1
 	move.w		d1,4(a0)
 	rts
