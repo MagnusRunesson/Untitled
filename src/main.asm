@@ -115,6 +115,13 @@ main:
 	perf_stop
 	jsr			rendWaitVSync(pc)
 	perf_start
+	
+	;
+	; Slow loop to test performance thingie
+	;
+;	move.l		#8000,d1
+;.perf_loop_test:
+;	dbra		d1,.perf_loop_test
 
 	;push		d2
 	move.l		d2,-(sp)
