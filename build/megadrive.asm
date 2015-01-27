@@ -1,5 +1,7 @@
 _chunk_size		equ		128			; same as TD_SECTOR (size of sector on floppy)
 
+	include		"../src/platform/megadrive/macros.asm"
+
 	include		"../src/platform/megadrive/bootup.asm"
 	include		"../src/structs.asm"
 	include		"../src/macros.asm"
