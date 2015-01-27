@@ -112,7 +112,9 @@ main:
 	bra			.done
 
 .done:
+	perf_stop
 	jsr			rendWaitVSync(pc)
+	perf_start
 
 	;push		d2
 	move.l		d2,-(sp)
