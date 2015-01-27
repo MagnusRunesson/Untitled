@@ -238,3 +238,43 @@ _data_untitled_splash_planar:
 _data_untitled_splash_planar_pos        equ _data_untitled_splash_planar/_chunk_size
 _data_untitled_splash_planar_length     equ ((_data_untitled_splash_planar_end-_data_untitled_splash_planar)+(_chunk_size-1))/_chunk_size
 _data_untitled_splash_planar_end:
+
+
+; herotestpng_sprite_chunky.bin
+
+	cnop		0,_chunk_size
+_data_herotestpng_sprite_chunky:
+	incbin	"../src/incbin/herotestpng_sprite_chunky.bin"
+_data_herotestpng_sprite_chunky_pos     equ _data_herotestpng_sprite_chunky/_chunk_size
+_data_herotestpng_sprite_chunky_length  equ ((_data_herotestpng_sprite_chunky_end-_data_herotestpng_sprite_chunky)+(_chunk_size-1))/_chunk_size
+_data_herotestpng_sprite_chunky_end:
+
+
+; herotestpng_palette.bin
+
+	cnop		0,_chunk_size
+_data_herotestpng_palette:
+	incbin	"../src/incbin/herotestpng_palette.bin"
+_data_herotestpng_palette_pos           equ _data_herotestpng_palette/_chunk_size
+_data_herotestpng_palette_length        equ ((_data_herotestpng_palette_end-_data_herotestpng_palette)+(_chunk_size-1))/_chunk_size
+_data_herotestpng_palette_end:
+
+
+; herotestpng_sprite.bin
+
+	cnop		0,_chunk_size
+_data_herotestpng_sprite:
+	incbin	"../src/incbin/herotestpng_sprite.bin"
+_data_herotestpng_sprite_pos            equ _data_herotestpng_sprite/_chunk_size
+_data_herotestpng_sprite_length         equ ((_data_herotestpng_sprite_end-_data_herotestpng_sprite)+(_chunk_size-1))/_chunk_size
+_data_herotestpng_sprite_end:
+
+
+; herotestpng_sprite_planar.bin
+
+	cnop		0,_chunk_size
+_data_herotestpng_sprite_planar:
+	incbin	"../src/incbin/herotestpng_sprite_planar.bin"
+_data_herotestpng_sprite_planar_pos     equ _data_herotestpng_sprite_planar/_chunk_size
+_data_herotestpng_sprite_planar_length  equ ((_data_herotestpng_sprite_planar_end-_data_herotestpng_sprite_planar)+(_chunk_size-1))/_chunk_size
+_data_herotestpng_sprite_planar_end:

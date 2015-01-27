@@ -22,6 +22,10 @@ fileid_untitled_splash_bank             equ 20
 fileid_untitled_splash_map              equ 21
 fileid_untitled_splash_palette          equ 22
 fileid_untitled_splash_planar           equ 23
+fileid_herotestpng_sprite_chunky        equ 24
+fileid_herotestpng_palette              equ 25
+fileid_herotestpng_sprite               equ 26
+fileid_herotestpng_sprite_planar        equ 27
 
 FileIDMap:
 	dc.w	_data_herotest_sprite_chunky_pos,_data_herotest_sprite_chunky_length
@@ -48,3 +52,7 @@ FileIDMap:
 	dc.w	_data_untitled_splash_map_pos,_data_untitled_splash_map_length
 	dc.w	_data_untitled_splash_palette_pos,_data_untitled_splash_palette_length
 	dc.w	_data_untitled_splash_planar_pos,_data_untitled_splash_planar_length
+	dc.w	_data_herotestpng_sprite_chunky_pos,_data_herotestpng_sprite_chunky_length
+	dc.w	_data_herotestpng_palette_pos,_data_herotestpng_palette_length
+	dc.w	_data_herotestpng_sprite_pos,_data_herotestpng_sprite_length
+	dc.w	_data_herotestpng_sprite_planar_pos,_data_herotestpng_sprite_planar_length
