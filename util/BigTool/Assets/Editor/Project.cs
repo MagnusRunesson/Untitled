@@ -94,7 +94,10 @@ public class Project
 	//
 	public void ScanFiles()
 	{
-		m_imageFiles = System.IO.Directory.GetFiles( m_path, "*.bmp" );
+		List<string> imageFiles = new List<string>();
+		imageFiles.AddRange( System.IO.Directory.GetFiles( m_path, "*.bmp" ));
+		imageFiles.AddRange( System.IO.Directory.GetFiles( m_path, "*.png" ));
+		m_imageFiles = imageFiles.ToArray();
 		m_mapFiles = System.IO.Directory.GetFiles( m_path, "*.json" );
 
 		VerifyMapFiles();
