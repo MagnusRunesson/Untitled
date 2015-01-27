@@ -421,8 +421,8 @@ public class bmp2tile : EditorWindow
 
 		// Load corresponding config first as it have information on how the image should be loaded
 		m_currentImageConfig = new PalettizedImageConfig( _path + ".config" );
-		
-		m_currentImageData = PalettizedImage.LoadBMP( _path, m_currentImageConfig );
+
+		m_currentImageData = PalettizedImage.LoadImage( _path, m_currentImageConfig );
 		if( m_currentImageData != null )
 		{
 			//
@@ -641,7 +641,7 @@ public class bmp2tile : EditorWindow
 
 			//
 			PalettizedImageConfig imageConfig = new PalettizedImageConfig( imageFile + ".config" );
-			PalettizedImage imageData = PalettizedImage.LoadBMP( imageFile, imageConfig );
+			PalettizedImage imageData = PalettizedImage.LoadImage( imageFile, imageConfig );
 
 			//
 			if( imageData != null )
