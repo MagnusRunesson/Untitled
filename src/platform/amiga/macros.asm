@@ -7,3 +7,12 @@ _get_workmem_ptr	MACRO	\1 \2
 	lea			workmembegin(pc),\2
 	add.l		#(\1-workmembegin),\2
 	ENDM
+
+
+perf_start		MACRO
+	ENDM
+
+
+perf_stop		MACRO
+	ENDM
+
