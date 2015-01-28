@@ -8,6 +8,10 @@ main:
 	lea			testtiles_image(pc),a0
 	bsr.w		imgLoad
 
+	move.l		#fileid_testmap_map,d0
+	move.l		#0,d1
+	jsr			rendLoadTileMap
+
 	nop
 	nop
 	nop
