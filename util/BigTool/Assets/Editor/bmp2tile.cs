@@ -687,6 +687,25 @@ public class bmp2tile : EditorWindow
 			}
 		}
 
+		//
+		// Export all maps
+		//
+		string[] mapFiles = m_project.m_mapFiles;
+		foreach( string mapFile in mapFiles )
+		{
+			Debug.Log( "Exporting map '" + mapFile + "'" );
+			
+			string outFileNameNoExt = System.IO.Path.GetFileNameWithoutExtension( mapFile ).ToLower();
+			string outBaseName = m_lastExportDirectory + System.IO.Path.DirectorySeparatorChar + outFileNameNoExt;
+			
+			//
+			TileMap tileMap = TileMap.LoadJson( mapFile );
+			tileMap.Export( outBaseName + "_map.bin" );
+
+			//
+			AddFile( ref asmData, ref asmFileList, ref asmFileMap, outFileNameNoExt + "_map.bin" );
+		}
+
 		System.IO.File.WriteAllText( m_lastExportDirectory + System.IO.Path.DirectorySeparatorChar + "data.asm", asmData );
 		System.IO.File.WriteAllText( m_lastExportDirectory + System.IO.Path.DirectorySeparatorChar + "files.asm", asmFileList + "\n" + asmFileMap );
 
