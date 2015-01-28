@@ -278,3 +278,13 @@ _data_herotestpng_sprite_planar:
 _data_herotestpng_sprite_planar_pos     equ _data_herotestpng_sprite_planar/_chunk_size
 _data_herotestpng_sprite_planar_length  equ ((_data_herotestpng_sprite_planar_end-_data_herotestpng_sprite_planar)+(_chunk_size-1))/_chunk_size
 _data_herotestpng_sprite_planar_end:
+
+
+; testmap_map.bin
+
+	cnop		0,_chunk_size
+_data_testmap_map:
+	incbin	"../src/incbin/testmap_map.bin"
+_data_testmap_map_pos                   equ _data_testmap_map/_chunk_size
+_data_testmap_map_length                equ ((_data_testmap_map_end-_data_testmap_map)+(_chunk_size-1))/_chunk_size
+_data_testmap_map_end:
