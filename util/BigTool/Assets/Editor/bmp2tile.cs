@@ -389,7 +389,7 @@ public class bmp2tile : EditorWindow
 			string name = System.IO.Path.GetFileName( fullPath );
 			if( GUILayout.Button( name ))
 			{
-				LoadMap( fullPath );
+				LoadMapPreview( fullPath );
 			}
 		}
 
@@ -478,7 +478,7 @@ public class bmp2tile : EditorWindow
 		}
 	}
 
-	void LoadMap( string _path )
+	void LoadMapPreview( string _path )
 	{
 		string jsonString = System.IO.File.ReadAllText( _path );
 		Dictionary<string,object> json = (Dictionary<string,object>)MiniJSON.Json.Deserialize( jsonString );
