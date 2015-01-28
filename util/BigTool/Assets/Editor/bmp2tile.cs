@@ -177,7 +177,8 @@ public class bmp2tile : EditorWindow
 			
 			Color c = Color.gray;
 			c.a = 0.25f;
-			
+			GUI.color = col;
+
 			int numTilesW = (int)src_w;
 			int numTilesH = (int)src_h;
 			numTilesW >>= 3;
