@@ -316,6 +316,73 @@ public class TileMap
 		}
 	}
 
+	static public TileMap LoadJson( string _fileName )
+	{
+		string jsonString = System.IO.File.ReadAllText( _fileName );
+		Dictionary<string,object> json = (Dictionary<string,object>)MiniJSON.Json.Deserialize( jsonString );
+
+		// Load tile bank
+		List<object> tilesetsJson = (List<object>)json[ "tilesets" ];
+		Dictionary<string,object> tilesetJson = (Dictionary<string,object>)tilesetsJson[ 0 ];
+		string imageFileName = (string)tilesetJson[ "image" ];
+		string imageFullPath = System.IO.Path.GetDirectoryName( _fileName ) + System.IO.Path.DirectorySeparatorChar + imageFileName;
+		//LoadBMP( imageFullPath );
+
+		PalettizedImageConfig imageConfig  = new PalettizedImageConfig( imageFullPath + ".config" );
+		
+		PalettizedImage imageData = PalettizedImage.LoadImage( imageFullPath, imageConfig );
+		TileBank tileBank = null;
+		if( imageData != null )
+		{
+			//
+			imageConfig.SetImage( imageData );
+
+			bool optimizeBank = (imageConfig.m_importAsSprite==false);	// Optimize bank when we're not loading the image as a sprite (i.e. optimize when we're loading as a tile bank)
+			tileBank = new TileBank( imageData, optimizeBank );
+		}
+
+		// Create map texture
+		int map_tiles_w = ((int)(long)json[ "width" ]);
+		int map_tiles_h = ((int)(long)json[ "height" ]);
+		int map_pixels_w = map_tiles_w * 8;
+		int map_pixels_h = map_tiles_h * 8;
+
+		TileMap ret = new TileMap( map_tiles_w, map_tiles_h );
+
+		// Find each layer
+		List<object> layersJson = (List<object>)json[ "layers" ];
+		Dictionary<string,object> layerJson = (Dictionary<string,object>)layersJson[ 0 ];
+		List<object> layerData = (List<object>)layerJson[ "data" ];
+		int tile_x, tile_y;
+		for( tile_y=0; tile_y<map_tiles_h; tile_y++ )
+		{
+			for( tile_x=0; tile_x<map_tiles_w; tile_x++ )
+			{
+				int i = tile_y*map_tiles_w + tile_x;
+				int tile_id = (int)(long)layerData[i];
+				tile_id--;
+				TileInstance tileInstance = tileBank.m_allTileInstances[ tile_id ];
+				
+				//
+				ret.SetTile( tile_x, tile_y, tileInstance );
+			}
+		}
+
+		return ret;
+	}
+
+	public TileMap( int _width, int _height )
+	{
+		m_width = _width;
+		m_height = _height;
+		m_tiles = new TileInstance[ m_width, m_height ];
+	}
+
+	void SetTile( int _x, int _y, TileInstance _tile )
+	{
+		m_tiles[ _x, _y ] = _tile;
+	}
+
 	public void Export( string _outfilename )
 	{
 		Debug.Log ("Exporting tile map to " + _outfilename );
