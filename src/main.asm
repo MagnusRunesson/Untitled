@@ -49,7 +49,40 @@ main:
 	bsr.w		rendLoadSprite
 	move.l		d0,_HeroSprite_Handle(a2)	; Retain the handle to the hero sprite
 
-.loop:
+.main_loop:
+	bsr.b		_input_update
+
+	perf_stop
+	jsr			rendWaitVSync(pc)
+	perf_start
+	
+	;
+	; Slow loop to test performance thingie
+	;
+;	move.l		#8000,d1
+;.perf_loop_test:
+;	dbra		d1,.perf_loop_test
+
+	move.l		_HeroSprite_Handle(a2),d0	; d0 should be sprite index
+	move		_HeroSprite_PosX(a2),d1		; d1 should be x position
+	move		_HeroSprite_PosY(a2),d2		; d2 should be y position
+	jsr			rendSetSpritePosition(pc)
+
+	; Update scrolling position
+	;move.l		d2,d0					; x position
+	;move.l		d3,d1					; y position
+	;jsr			rendSetScrollXY(pc)			; d0=x position, d1=y position
+
+	;
+	bra			.main_loop
+
+
+
+
+;
+; Ask hardware for the input and act on it
+;
+_input_update:
 	jsr			inpUpdate(pc)				; Return the currently pressed buttons in d0
 
 	btst		#INPUT_ACTION,d0
@@ -102,26 +135,7 @@ main:
 	bra			.done
 
 .done:
-	perf_stop
-	jsr			rendWaitVSync(pc)
-	perf_start
-	
-	;
-	; Slow loop to test performance thingie
-	;
-;	move.l		#8000,d1
-;.perf_loop_test:
-;	dbra		d1,.perf_loop_test
-
-	move.l		_HeroSprite_Handle(a2),d0	; d0 should be sprite index
-	move		_HeroSprite_PosX(a2),d1		; d1 should be x position
-	move		_HeroSprite_PosY(a2),d2		; d2 should be y position
-	jsr			rendSetSpritePosition(pc)
-
-	; Update scrolling position
-	;move.l		d2,d0					; x position
-	;move.l		d3,d1					; y position
-	;jsr			rendSetScrollXY(pc)			; d0=x position, d1=y position
-
-	;
-	bra			.loop
+	; As it is now all the branches to done could be an rts instead,
+	; but in case we want to clean something up it's better to have
+	; closure to the function so we're prepared.
+	rts
