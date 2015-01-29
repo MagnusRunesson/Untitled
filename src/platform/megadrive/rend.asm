@@ -53,6 +53,7 @@ move_vram_addr	MACRO
 	move.l		#((((\1)&$3fff)<<16)+(((\1)>>14)&3))|(1<<30),\2
 	ENDM
 
+
 ;==============================================================================
 ;
 ; Initialize the VDP and CPU states of the renderer
