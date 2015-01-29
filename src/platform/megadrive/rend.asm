@@ -690,11 +690,13 @@ InitVDP:
 VDPRegs:
 	dc.w		$8004						; Reg.  0: Enable Hint, HV counter stop
 	dc.w		$8174						; Reg.  1: Enable display, enable Vint, enable DMA, V28 mode (PAL & NTSC)
-	dc.w		$8230						; Reg.  2: Plane A is at $C000
+	dc.b		$82							; Reg.  2: Plane A tile map
+	dc.b		VRAM_TileMap0_Start>>10
 	dc.w		$8340						; Reg.  3: Window is at $10000 (disable)
-	dc.w		$8407						; Reg.  4: Plane B is at $E000
-	dc.b		$85
-	dc.b		VRAM_SpriteAttributes_Start>>9	; Reg.  5: Sprite attribute table
+	dc.b		$84							; Reg.  4: Plane B tile map
+	dc.b		VRAM_TileMap1_Start>>13
+	dc.b		$85							; Reg.  5: Sprite attribute table
+	dc.b		VRAM_SpriteAttributes_Start>>9
 	dc.w		$8600						; Reg.  6: always zero
 	dc.w		$8700						; Reg.  7: Background color: palette 0, color 0
 	dc.w		$8800						; Reg.  8: always zero
@@ -702,7 +704,7 @@ VDPRegs:
 	dc.w		$8a00						; Reg. 10: Hint timing
 	dc.w		$8b08						; Reg. 11: Enable Eint, full scroll
 	dc.w		$8c81						; Reg. 12: Disable Shadow/Highlight, no interlace, 40 cell mode
-	dc.b		$8d							; Reg. 13:
+	dc.b		$8d							; Reg. 13: Horizontal scroll table
 	dc.b		VRAM_HScroll_Start>>10
 	dc.w		$8e00						; Reg. 14: always zero
 	dc.w		$8f00						; Reg. 15: no autoincrement
