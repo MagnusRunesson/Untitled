@@ -273,6 +273,9 @@ rendLoadSprite:
 
 .already_connected:
 
+	; Put the sprite slot ID into d0 as the return value
+	move.l			d3,d0
+
 	stack_read.l	d3,0
 	stack_free		16
 	rts
