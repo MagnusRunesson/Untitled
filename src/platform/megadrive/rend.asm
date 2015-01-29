@@ -472,8 +472,12 @@ rendLoadTileMap:
 	jsr			fileLoad
 	; a0 is the return address from fileLoad, so it is set to the source address now
 
-	; d0 is set to the size of the file but _rendCopyToVRAM expect it to be in d1
-	move.l		#64*32/2,d1		; How many longs to copy
+	; Read the width and height of the tile map and calculate how many
+	; longs to copy to get the entire tile map from file to VRAM
+	move.b		(a0)+,d0
+	move.b		(a0)+,d1
+	mulu		d0,d1
+	lsr			#1,d1
 
 	; Now fetch the slot argument and convert to a VRAM destination address
 	move.l		(sp)+,d0
