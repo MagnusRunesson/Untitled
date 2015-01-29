@@ -350,8 +350,12 @@ rendSetSpritePosition:
 ;
 ;==============================================================================
 rendLoadTileMap:
+	;
+	push		d2
+	push		d3
+
 	; Push the slot ID onto the stack
-	move.l		d1,-(sp)
+	push		d1
 
 	; fileLoad accept the file ID as d0, so no need to do any tricks here
 	jsr			fileLoad
@@ -362,9 +366,9 @@ rendLoadTileMap:
 	move.b		(a0)+,d0
 	move.b		(a0)+,d1
 
-	; Retain width and height in register d2 and d4
-	push		d2
-	push		d3
+	; Retain width and height in register d2 and d3
+	clr			d2
+	clr			d3
 	move.b		d0,d2
 	move.b		d1,d3
 
@@ -372,7 +376,7 @@ rendLoadTileMap:
 	lsr			#1,d1
 
 	; Now fetch the slot argument and convert to a VRAM destination address
-	move.l		(sp)+,d0
+	pop			d0
 	lsl			#2,d0		; Multiply by 4 because we read longs from a1
 	lea			.SlotAddresses,a1
 	add.l		d0,a1
