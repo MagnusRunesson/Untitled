@@ -29,7 +29,6 @@ VarLockedSpriteAddress	so.l	1										; Locked address where we can free tiles 
 VarNextSpriteSlot		so.l	1										; Next available sprite index in our sprite tables
 VarLockedSpriteSlot		so.l	1										; Locked sprite index for free
 VarHWSprites			so.b	hw_sprite_byte_size*rend_num_sprites	; This will never be greater than $280. The hardware sprite attribute size won't change and there will never be more than 80 sprites.
-;VarRendSprites			so.b	sRendSprite_Size*rend_num_sprites		; Our local table of sprites that holds information about which tile a sprite was loaded to, etc..
 	clrso
 
 ;
@@ -63,14 +62,6 @@ rendInit:
 	dbra    	d1,.clear_loop
 
 	jsr			InitVDP
-	nop
-	nop
-	nop
-
-	;jsr			LoadSprites
-	nop
-	nop
-	nop
 
 	rts
 
@@ -142,10 +133,6 @@ rendLoadTileBank:
 
 	; Now create the VRAM offset
 	move_vram_addr		VRAM_MapTiles_Start,d0
-	;move.l		d1,-(sp)
-	;move.l		#VRAM_MapTiles_Start,d0
-	;jsr		_rendIntegerToVRAMAddress
-	;move.l		(sp)+,d1
 
 	; d0=destination offset
 	; d1=size to copy
@@ -673,13 +660,9 @@ InitVDP:
 VDPRegs:
 	dc.w		$8004						; Reg.  0: Enable Hint, HV counter stop
 	dc.w		$8174						; Reg.  1: Enable display, enable Vint, enable DMA, V28 mode (PAL & NTSC)
-	;dc.w		$8240						; Reg.  2: Plane A is at $10000 (disable)
 	dc.w		$8230						; Reg.  2: Plane A is at $C000
 	dc.w		$8340						; Reg.  3: Window is at $10000 (disable)
-	;dc.w		$8440						; Reg.  4: Plane B is at $10000 (disable?)
 	dc.w		$8407						; Reg.  4: Plane B is at $E000
-	;dc.w		$8430						; Reg.  4: Plane B is at $C000
-	;dc.w		$8570						; Reg.  5: Sprite attribute table is at $E000
 	dc.b		$85
 	dc.b		VRAM_SpriteAttributes_Start>>9	; Reg.  5: Sprite attribute table
 	dc.w		$8600						; Reg.  6: always zero
@@ -689,7 +672,6 @@ VDPRegs:
 	dc.w		$8a00						; Reg. 10: Hint timing
 	dc.w		$8b08						; Reg. 11: Enable Eint, full scroll
 	dc.w		$8c81						; Reg. 12: Disable Shadow/Highlight, no interlace, 40 cell mode
-	;dc.w		$8d34						; Reg. 13: Hscroll is at $D000
 	dc.b		$8d							; Reg. 13:
 	dc.b		VRAM_HScroll_Start>>10
 	dc.w		$8e00						; Reg. 14: always zero
@@ -702,25 +684,3 @@ VDPRegs:
 	dc.w		$9500						; Reg. 21: DMA source address low
 	dc.w		$9600						; Reg. 22: DMA source address mid
 	dc.w		$9700						; Reg. 23: DMA source address high, DMA mode ?
-
-
-
-;LoadSprites:
-;	move.l		#$00C00000,a4
-;	move.l		#$00C00004,a5
-;
-;	move.w		#$8F02,(a5)			; Set autoincrement (register 15) to 2
-;	move_vram_addr	VRAM_SpriteAttributes_Start,(a5)
-;	;move.l		#$60000003,(a5)
-;	lea			SpriteSetting,a0
-;
-;	move.l		(a0)+,(a4)			; Sprite setting should be 0 (1x1 sprite, tile index 4, no more sprites)
-;	move.l		(a0)+,(a4)			; Sprite setting should be 0 (1x1 sprite, tile index 4, no more sprites)
-;
-;	rts
-;
-;SpriteSetting:
-;	dc.w		$0080
-;	dc.w		$0500
-;	dc.w		(VRAM_SpriteTiles_Start-$100)/32
-;	dc.w		$0080
