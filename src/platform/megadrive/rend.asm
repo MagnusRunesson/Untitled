@@ -38,6 +38,7 @@ VarHWSprites			so.b	hw_sprite_byte_size*rend_num_sprites	; This will never be gr
 VRAM_MapTiles_Start				= $0000
 VRAM_SpriteTiles_Start			= $a000		; This one goes down when allocated, so it should be the same as another VRAM tag
 VRAM_SpriteAttributes_Start		= $a000		; There are requirements as to what this address can be! (Only the top 6 bits are used when in 40 cell mode, top 7 bits when in 32 cell mode)
+VRAM_HScroll_Start				= $a400		; There are requirements as to what this address can be! (Only the top 6 bits are used.)
 VRAM_TileMap0_Start				= $c000
 VRAM_TileMap1_Start				= $e000
 
@@ -117,7 +118,7 @@ rendSetScrollXY:
 	move.w		#$8F02,(a1)			; Disable autoincrement
 
 	; Set horizontal scroll
-	move.l		#$50000003,(a1)		; Point the VDP data port to the horizontal scroll table
+	move_vram_addr	VRAM_HScroll_Start,(a1)
 	move.w		d0,(a0)
 	move.w		d0,(a0)
 
@@ -639,10 +640,12 @@ VDPRegs:
 	dc.w		$8a00						; Reg. 10: Hint timing
 	dc.w		$8b08						; Reg. 11: Enable Eint, full scroll
 	dc.w		$8c81						; Reg. 12: Disable Shadow/Highlight, no interlace, 40 cell mode
-	dc.w		$8d34						; Reg. 13: Hscroll is at $D000
+	;dc.w		$8d34						; Reg. 13: Hscroll is at $D000
+	dc.b		$8d							; Reg. 13:
+	dc.b		VRAM_HScroll_Start>>10
 	dc.w		$8e00						; Reg. 14: always zero
 	dc.w		$8f00						; Reg. 15: no autoincrement
-	dc.w		$9001						; Reg. 16: Scroll 32V and 32H
+	dc.w		$9011						; Reg. 16: Scroll 32V and 32H
 	dc.w		$9100						; Reg. 17: Set window X position/size to 0
 	dc.w		$9200						; Reg. 18: Set window Y position/size to 0
 	dc.w		$9300						; Reg. 19: DMA counter low
