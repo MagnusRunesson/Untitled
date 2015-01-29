@@ -18,7 +18,8 @@ class PlanarImage
 
 		SanityChecks (_palettizedImage);
 
-		m_planarData = ChunkyToPlanarImageInterleaved (_palettizedImage.m_image);
+		//m_planarData = ChunkyToPlanarImageInterleaved (_palettizedImage.m_image);
+		m_planarData = ChunkyToPlanarTilesInterleaved (_palettizedImage.m_image);
 	}
 
 	void SanityChecks (PalettizedImage _palettizedImage)
@@ -80,6 +81,41 @@ class PlanarImage
 			{		
 				ChunkyToPlanar8Pixels (chunkyImage, x, y, chunkyStepPerRow, 
 				                       planarData, x/8, y, planarStepPerRow, planarStepPerPlane);						
+			}
+		}
+
+		return planarData;
+	}
+
+	private byte[] ChunkyToPlanarTilesInterleaved (byte[] chunkyImage)
+	{
+		int chunkyStepPerRow = m_width;
+		int planarStepPerRow = m_numberOfBitPlanes;
+		int planarStepPerPlane = 1;
+		//		Debug.Log ("chunkyStepPerRow: " + chunkyStepPerRow);
+		//		Debug.Log ("planarStepPerRow: " + planarStepPerRow);
+		//		Debug.Log ("planarStepPerPlane: " + planarStepPerPlane);
+		
+		int planarDataSize = m_height * m_width * m_numberOfBitPlanes / 8;	
+		byte[] planarData = new byte[planarDataSize];
+		
+		//			Debug.Log (m_height);
+		//			Debug.Log (m_width);
+		//			Debug.Log (m_numberOfBitPlanes);
+		//			Debug.Log (planarDataSize);
+		//			Debug.Log (chunkyYOffs);
+		//			Debug.Log (yoffsPlane3);
+		int tile = 0;
+		for (int y = 0; y < m_height; y+=8) 
+		{		
+			for (int x = 0; x < m_width; x+=8)
+			{		
+				for (int yInner = 0; yInner < 8; yInner++)
+				{
+					ChunkyToPlanar8Pixels (chunkyImage, x, y+yInner, chunkyStepPerRow, 
+				    	                   planarData, 0, (tile*8)+yInner, planarStepPerRow, planarStepPerPlane);						
+				}
+				tile++;
 			}
 		}
 
