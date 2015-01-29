@@ -10,9 +10,11 @@ _get_workmem_ptr	MACRO	\1 \2
 
 
 perf_start		MACRO
+	move.w		#$0F00,$DFF180
 	ENDM
 
 
 perf_stop		MACRO
+	move.w		#$0000,$DFF180
 	ENDM
 
