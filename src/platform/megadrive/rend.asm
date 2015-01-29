@@ -35,9 +35,9 @@ VarHWSprites			so.b	hw_sprite_byte_size*rend_num_sprites	; This will never be gr
 ; VRAM memory map
 ;
 VRAM_MapTiles_Start				= $0000
-VRAM_SpriteTiles_Start			= $a000		; This one goes down when allocated, so it should be the same as another VRAM tag
-VRAM_SpriteAttributes_Start		= $a000		; There are requirements as to what this address can be! (Only the top 6 bits are used when in 40 cell mode, top 7 bits when in 32 cell mode)
-VRAM_HScroll_Start				= $a400		; There are requirements as to what this address can be! (Only the top 6 bits are used.)
+VRAM_SpriteTiles_Start			= $b800		; This one goes down when allocated, so it should be the same as another VRAM tag
+VRAM_SpriteAttributes_Start		= $b800		; There are requirements as to what this address can be! (Only the top 6 bits are used when in 40 cell mode, top 7 bits when in 32 cell mode)
+VRAM_HScroll_Start				= $bc00		; There are requirements as to what this address can be! (Only the top 6 bits are used.)
 VRAM_TileMap0_Start				= $c000
 VRAM_TileMap1_Start				= $e000
 
