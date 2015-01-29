@@ -169,6 +169,7 @@ rendLoadTileBank:
 ;
 ;==============================================================================
 rendLoadSprite:
+	; Setup a stack frame and store some stuffs
 	stack_alloc		16
 	stack_write.l	d3,0
 	stack_write.l	d1,4
@@ -180,7 +181,7 @@ rendLoadSprite:
 	; Load the number of tiles to copy from the bank data
 	move.w			(a0)+,d1
 	lsl				#5,d1		; Now we have the byte size of the
-							; tiles that should be loaded
+								; tiles that should be loaded
 
 	; Find VRAM address to load the tiles to
 	move.l			(VarNextSpriteAddress),d0
@@ -276,6 +277,7 @@ rendLoadSprite:
 	; Put the sprite slot ID into d0 as the return value
 	move.l			d3,d0
 
+	; Clear up stack frame and be happy
 	stack_read.l	d3,0
 	stack_free		16
 	rts
