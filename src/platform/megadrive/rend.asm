@@ -169,9 +169,9 @@ rendLoadTileBank:
 ;
 ;==============================================================================
 rendLoadSprite:
-	push		d3
-
-	push		d1			; Push #0
+	stack_alloc		16
+	stack_write.l	d3,0
+	stack_write.l	d1,4
 
 	; fileLoad accept the file ID as d0, so no need to do any tricks here
 	jsr			fileLoad
@@ -188,10 +188,10 @@ rendLoadSprite:
 	move.l		d0,(VarNextSpriteAddress)
 	; d0 is now the VRAM address to load the sprite tiles to
 
-	push		d0
-	push		d1
 	jsr			_rendIntegerToVRAMAddress
-	pop			d1
+	stack_write.l	d0,8
+	stack_write.l	d1,12
+	stack_read.l	d1,12
 
 	lsr			#2,d1		; d1 is the size of the tiles in bytes, but it
 							; should be the size in longs for _rendCopyToVRAM
@@ -200,7 +200,7 @@ rendLoadSprite:
 	; d1=size to copy
 	; a0=source address
 	jsr			_rendCopyToVRAM
-	pop			d0
+	stack_read.l	d0,8
 
 	; Fetch the next available sprite slot
 	move.l		(VarNextSpriteSlot),d1
@@ -225,12 +225,11 @@ rendLoadSprite:
 	jsr			_rendSetSpriteTileID_Address
 
 	; Load the sprite information file to get the dimensions of the sprite
-	pop			d0			; Popping push #0: The sprite information file ID was
-							; pushed as d1 but needs to be in d0 when we get into
-							; fileLoad, so we pop it straight to d0
+	; Read the file ID from the stack
+	stack_read.l	d0,4
 
 	; Retain the address to the sprite mirror table for this sprite
-	push		a0
+	stack_write.l	a0,4
 
 	; d0=File ID of the sprite information file
 	jsr			fileLoad
@@ -249,7 +248,7 @@ rendLoadSprite:
 	sub			#1,d1
 
 	; Fetch the sprite mirror table address
-	pop			a0
+	stack_read.l	a0,4
 
 	; d0=Sprite width, in tiles
 	; d1=Sprite height, in tiles
@@ -274,7 +273,8 @@ rendLoadSprite:
 
 .already_connected:
 
-	pop			d3
+	stack_read.l	d3,0
+	stack_free		16
 	rts
 
 
