@@ -387,9 +387,14 @@ public class TileMap
 	{
 		Debug.Log ("Exporting tile map to " + _outfilename );
 
+		int headersize = 2;
+
 		// Export size = width * height * 2 (each tile in the map is 2 bytes)
 		int outsize = m_width*m_height*2;
-		byte[] outBytes = new byte[ outsize ];
+		byte[] outBytes = new byte[ headersize+outsize ];
+
+		outBytes[ 0 ] = (byte)m_width;
+		outBytes[ 1 ] = (byte)m_height;
 
 		int x, y;
 		for( y=0; y<m_height; y++ )
@@ -409,7 +414,7 @@ public class TileMap
 
 				int value = ((prio&1)<<15) + ((paletteIndex&3)<<13) + ((vf&1)<<12) + ((hf&1)<<11) + (index&0x7ff);
 				
-				int wrOfs = ((y*m_width)+x) * 2;
+				int wrOfs = headersize + (((y*m_width)+x) * 2);
 				outBytes[ wrOfs+0 ] = (byte)((value>>8)&0xff);
 				outBytes[ wrOfs+1 ] = (byte)(value&0xff);
 			}
