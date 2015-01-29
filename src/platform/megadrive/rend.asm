@@ -476,6 +476,13 @@ rendLoadTileMap:
 	; longs to copy to get the entire tile map from file to VRAM
 	move.b		(a0)+,d0
 	move.b		(a0)+,d1
+
+	; Retain width and height in register d2 and d4
+	push		d2
+	push		d3
+	move.b		d0,d2
+	move.b		d1,d3
+
 	mulu		d0,d1
 	lsr			#1,d1
 
@@ -490,6 +497,47 @@ rendLoadTileMap:
 	; d1=size to copy
 	; a0=source address
 	jsr			_rendCopyToVRAM
+
+	; Set hardware register to match the loaded width and height
+	move.w		#$9000,d0
+
+	; Check width
+	cmp.b		#64,d2
+	beq			.width_64
+
+	cmp.b		#128,d2
+	beq			.width_128
+
+	bra			.check_height
+
+.width_64:
+	or.w		#$0001,d0
+	bra			.check_height
+
+.width_128:
+	or.w		#$0001,d0
+
+	; Check height of map
+.check_height:
+
+	cmp.b		#64,d3
+	beq			.height_64
+
+	cmp.b		#128,d3
+	beq			.height_128
+
+.height_64:
+	or.w		#$0010,d0
+	bra			.set_dimensions
+
+.height_128:
+	or.w		#$0010,d0
+
+.set_dimensions:
+	move.w		d0,($00C00004)
+
+	pop			d3
+	pop			d2
 
 	rts
 
