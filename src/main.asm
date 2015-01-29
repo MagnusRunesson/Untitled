@@ -50,12 +50,13 @@ main:
 	move.l		d0,_HeroSprite_Handle(a2)	; Retain the handle to the hero sprite
 
 .main_loop:
-	bsr.b		_input_update
+	bsr			_input_update
+	bsr			_camera_update
 
 	perf_stop
 	jsr			rendWaitVSync(pc)
 	perf_start
-	
+
 	;
 	; Slow loop to test performance thingie
 	;
@@ -63,15 +64,27 @@ main:
 ;.perf_loop_test:
 ;	dbra		d1,.perf_loop_test
 
+	move		_Camera_PosX(a2),d3
+	move		_Camera_PosY(a2),d4
 	move.l		_HeroSprite_Handle(a2),d0	; d0 should be sprite index
 	move		_HeroSprite_PosX(a2),d1		; d1 should be x position
 	move		_HeroSprite_PosY(a2),d2		; d2 should be y position
+	sub			d3,d1
 	jsr			rendSetSpritePosition(pc)
 
+	nop
+	nop
+
+	clr			d0
+	clr			d1
+	move		_Camera_PosX(a2),d0
 	; Update scrolling position
 	;move.l		d2,d0					; x position
 	;move.l		d3,d1					; y position
-	;jsr			rendSetScrollXY(pc)			; d0=x position, d1=y position
+	jsr			rendSetScrollXY(pc)			; d0=x position, d1=y position
+
+	nop
+	nop
 
 	;
 	bra			.main_loop
@@ -138,4 +151,75 @@ _input_update:
 	; As it is now all the branches to done could be an rts instead,
 	; but in case we want to clean something up it's better to have
 	; closure to the function so we're prepared.
+	rts
+
+
+
+;
+; Updates the camera. The camera will follow the
+; player sprite around, but not go out of bounds
+;
+_camera_update:
+	move		_Camera_PosX(a2),d0
+	move		_Camera_PosY(a2),d1
+	move		_HeroSprite_PosX(a2),d2
+	move		_HeroSprite_PosY(a2),d3
+
+	;
+	; Check if player is too far left
+	;
+	sub			d0,d2					; d2 = CameraX - HeroSpriteX		(30-40=10 pixels to the left)
+	sub			#96,d2					; delta -= padding					(10-32=-22)
+	cmp			#0,d2					;
+	bge			.no_adjust_left
+	add			d2,d0
+
+	; Now when we've adjust the camera to the left we need to make sure it isn't too far off to the left
+	cmp			#0,d0
+	bge			.left_ok
+	clr			d0
+.left_ok:
+	move		d0,_Camera_PosX(a2)		; If we need to adjust the camera then d2 will be a negative value, hence moving the camera to the left when we add d2 to the camera position
+	bra			.check_vertical_adjust
+
+.no_adjust_left:
+	move		_HeroSprite_PosX(a2),d2
+
+
+	;
+	; Check if player is too far to the right
+	;
+
+	;
+	; CameraX = 10
+	; Camera width = 320
+	; PlayerX = 340
+	; Then player is 10 pixels off screen to the right
+	; PlayerX-CameraX-CameraWidth=10
+	;
+	;
+	;
+
+	sub			d0,d2					; d2 = CameraX - HeroSpriteX		(30-40=10 pixels to the left)
+	sub			#320-96-16,d2					; delta -= padding					(10-32=-22)
+	cmp			#0,d2					;
+	ble			.no_adjust_right
+	add			d2,d0
+
+	; Now when we've adjust the camera to the left we need to make sure it isn't too far off to the left
+	cmp			#512-320,d0
+	ble			.right_ok
+	move		#512-320,d0
+.right_ok:
+	move		d0,_Camera_PosX(a2)		; If we need to adjust the camera then d2 will be a negative value, hence moving the camera to the left when we add d2 to the camera position
+.no_adjust_right:
+	move		_HeroSprite_PosX(a2),d2
+
+
+
+
+.check_vertical_adjust:
+
+
+
 	rts
