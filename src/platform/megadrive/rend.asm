@@ -174,55 +174,55 @@ rendLoadSprite:
 	stack_write.l	d1,4
 
 	; fileLoad accept the file ID as d0, so no need to do any tricks here
-	jsr			fileLoad
+	jsr				fileLoad
 	; a0 is the return address from fileLoad
 
 	; Load the number of tiles to copy from the bank data
-	move.w		(a0)+,d1
-	lsl			#5,d1		; Now we have the byte size of the
+	move.w			(a0)+,d1
+	lsl				#5,d1		; Now we have the byte size of the
 							; tiles that should be loaded
 
 	; Find VRAM address to load the tiles to
-	move.l		(VarNextSpriteAddress),d0
-	sub.l		d1,d0
-	move.l		d0,(VarNextSpriteAddress)
+	move.l			(VarNextSpriteAddress),d0
+	sub.l			d1,d0
+	move.l			d0,(VarNextSpriteAddress)
 	; d0 is now the VRAM address to load the sprite tiles to
 
-	jsr			_rendIntegerToVRAMAddress
 	stack_write.l	d0,8
 	stack_write.l	d1,12
+	jsr				_rendIntegerToVRAMAddress
 	stack_read.l	d1,12
 
-	lsr			#2,d1		; d1 is the size of the tiles in bytes, but it
-							; should be the size in longs for _rendCopyToVRAM
+	lsr				#2,d1		; d1 is the size of the tiles in bytes, but it
+								; should be the size in longs for _rendCopyToVRAM
 
 	; d0=destination offset
 	; d1=size to copy
 	; a0=source address
-	jsr			_rendCopyToVRAM
+	jsr				_rendCopyToVRAM
 	stack_read.l	d0,8
 
 	; Fetch the next available sprite slot
-	move.l		(VarNextSpriteSlot),d1
-	move.l		d1,d3
+	move.l			(VarNextSpriteSlot),d1
+	move.l			d1,d3
 
 	; And allocate one
-	add.l		#1,(VarNextSpriteSlot)
+	add.l			#1,(VarNextSpriteSlot)
 
 	; Find address of sprite attributes mirror and renderer sprite data
-	mulu		#hw_sprite_byte_size,d1
-	add.l		#VarHWSprites,d1
-	move.l		d1,a0
+	mulu			#hw_sprite_byte_size,d1
+	add.l			#VarHWSprites,d1
+	move.l			d1,a0
 	; Now a0 points to somewhere in the sprite attributes mirror table
 
 	; d0 still points to the VRAM address, in bytes, that the tiles
 	; was copied to. Lets convert that into a tile ID and store in
 	; the sprite hw mirror table.
-	lsr			#5,d0
+	lsr				#5,d0
 
 	; d0=Tile ID of the sprite tile bank where the data was loaded to
 	; a0=Address of the sprite hw attribute table mirror for the sprite that was allocated
-	jsr			_rendSetSpriteTileID_Address
+	jsr				_rendSetSpriteTileID_Address
 
 	; Load the sprite information file to get the dimensions of the sprite
 	; Read the file ID from the stack
@@ -232,20 +232,20 @@ rendLoadSprite:
 	stack_write.l	a0,4
 
 	; d0=File ID of the sprite information file
-	jsr			fileLoad
+	jsr				fileLoad
 	; d0 is now the size of the sprites file
 	; a0 is the address to the sprite information
 
-	move.b		(a0)+,d0	; Fetch sprite width in pixels
-	move.b		(a0)+,d1	; Fetch sprite height in pixels
-	lsr			#3,d0		; Convert width from pixels to tiles
-	lsr			#3,d1		; Convert height from pixels to tiles
+	move.b			(a0)+,d0	; Fetch sprite width in pixels
+	move.b			(a0)+,d1	; Fetch sprite height in pixels
+	lsr				#3,d0		; Convert width from pixels to tiles
+	lsr				#3,d1		; Convert height from pixels to tiles
 
 	; Also, on the Mega Drive, the width and size are defined from 0-3,
 	; where 0 means 1 tile wide, and 3 means 4 tiles wide) So we need
 	; to subtract one from the tile dimensions
-	sub			#1,d0
-	sub			#1,d1
+	sub				#1,d0
+	sub				#1,d1
 
 	; Fetch the sprite mirror table address
 	stack_read.l	a0,4
@@ -253,23 +253,23 @@ rendLoadSprite:
 	; d0=Sprite width, in tiles
 	; d1=Sprite height, in tiles
 	; a0=Sprite mirror table address
-	jsr			_rendSetSpriteDimensions_Address
+	jsr				_rendSetSpriteDimensions_Address
 
 	; Set sprite coordinates
-	move.l		#0,d0
-	move.l		#0,d1
-	jsr			_rendSetSpritePosition_Address
+	move.l			#0,d0
+	move.l			#0,d1
+	jsr				_rendSetSpritePosition_Address
 
-	move.l		d3,d0		; d3 is the sprite slot ID
-	jsr			_rendCopySpriteToVRAM_Index
+	move.l			d3,d0		; d3 is the sprite slot ID
+	jsr				_rendCopySpriteToVRAM_Index
 
 	; Sprite 0 is always rendered. But if this sprite isn't sprite 0 then
 	; it needs to be added to the linked list of sprites to render
-	cmp.l		#0,d3
-	beq			.already_connected
+	cmp.l			#0,d3
+	beq				.already_connected
 
-	move.l		d3,d0		; d3 is the sprite slot ID
-	jsr			_rendAddSprite_Index
+	move.l			d3,d0		; d3 is the sprite slot ID
+	jsr				_rendAddSprite_Index
 
 .already_connected:
 
