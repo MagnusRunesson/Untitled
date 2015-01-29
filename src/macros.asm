@@ -19,6 +19,12 @@ gommem_base			= 	usermem_size
 gommem_size			=	$0100
 gommem_end			=	gommem_base+gommem_size
 
+
+;==================================================================================================
+;
+; Macros to push and pop to the stack
+;
+;==================================================================================================
 ;
 ; Will decrement the stack pointer and write a register to the new address
 ;
