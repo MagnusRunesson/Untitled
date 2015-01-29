@@ -14,7 +14,7 @@ main:
 
 	move.l		#fileid_testmap_map,d0
 	move.l		#0,d1
-	jsr			rendLoadTileMap
+	jsr			rendLoadTileMap(pc)
 
 	nop
 	nop
