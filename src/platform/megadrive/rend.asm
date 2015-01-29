@@ -76,6 +76,23 @@ rendInit:
 
 	jsr			InitVDP
 
+
+;	move.l		#$00C00004,a0
+;	move.w		#$8F02,(a0)
+;	move_vram_addr	VRAM_HScroll_Start,(a0)
+;
+;	move.l		#$00C00000,a0
+;
+;	move		#240,d0			; Write 240 scan lines of data
+;	move		#0,d1
+;
+;.hscoll_loop:
+;	move.w		d1,(a0)			; Write to plane A hscroll table
+;	move.w		d1,(a0)			; Write to plane B hscroll table
+;	add			#1,d1
+;	and			#$1f,d1
+;	dbra		d0,.hscoll_loop
+
 	rts
 
 
