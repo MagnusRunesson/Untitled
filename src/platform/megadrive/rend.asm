@@ -697,7 +697,7 @@ VDPRegs:
 	dc.b		VRAM_HScroll_Start>>10
 	dc.w		$8e00						; Reg. 14: always zero
 	dc.w		$8f00						; Reg. 15: no autoincrement
-	dc.w		$9011						; Reg. 16: Scroll 32V and 32H
+	dc.w		$9000						; Reg. 16: Scroll 32V and 32H
 	dc.w		$9100						; Reg. 17: Set window X position/size to 0
 	dc.w		$9200						; Reg. 18: Set window Y position/size to 0
 	dc.w		$9300						; Reg. 19: DMA counter low
