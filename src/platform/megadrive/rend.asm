@@ -42,10 +42,22 @@ VRAM_TileMap0_Start				= $c000
 VRAM_TileMap1_Start				= $e000
 
 
+;
+; Convert a regular integer value into a VRAM address
+; and move that converted address into a register
+;
+; Usage:
+; move_vram_addr	$a000,d0		; Convert $a000 to $60000002 (or whatever it becomes) and move that into d0
+;
 move_vram_addr	MACRO
 	move.l		#((((\1)&$3fff)<<16)+(((\1)>>14)&3))|(1<<30),\2
 	ENDM
 
+;==============================================================================
+;
+; Initialize the VDP and CPU states of the renderer
+;
+;==============================================================================
 rendInit:
 	move.l		#0,(VarNextSpriteSlot)
 	move.l		#0,(VarLockedSpriteSlot)
@@ -64,6 +76,7 @@ rendInit:
 	jsr			InitVDP
 
 	rts
+
 
 ;==============================================================================
 ;
@@ -307,136 +320,6 @@ rendSetSpritePosition:
 	pop			d3
 	rts
 
-;==============================================================================
-;
-; Set the tile ID of a sprite in the hw mirror table
-;
-; Input
-;	d0 = new tile ID
-;	a0 = the address of the sprite to modify
-;
-;==============================================================================
-_rendSetSpriteTileID_Address:
-	move.w		4(a0),d1
-	and.w		#$07ff,d0		; Binary: 0000 0111 1111 1111
-	and.w		#$f800,d1		; Binary: 1111 1000 0000 0000
-	or.w		d0,d1
-	move.w		d1,4(a0)
-	rts
-
-
-;==============================================================================
-;
-; Set the width and height of a sprite in the hw mirror table
-;
-; Input
-;	d0 = width, in tiles
-;	d1 = height, in tiles
-;	a0 = the address of the sprite to modify
-;
-;==============================================================================
-_rendSetSpriteDimensions_Address:
-	push		d2
-	move.b		#0,d2
-	or			d1,d2
-	lsl			#2,d0
-	or			d0,d2
-	move.b		d2,2(a0)
-	pop			d2
-	rts
-
-
-;==============================================================================
-;
-; Set the X and Y coordinate of a sprite into the mirror table
-;
-; Input
-;	d0 = X position, in pixels. 0 is left most pixel on screen
-;	d1 = Y position, in pixels. 0 is top line on screen
-;	a0 = the address of the sprite to modify
-;
-;==============================================================================
-_rendSetSpritePosition_Address:
-	add.l		#$80,d0
-	add.l		#$80,d1
-	move.w		d1,(a0)
-	move.w		d0,6(a0)
-	rts
-
-
-;==============================================================================
-;
-; Copy the sprite mirror table entry from CPU RAM to VRAM
-;
-; Input
-;	d0 = Sprite entry index. Allowed range is 0-79
-;
-;==============================================================================
-_rendCopySpriteToVRAM_Index:
-	push		d0
-
-	move.l		#VRAM_SpriteAttributes_Start,d1
-	mulu		#8,d0
-	add.l		d1,d0
-	jsr			_rendIntegerToVRAMAddress
-	; Now d0 is the destination address in VRAM
-
-	move.l		#$00C00004,a0
-	move.w		#$8F02,(a0)			; Set autoincrement (register 15) to 2
-	move.l		d0,(a0)				; Set destination address in VRAM
-
-	; Get the source address
-	pop			d0
-	mulu		#8,d0
-	add.l		#VarHWSprites,d0
-	move.l		d0,a0
-	; Now a0 is the source
-
-	; Data write register
-	move.l		#$00C00000,a1
-
-	; Copy the sprite settings
-	move.l		(a0)+,(a1)
-	move.l		(a0)+,(a1)
-
-	rts
-
-
-;==============================================================================
-;
-; Add sprite with index d0 to the render list.
-;
-; Input
-;	d0 = The sprite slot ID that should be added to the render list
-;
-;==============================================================================
-_rendAddSprite_Index:
-	push		d2
-	move.l		d0,d2				; Retain the sprite slot index in d2
-
-	sub.l		#1,d0				; We actually want to modify
-									; the sprite BEFORE this
-	mulu		#8,d0				; Calculate the byte offset to the sprite data
-
-	;
-	move.l		#VarHWSprites,d1	; Get base address to the sprite mirror table
-	add			d0,d1				; Add the offset to the sprite index before d0
-	move.l		d1,a0				; We want to address it
-
-	; a0 is now the address to the sprite slot in the sprite mirror table
-	; d2 is the sprite index
-
-	move.b		d2,3(a0)
-
-	; Refresh data in VRAM
-	move.l		d2,d0
-	sub			#1,d0
-	jsr			_rendCopySpriteToVRAM_Index
-
-	pop			d2
-	rts
-
-
 
 ;==============================================================================
 ;
@@ -598,6 +481,135 @@ _rendCopyToVRAM:
     
     rts									; Return to caller
 
+
+;==============================================================================
+;
+; Set the tile ID of a sprite in the hw mirror table
+;
+; Input
+;	d0 = new tile ID
+;	a0 = the address of the sprite to modify
+;
+;==============================================================================
+_rendSetSpriteTileID_Address:
+	move.w		4(a0),d1
+	and.w		#$07ff,d0		; Binary: 0000 0111 1111 1111
+	and.w		#$f800,d1		; Binary: 1111 1000 0000 0000
+	or.w		d0,d1
+	move.w		d1,4(a0)
+	rts
+
+
+;==============================================================================
+;
+; Set the width and height of a sprite in the hw mirror table
+;
+; Input
+;	d0 = width, in tiles
+;	d1 = height, in tiles
+;	a0 = the address of the sprite to modify
+;
+;==============================================================================
+_rendSetSpriteDimensions_Address:
+	push		d2
+	move.b		#0,d2
+	or			d1,d2
+	lsl			#2,d0
+	or			d0,d2
+	move.b		d2,2(a0)
+	pop			d2
+	rts
+
+
+;==============================================================================
+;
+; Set the X and Y coordinate of a sprite into the mirror table
+;
+; Input
+;	d0 = X position, in pixels. 0 is left most pixel on screen
+;	d1 = Y position, in pixels. 0 is top line on screen
+;	a0 = the address of the sprite to modify
+;
+;==============================================================================
+_rendSetSpritePosition_Address:
+	add.l		#$80,d0
+	add.l		#$80,d1
+	move.w		d1,(a0)
+	move.w		d0,6(a0)
+	rts
+
+
+;==============================================================================
+;
+; Add sprite with index d0 to the render list.
+;
+; Input
+;	d0 = The sprite slot ID that should be added to the render list
+;
+;==============================================================================
+_rendAddSprite_Index:
+	push		d2
+	move.l		d0,d2				; Retain the sprite slot index in d2
+
+	sub.l		#1,d0				; We actually want to modify
+									; the sprite BEFORE this
+	mulu		#8,d0				; Calculate the byte offset to the sprite data
+
+	;
+	move.l		#VarHWSprites,d1	; Get base address to the sprite mirror table
+	add			d0,d1				; Add the offset to the sprite index before d0
+	move.l		d1,a0				; We want to address it
+
+	; a0 is now the address to the sprite slot in the sprite mirror table
+	; d2 is the sprite index
+
+	move.b		d2,3(a0)
+
+	; Refresh data in VRAM
+	move.l		d2,d0
+	sub			#1,d0
+	jsr			_rendCopySpriteToVRAM_Index
+
+	pop			d2
+	rts
+
+
+;==============================================================================
+;
+; Copy the sprite mirror table entry from CPU RAM to VRAM
+;
+; Input
+;	d0 = Sprite entry index. Allowed range is 0-79
+;
+;==============================================================================
+_rendCopySpriteToVRAM_Index:
+	push		d0
+
+	move.l		#VRAM_SpriteAttributes_Start,d1
+	mulu		#8,d0
+	add.l		d1,d0
+	jsr			_rendIntegerToVRAMAddress
+	; Now d0 is the destination address in VRAM
+
+	move.l		#$00C00004,a0
+	move.w		#$8F02,(a0)			; Set autoincrement (register 15) to 2
+	move.l		d0,(a0)				; Set destination address in VRAM
+
+	; Get the source address
+	pop			d0
+	mulu		#8,d0
+	add.l		#VarHWSprites,d0
+	move.l		d0,a0
+	; Now a0 is the source
+
+	; Data write register
+	move.l		#$00C00000,a1
+
+	; Copy the sprite settings
+	move.l		(a0)+,(a1)
+	move.l		(a0)+,(a1)
+
+	rts
 
 
 ;==============================================================================
