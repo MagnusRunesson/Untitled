@@ -5,8 +5,12 @@ main:
 	jsr			memGetUserBaseAddress(pc)	;
 	move.l		a0,a2					; a2 will be user mem from now on
 
-	lea			testtiles_image(pc),a0
-	bsr.w		imgLoad
+	move.l		#fileid_testtiles_palette,d0
+	moveq		#0,d1
+	jsr			rendLoadPalette(pc)
+
+	move.l		#fileid_testtiles_bank,d0
+	jsr			rendLoadTileBank(pc)
 
 	move.l		#fileid_testmap_map,d0
 	move.l		#0,d1
