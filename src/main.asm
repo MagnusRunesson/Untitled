@@ -1,10 +1,28 @@
-main:
-	move.l		#0,d2						; d2 = x scroll position for background layer
-	move.l		#0,d3						; d3 = y scroll position for background layer
+	rsreset
+_HeroSprite_Handle		rs.l		1
+_HeroSprite_PosX		rs.w		1
+_HeroSprite_PosY		rs.w		1
+_Camera_PosX			rs.w		1
+_Camera_PosY			rs.w		1
 
+
+
+main:
+	;
 	jsr			memGetUserBaseAddress(pc)	;
 	move.l		a0,a2						; a2 will be user mem from now on
 
+	;
+	; Setup local variables
+	;
+	move		#0,_HeroSprite_PosX(a2)
+	move		#0,_HeroSprite_PosY(a2)
+	move		#0,_Camera_PosX(a2)
+	move		#0,_Camera_PosY(a2)
+
+	;
+	; Load world graphics
+	;
 	move.l		#fileid_testtiles_palette,d0
 	moveq		#0,d1
 	jsr			rendLoadPalette(pc)
@@ -16,13 +34,20 @@ main:
 	move.l		#0,d1
 	jsr			rendLoadTileMap(pc)
 
-	move.l		#fileid_herotest_sprite_chunky,d0
-	move.l		#fileid_herotest_sprite,d1
-	bsr.w		rendLoadSprite
-
+	;
+	; Load the potion sprite
+	;
 	move.l		#fileid_testsprite2_sprite_chunky,d0
 	move.l		#fileid_testsprite2_sprite,d1
 	bsr.w		rendLoadSprite
+
+	;
+	; Load the hero sprite
+	;
+	move.l		#fileid_herotest_sprite_chunky,d0
+	move.l		#fileid_herotest_sprite,d1
+	bsr.w		rendLoadSprite
+	move.l		d0,_HeroSprite_Handle(a2)	; Retain the handle to the hero sprite
 
 .loop:
 	jsr			inpUpdate(pc)				; Return the currently pressed buttons in d0
@@ -42,11 +67,11 @@ main:
 	bra			.scroll_updown
 
 .scroll_left:
-	subq.w		#1,d2
+	subq.w		#1,_HeroSprite_PosX(a2)
 	bra			.scroll_updown
 
 .scroll_right:
-	addq.w		#1,d2
+	addq.w		#1,_HeroSprite_PosX(a2)
 	bra			.scroll_updown
 
 .scroll_updown:
@@ -59,11 +84,11 @@ main:
 	bra			.done
 
 .scroll_up:
-	subq.w		#1,d3
+	subq.w		#1,_HeroSprite_PosY(a2)
 	bra			.done
 
 .scroll_down:
-	addq.w		#1,d3
+	addq.w		#1,_HeroSprite_PosY(a2)
 	bra			.done
 
 .change_picture_0
@@ -88,19 +113,15 @@ main:
 ;.perf_loop_test:
 ;	dbra		d1,.perf_loop_test
 
-	push		d2
-
-	move		#0,d0		; d0 should be sprite index
-	move.l		d2,d1		; d1 should be x position
-	move.l		d3,d2		; d2 should be y position
+	move.l		_HeroSprite_Handle(a2),d0	; d0 should be sprite index
+	move		_HeroSprite_PosX(a2),d1		; d1 should be x position
+	move		_HeroSprite_PosY(a2),d2		; d2 should be y position
 	jsr			rendSetSpritePosition(pc)
 
 	; Update scrolling position
 	;move.l		d2,d0					; x position
 	;move.l		d3,d1					; y position
 	;jsr			rendSetScrollXY(pc)			; d0=x position, d1=y position
-
-	pop			d2
 
 	;
 	bra			.loop
