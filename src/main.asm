@@ -131,8 +131,7 @@ main:
 ;.perf_loop_test:
 ;	dbra		d1,.perf_loop_test
 
-	;push		d2
-	move.l		d2,-(sp)
+	push		d2
 
 	nop
 	nop
@@ -152,8 +151,7 @@ main:
 	;move.l		d3,d1					; y position
 	;jsr			rendSetScrollXY(pc)			; d0=x position, d1=y position
 
-	;pop			d2
-	move.l		(sp)+,d2
+	pop			d2
 
 	;
 	bra			.loop
