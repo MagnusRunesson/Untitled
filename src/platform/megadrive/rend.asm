@@ -47,14 +47,6 @@ move_vram_addr	MACRO
 	move.l		#((((\1)&$3fff)<<16)+(((\1)>>14)&3))|(1<<30),\2
 	ENDM
 
-push			MACRO
-	move.l		\1,-(sp)
-	ENDM
-
-pop				MACRO
-	move.l		(sp)+,\1
-	ENDM
-
 rendInit:
 	move.l		#0,(VarNextSpriteSlot)
 	move.l		#0,(VarLockedSpriteSlot)

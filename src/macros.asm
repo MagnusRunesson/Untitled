@@ -18,3 +18,24 @@ usermem_end			=	usermem_size
 gommem_base			= 	usermem_size
 gommem_size			=	$0100
 gommem_end			=	gommem_base+gommem_size
+
+;
+; Will decrement the stack pointer and write a register to the new address
+;
+; Usage:
+; push		d0
+;
+push			MACRO
+	move.l		\1,-(sp)
+	ENDM
+
+;
+; Will write a value from the current stack address into a register, and then increment the stack pointer
+;
+; Usage:
+; pop		d0
+;
+pop				MACRO
+	move.l		(sp)+,\1
+	ENDM
+
