@@ -126,6 +126,11 @@ rendWaitVSync:
 ;
 ;==============================================================================
 rendSetScrollXY:
+	and			#511,d0
+	and			#511,d1
+	muls		#-1,d0
+	add			#512,d0
+
 	; Setup CPU registers and VDP auto increment register
 	move.l		#$00C00000,a0		; Throughout all my code I'll use A4
 	move.l		#$00C00004,a1		; for the VDP data port and A5 for the
