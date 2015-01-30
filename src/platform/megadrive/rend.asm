@@ -356,6 +356,44 @@ rendSetSpritePosition:
 
 ;==============================================================================
 ;
+; Set which frame of a sprite animation that should be shown
+;
+; d0=Sprite ID
+; d1=Frame index
+;
+;==============================================================================
+rendSetSpriteFrame:
+	push		d2
+
+	push		d0							; Retain the sprite ID on the stack, for later
+
+	mulu		#_cpu_sprite_size,d0		; Calculate the byte offset to the sprite data
+	move.l		#VarHWSprites,d2			; Get base address to the sprite mirror table
+	add			d0,d2						; Add the offset to the sprite index before d0
+	move.l		d2,a0						; We want to address it
+	; now a0 point to the address of this sprites mirror
+
+	; d1 is the frame index. Convert that into tile
+	; index offset from where it was loaded.
+	mulu		#4,d1						; #4 needs to be read from somewhere, so we know how many tiles an individual frame is
+
+	add.w		_cpu_sprite_tileid(a0),d1	; Apply the original offset from when the sprite was loaded
+
+	move.w		4(a0),d0					; Read from the sprite mirror into d0
+	and.w		#$f800,d0					; Remove the previous tile settings
+	or.w		d1,d0						; Apply the new tile ID
+	move.w		d0,4(a0)					; Update the CPU mirror
+
+	pop			d0							; Pop the sprite ID from the stack
+	jsr			_rendCopySpriteToVRAM_Index	;
+
+	pop			d2
+
+	rts
+
+
+;==============================================================================
+;
 ; Load a tile map into VRAM
 ;
 ; d0=file ID of tile bank file to load into VRAM
