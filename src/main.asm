@@ -1,9 +1,9 @@
 	rsreset
-_HeroSprite_Handle		rs.l		1
-_HeroSprite_PosX		rs.w		1
-_HeroSprite_PosY		rs.w		1
-_Camera_PosX			rs.w		1
-_Camera_PosY			rs.w		1
+_hero_sprite_handle		rs.l		1
+_hero_sprite_pos_x		rs.w		1
+_hero_sprite_pos_y		rs.w		1
+_camera_pos_x			rs.w		1
+_camera_pos_y			rs.w		1
 
 
 
@@ -15,10 +15,10 @@ main:
 	;
 	; Setup local variables
 	;
-	move		#0,_HeroSprite_PosX(a2)
-	move		#0,_HeroSprite_PosY(a2)
-	move		#0,_Camera_PosX(a2)
-	move		#0,_Camera_PosY(a2)
+	move		#0,_hero_sprite_pos_x(a2)
+	move		#0,_hero_sprite_pos_y(a2)
+	move		#0,_camera_pos_x(a2)
+	move		#0,_camera_pos_y(a2)
 
 	;
 	; Load world graphics
@@ -47,7 +47,7 @@ main:
 	move.l		#fileid_herotest_sprite_chunky,d0
 	move.l		#fileid_herotest_sprite,d1
 	bsr.w		rendLoadSprite
-	move.l		d0,_HeroSprite_Handle(a2)	; Retain the handle to the hero sprite
+	move.l		d0,_hero_sprite_handle(a2)	; Retain the handle to the hero sprite
 
 .main_loop:
 	bsr			_inputUpdate
@@ -68,11 +68,11 @@ main:
 	; Transform hero sprite position from world space
 	; to screen space and update hero sprite position
 	;
-	move		_Camera_PosX(a2),d3
-	move		_Camera_PosY(a2),d4
-	move.l		_HeroSprite_Handle(a2),d0	; d0 should be sprite index
-	move		_HeroSprite_PosX(a2),d1		; d1 should be x position
-	move		_HeroSprite_PosY(a2),d2		; d2 should be y position
+	move		_camera_pos_x(a2),d3
+	move		_camera_pos_y(a2),d4
+	move.l		_hero_sprite_handle(a2),d0	; d0 should be sprite index
+	move		_hero_sprite_pos_x(a2),d1		; d1 should be x position
+	move		_hero_sprite_pos_y(a2),d2		; d2 should be y position
 	sub			d3,d1
 	sub			d4,d2
 
@@ -83,8 +83,8 @@ main:
 	;
 	clr			d0
 	clr			d1
-	move		_Camera_PosX(a2),d0
-	move		_Camera_PosY(a2),d1
+	move		_camera_pos_x(a2),d0
+	move		_camera_pos_y(a2),d1
 	jsr			rendSetScrollXY(pc)			; d0=x position, d1=y position
 
 	nop
@@ -117,11 +117,11 @@ _inputUpdate:
 	bra			.scroll_updown
 
 .scroll_left:
-	subq.w		#1,_HeroSprite_PosX(a2)
+	subq.w		#1,_hero_sprite_pos_x(a2)
 	bra			.scroll_updown
 
 .scroll_right:
-	addq.w		#1,_HeroSprite_PosX(a2)
+	addq.w		#1,_hero_sprite_pos_x(a2)
 	bra			.scroll_updown
 
 .scroll_updown:
@@ -134,11 +134,11 @@ _inputUpdate:
 	bra			.done
 
 .scroll_up:
-	subq.w		#1,_HeroSprite_PosY(a2)
+	subq.w		#1,_hero_sprite_pos_y(a2)
 	bra			.done
 
 .scroll_down:
-	addq.w		#1,_HeroSprite_PosY(a2)
+	addq.w		#1,_hero_sprite_pos_y(a2)
 	bra			.done
 
 .change_picture_0
@@ -164,8 +164,8 @@ _inputUpdate:
 ; player sprite around, but not go out of bounds
 ;
 _cameraUpdate:
-	move		_Camera_PosX(a2),d0
-	move		_HeroSprite_PosX(a2),d1
+	move		_camera_pos_x(a2),d0
+	move		_hero_sprite_pos_x(a2),d1
 
 	;
 	; Check if player is too far left
@@ -181,11 +181,11 @@ _cameraUpdate:
 	bge			.left_ok
 	clr			d0
 .left_ok:
-	move		d0,_Camera_PosX(a2)		; If we need to adjust the camera then d2 will be a negative value, hence moving the camera to the left when we add d2 to the camera position
+	move		d0,_camera_pos_x(a2)		; If we need to adjust the camera then d2 will be a negative value, hence moving the camera to the left when we add d2 to the camera position
 	bra			.check_vertical_adjust
 
 .no_adjust_left:
-	move		_HeroSprite_PosX(a2),d1
+	move		_hero_sprite_pos_x(a2),d1
 
 
 	;
@@ -213,15 +213,15 @@ _cameraUpdate:
 	ble			.right_ok
 	move		#512-320,d0
 .right_ok:
-	move		d0,_Camera_PosX(a2)		; If we need to adjust the camera then d2 will be a negative value, hence moving the camera to the left when we add d2 to the camera position
+	move		d0,_camera_pos_x(a2)		; If we need to adjust the camera then d2 will be a negative value, hence moving the camera to the left when we add d2 to the camera position
 .no_adjust_right:
 
 
 
 
 .check_vertical_adjust:
-	move		_Camera_PosY(a2),d0
-	move		_HeroSprite_PosY(a2),d1
+	move		_camera_pos_y(a2),d0
+	move		_hero_sprite_pos_y(a2),d1
 
 	;
 	; Check if player is too far left
@@ -237,11 +237,11 @@ _cameraUpdate:
 	bge			.up_ok
 	clr			d0
 .up_ok:
-	move		d0,_Camera_PosY(a2)		; If we need to adjust the camera then d2 will be a negative value, hence moving the camera to the left when we add d2 to the camera position
+	move		d0,_camera_pos_y(a2)		; If we need to adjust the camera then d2 will be a negative value, hence moving the camera to the left when we add d2 to the camera position
 	bra			.done
 
 .no_adjust_up:
-	move		_HeroSprite_PosY(a2),d1
+	move		_hero_sprite_pos_y(a2),d1
 
 
 	;
@@ -269,7 +269,7 @@ _cameraUpdate:
 	ble			.down_ok
 	move		#512-224,d0
 .down_ok:
-	move		d0,_Camera_PosY(a2)		; If we need to adjust the camera then d2 will be a negative value, hence moving the camera to the left when we add d2 to the camera position
+	move		d0,_camera_pos_y(a2)		; If we need to adjust the camera then d2 will be a negative value, hence moving the camera to the left when we add d2 to the camera position
 .no_adjust_down:
 
 
