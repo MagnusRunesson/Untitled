@@ -161,18 +161,16 @@ _input_update:
 ;
 _camera_update:
 	move		_Camera_PosX(a2),d0
-	move		_Camera_PosY(a2),d1
-	move		_HeroSprite_PosX(a2),d2
-	move		_HeroSprite_PosY(a2),d3
+	move		_HeroSprite_PosX(a2),d1
 
 	;
 	; Check if player is too far left
 	;
-	sub			d0,d2					; d2 = CameraX - HeroSpriteX		(30-40=10 pixels to the left)
-	sub			#96,d2					; delta -= padding					(10-32=-22)
-	cmp			#0,d2					;
+	sub			d0,d1					; d2 = CameraX - HeroSpriteX		(30-40=10 pixels to the left)
+	sub			#96,d1					; delta -= padding					(10-32=-22)
+	cmp			#0,d1					;
 	bge			.no_adjust_left
-	add			d2,d0
+	add			d1,d0
 
 	; Now when we've adjust the camera to the left we need to make sure it isn't too far off to the left
 	cmp			#0,d0
@@ -183,7 +181,7 @@ _camera_update:
 	bra			.check_vertical_adjust
 
 .no_adjust_left:
-	move		_HeroSprite_PosX(a2),d2
+	move		_HeroSprite_PosX(a2),d1
 
 
 	;
@@ -200,11 +198,11 @@ _camera_update:
 	;
 	;
 
-	sub			d0,d2					; d2 = CameraX - HeroSpriteX		(30-40=10 pixels to the left)
-	sub			#320-96-16,d2					; delta -= padding					(10-32=-22)
-	cmp			#0,d2					;
+	sub			d0,d1					; d2 = CameraX - HeroSpriteX		(30-40=10 pixels to the left)
+	sub			#320-96-16,d1					; delta -= padding					(10-32=-22)
+	cmp			#0,d1					;
 	ble			.no_adjust_right
-	add			d2,d0
+	add			d1,d0
 
 	; Now when we've adjust the camera to the left we need to make sure it isn't too far off to the left
 	cmp			#512-320,d0
@@ -213,7 +211,7 @@ _camera_update:
 .right_ok:
 	move		d0,_Camera_PosX(a2)		; If we need to adjust the camera then d2 will be a negative value, hence moving the camera to the left when we add d2 to the camera position
 .no_adjust_right:
-	move		_HeroSprite_PosX(a2),d2
+	move		_HeroSprite_PosX(a2),d1
 
 
 
