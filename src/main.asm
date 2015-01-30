@@ -8,16 +8,18 @@ camera_padding_horizontal	equ			96
 camera_padding_vertical		equ			64
 
 	rsreset
-_hero_sprite_handle			rs.l		1
+_hero_go_handle				rs.l		1
 _hero_sprite_pos_x			rs.w		1
 _hero_sprite_pos_y			rs.w		1
 _camera_pos_x				rs.w		1
 _camera_pos_y				rs.w		1
-_potion_sprite_handle		rs.w		1
+_potion_go_handle		rs.w		1
 _testanim_time				rs.w		1
 
 
 main:
+	jsr			gomInit(pc)
+
 	;
 	jsr			memGetUserBaseAddress(pc)	;
 	move.l		a0,a2						; a2 will be user mem from now on
@@ -52,20 +54,18 @@ main:
 	jsr			rendLoadTileMap(pc)
 
 	;
-	; Load the potion sprite
+	; Load the potion game object
 	;
-	move.l		#fileid_testsprite2_sprite_chunky,d0
-	move.l		#fileid_testsprite2_sprite,d1
-	bsr.w		rendLoadSprite
-	move.l		d0,_potion_sprite_handle(a2)
+	lea			potion_go(pc),a0
+	jsr			gomLoadObject(pc)
+	move.l		d0,_potion_go_handle(a2)
 
 	;
-	; Load the hero sprite
+	; Load the hero game object
 	;
-	move.l		#fileid_herotest_sprite_chunky,d0
-	move.l		#fileid_herotest_sprite,d1
-	bsr.w		rendLoadSprite
-	move.l		d0,_hero_sprite_handle(a2)	; Retain the handle to the hero sprite
+	lea			hero_go(pc),a0
+	jsr			gomLoadObject(pc)
+	move.l		d0,_hero_go_handle(a2)
 
 .main_loop:
 	bsr			_inputUpdate
@@ -88,7 +88,7 @@ main:
 	;
 	move		_camera_pos_x(a2),d3
 	move		_camera_pos_y(a2),d4
-	move.l		_hero_sprite_handle(a2),d0	; d0 should be sprite index
+	move.l		_hero_go_handle(a2),d0	; d0 should be sprite index
 	move		_hero_sprite_pos_x(a2),d1		; d1 should be x position
 	move		_hero_sprite_pos_y(a2),d2		; d2 should be y position
 	sub			d3,d1
@@ -108,7 +108,7 @@ main:
 	;
 	; Update animation
 	;
-	move.w		_potion_sprite_handle(a2),d0
+	move.w		_potion_go_handle(a2),d0
 	move.w		_testanim_time(a2),d1
 	lsr			#4,d1
 	and			#1,d1
