@@ -64,23 +64,27 @@ main:
 ;.perf_loop_test:
 ;	dbra		d1,.perf_loop_test
 
+	;
+	; Transform hero sprite position from world space
+	; to screen space and update hero sprite position
+	;
 	move		_Camera_PosX(a2),d3
 	move		_Camera_PosY(a2),d4
 	move.l		_HeroSprite_Handle(a2),d0	; d0 should be sprite index
 	move		_HeroSprite_PosX(a2),d1		; d1 should be x position
 	move		_HeroSprite_PosY(a2),d2		; d2 should be y position
 	sub			d3,d1
+	sub			d4,d2
+
 	jsr			rendSetSpritePosition(pc)
 
-	nop
-	nop
-
+	;
+	; Update background position
+	;
 	clr			d0
 	clr			d1
 	move		_Camera_PosX(a2),d0
-	; Update scrolling position
-	;move.l		d2,d0					; x position
-	;move.l		d3,d1					; y position
+	move		_Camera_PosY(a2),d1
 	jsr			rendSetScrollXY(pc)			; d0=x position, d1=y position
 
 	nop
@@ -211,13 +215,63 @@ _camera_update:
 .right_ok:
 	move		d0,_Camera_PosX(a2)		; If we need to adjust the camera then d2 will be a negative value, hence moving the camera to the left when we add d2 to the camera position
 .no_adjust_right:
-	move		_HeroSprite_PosX(a2),d1
 
 
 
 
 .check_vertical_adjust:
+	move		_Camera_PosY(a2),d0
+	move		_HeroSprite_PosY(a2),d1
+
+	;
+	; Check if player is too far left
+	;
+	sub			d0,d1					; d2 = CameraX - HeroSpriteX		(30-40=10 pixels to the left)
+	sub			#64,d1					; delta -= padding					(10-32=-22)
+	cmp			#0,d1					;
+	bge			.no_adjust_up
+	add			d1,d0
+
+	; Now when we've adjust the camera to the left we need to make sure it isn't too far off to the left
+	cmp			#0,d0
+	bge			.up_ok
+	clr			d0
+.up_ok:
+	move		d0,_Camera_PosY(a2)		; If we need to adjust the camera then d2 will be a negative value, hence moving the camera to the left when we add d2 to the camera position
+	bra			.done
+
+.no_adjust_up:
+	move		_HeroSprite_PosY(a2),d1
 
 
+	;
+	; Check if player is too far to the right
+	;
 
+	;
+	; CameraX = 10
+	; Camera width = 320
+	; PlayerX = 340
+	; Then player is 10 pixels off screen to the right
+	; PlayerX-CameraX-CameraWidth=10
+	;
+	;
+	;
+
+	sub			d0,d1					; d2 = CameraX - HeroSpriteX		(30-40=10 pixels to the left)
+	sub			#224-64-16,d1			; delta -= padding					(10-32=-22)
+	cmp			#0,d1					;
+	ble			.no_adjust_down
+	add			d1,d0
+
+	; Now when we've adjust the camera to the left we need to make sure it isn't too far off to the left
+	cmp			#512-224,d0
+	ble			.down_ok
+	move		#512-224,d0
+.down_ok:
+	move		d0,_Camera_PosY(a2)		; If we need to adjust the camera then d2 will be a negative value, hence moving the camera to the left when we add d2 to the camera position
+.no_adjust_down:
+
+
+.done:
 	rts
