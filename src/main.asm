@@ -50,8 +50,8 @@ main:
 	move.l		d0,_HeroSprite_Handle(a2)	; Retain the handle to the hero sprite
 
 .main_loop:
-	bsr			_input_update
-	bsr			_camera_update
+	bsr			_inputUpdate
+	bsr			_cameraUpdate
 
 	perf_stop
 	jsr			rendWaitVSync(pc)
@@ -99,7 +99,7 @@ main:
 ;
 ; Ask hardware for the input and act on it
 ;
-_input_update:
+_inputUpdate:
 	jsr			inpUpdate(pc)				; Return the currently pressed buttons in d0
 
 	btst		#INPUT_ACTION,d0
@@ -163,7 +163,7 @@ _input_update:
 ; Updates the camera. The camera will follow the
 ; player sprite around, but not go out of bounds
 ;
-_camera_update:
+_cameraUpdate:
 	move		_Camera_PosX(a2),d0
 	move		_HeroSprite_PosX(a2),d1
 
