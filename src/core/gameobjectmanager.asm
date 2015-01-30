@@ -81,24 +81,37 @@ gomInit:
 ;==============================================================================
 
 gomLoadObject:
-	stack_alloc			8
-	stack_write.l		a0,0
-
-	jsr					memGetGameObjectManagerBaseAddress(pc)
-	move.w				_gom_numobjects(a0),d0
-	add.w				#1,_gom_numobjects(a0)
-
-	; Allocate a game object first
-
-	stack_read.l		a0,0
-
+	; First we load the sprite, while the registers are untouched
 	clr					d0
 	clr					d1
 	move.w				(a0)+,d0			; Read the file ID for the sprite tiles into d0
 	move.w				(a0)+,d1			; Read the file ID for the sprite definition into d1
 	jsr					rendLoadSprite(pc)	;
 
-	stack_free			8
+	; Fetch the address to the game object manager
+	jsr					memGetGameObjectManagerBaseAddress(pc)
+	; Now a0 is the address to the game object manager
+
+	; Find the next free game object ID
+	move.w				_gom_numobjects(a0),d0
+
+	; "Allocate" the object ID
+	add.w				#1,_gom_numobjects(a0)
+
+	; Now we have an object ID, wen can turn that into an address for our object data
+	move				d0,d1
+	mulu				#_go_size,d1			; First we take the ID and turn into a byte offset from the game object manager base memory
+	add.l				#_gom_gameobjects,a0	; a0 is the gom base address, so offset that into the game objects array
+	add.l				d1,a0					; From the game object array, go to the specific game object
+	; Current register status at this point
+	; a0=the data for this specific game object
+	; d0=the object ID for the game object we're working on
+	; a1=unused
+	; d1=unused
+
+	; Retain the sprite handle in this game object
+	move.w				d0,_go_sprite_handle(a0)
+
 	rts
 
 
