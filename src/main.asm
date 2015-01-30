@@ -13,7 +13,8 @@ _hero_sprite_pos_x			rs.w		1
 _hero_sprite_pos_y			rs.w		1
 _camera_pos_x				rs.w		1
 _camera_pos_y				rs.w		1
-
+_potion_sprite_handle		rs.w		1
+_testanim_time				rs.w		1
 
 
 main:
@@ -28,6 +29,9 @@ main:
 	move		#0,_hero_sprite_pos_y(a2)
 	move		#0,_camera_pos_x(a2)
 	move		#0,_camera_pos_y(a2)
+
+	;
+	move		#0,_testanim_time(a2)
 
 	;
 	; Load world graphics
@@ -53,6 +57,7 @@ main:
 	move.l		#fileid_testsprite2_sprite_chunky,d0
 	move.l		#fileid_testsprite2_sprite,d1
 	bsr.w		rendLoadSprite
+	move.l		d0,_potion_sprite_handle(a2)
 
 	;
 	; Load the hero sprite
@@ -100,8 +105,24 @@ main:
 	move		_camera_pos_y(a2),d1
 	jsr			rendSetScrollXY(pc)			; d0=x position, d1=y position
 
+	;
+	; Update animation
+	;
+	move.w		_potion_sprite_handle(a2),d0
+	move.w		_testanim_time(a2),d1
+	lsr			#4,d1
+	and			#1,d1
+	jsr			rendSetSpriteFrame
+
+	; Increment animation time
+	move.w		_testanim_time(a2),d0
+	add.w		#1,d0
+	and.w		#$ff,d0
+	move.w		d0,_testanim_time(a2)
+
 	nop
 	nop
+
 
 	;
 	bra			.main_loop
