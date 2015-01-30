@@ -112,6 +112,10 @@ gomLoadObject:
 	; Retain the sprite handle in this game object
 	move.w				d0,_go_sprite_handle(a0)
 
+	; Setup default values for our new game object
+	move.w				#0,_go_anim_time(a0)
+	move.w				#0,_go_world_pos_x(a0)
+	move.w				#0,_go_world_pos_y(a0)
 	rts
 
 
