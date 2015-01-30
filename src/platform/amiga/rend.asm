@@ -56,6 +56,19 @@ rendSetSpritePosition:
 
 ;==============================================================================
 ;
+; Set which frame of a sprite animation that should be shown
+;
+; d0=Sprite ID
+; d1=Frame index
+;
+;==============================================================================
+
+rendSetSpriteFrame:
+	rts
+
+
+;==============================================================================
+;
 ; Load a tile bank into VRAM
 ;
 ; d0=file ID of tile bank file to load into VRAM
