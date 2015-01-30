@@ -36,8 +36,7 @@ mainbegin
 	
 	include		"../src/incbin/files.asm"
 
-	include		"../src/incbin/untitled_splash_image.asm"
-	include		"../src/incbin/testtiles_image.asm"
+	include		"../src/incasm/data.asm"
 	
 	cnop		0,_chunk_size
 	
