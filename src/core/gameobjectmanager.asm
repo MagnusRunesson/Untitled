@@ -26,6 +26,7 @@ _go_world_pos_x		rs.w		1							; Game object world X position
 _go_world_pos_y		rs.w		1							; Game object world Y position
 _go_sprite_handle	rs.w		1							; Hardware sprite handle for the associated sprite
 _go_anim_time		rs.w		1							; Current animation time
+_go_sort			rs.w		1							; Sort value for object compared to other objects. Haven't decided if lower sort means drawn before or after higher sort values
 _go_size			rs.w		1
 
 ;
@@ -116,6 +117,8 @@ gomLoadObject:
 	move.w				#0,_go_anim_time(a0)
 	move.w				#0,_go_world_pos_x(a0)
 	move.w				#0,_go_world_pos_y(a0)
+	move.w				#0,_go_sort(a0)
+
 	rts
 
 
