@@ -255,6 +255,9 @@ rendLoadSprite:
 	; a0=Address of the sprite hw attribute table mirror for the sprite that was allocated
 	jsr				_rendSetSpriteTileID_Address
 
+	; We also want to retain the tile ID in the CPU sprite memory
+	move.w			d0,_cpu_sprite_tileid(a0)
+
 	; Load the sprite information file to get the dimensions of the sprite
 	; Read the file ID from the stack
 	stack_read.l	d0,4
