@@ -17,6 +17,13 @@
 rend_num_sprites		= 80
 hw_sprite_byte_size		= 8
 
+;
+;
+;
+	rsreset
+_cpu_sprite_mirror		rs.b		8
+_cpu_sprite_tileid		rs.w		1
+_cpu_sprite_size		rs.l		1
 
 ;
 ; CPU Memory map
@@ -28,7 +35,7 @@ VarNextSpriteAddress	so.l	1										; The address where the last loaded sprite 
 VarLockedSpriteAddress	so.l	1										; Locked address where we can free tiles to
 VarNextSpriteSlot		so.l	1										; Next available sprite index in our sprite tables
 VarLockedSpriteSlot		so.l	1										; Locked sprite index for free
-VarHWSprites			so.b	hw_sprite_byte_size*rend_num_sprites	; This will never be greater than $280. The hardware sprite attribute size won't change and there will never be more than 80 sprites.
+VarHWSprites			so.b	_cpu_sprite_size*rend_num_sprites		; This is reserved to the cpu ram mirror of the VRAM
 	clrso
 
 ;
@@ -67,7 +74,7 @@ rendInit:
 
 	; Clear all mirror sprites
 	move.l		#0,d0
-	move.l		#(hw_sprite_byte_size*rend_num_sprites/4)-1,d1
+	move.l		#(_cpu_sprite_size*rend_num_sprites/4)-1,d1
 	move.l		#VarHWSprites,a0
 
 .clear_loop:
@@ -234,7 +241,7 @@ rendLoadSprite:
 	add.l			#1,(VarNextSpriteSlot)
 
 	; Find address of sprite attributes mirror and renderer sprite data
-	mulu			#hw_sprite_byte_size,d1
+	mulu			#_cpu_sprite_size,d1
 	add.l			#VarHWSprites,d1
 	move.l			d1,a0
 	; Now a0 points to somewhere in the sprite attributes mirror table
@@ -318,21 +325,21 @@ rendLoadSprite:
 ;==============================================================================
 rendSetSpritePosition:
 	push		d3
-	push		d1					; Push X coordinate to stack
+	push		d1						; Push X coordinate to stack
 
-	move.l		d0,d3				; Retain the sprite slot index in d3
-	mulu		#8,d0				; Calculate the byte offset to the sprite data
+	move.l		d0,d3					; Retain the sprite slot index in d3
+	mulu		#_cpu_sprite_size,d0	; Calculate the byte offset to the sprite data
 
 	;
-	move.l		#VarHWSprites,d1	; Get base address to the sprite mirror table
-	add			d0,d1				; Add the offset to the sprite index before d0
-	move.l		d1,a0				; We want to address it
+	move.l		#VarHWSprites,d1		; Get base address to the sprite mirror table
+	add			d0,d1					; Add the offset to the sprite index before d0
+	move.l		d1,a0					; We want to address it
 
 	; a0 is now the address to the sprite slot in the sprite mirror table
 	; d0 is garbage
 	; d1 is garbage
 	; d2 is the Y position
-	pop			d0					; Pop X coordinate from stack
+	pop			d0						; Pop X coordinate from stack
 	move.l		d2,d1
 	jsr			_rendSetSpritePosition_Address
 
@@ -576,16 +583,16 @@ _rendSetSpritePosition_Address:
 ;==============================================================================
 _rendAddSprite_Index:
 	push		d2
-	move.l		d0,d2				; Retain the sprite slot index in d2
+	move.l		d0,d2					; Retain the sprite slot index in d2
 
-	sub.l		#1,d0				; We actually want to modify
-									; the sprite BEFORE this
-	mulu		#8,d0				; Calculate the byte offset to the sprite data
+	sub.l		#1,d0					; We actually want to modify
+										; the sprite BEFORE this
+	mulu		#_cpu_sprite_size,d0	; Calculate the byte offset to the sprite data
 
 	;
-	move.l		#VarHWSprites,d1	; Get base address to the sprite mirror table
-	add			d0,d1				; Add the offset to the sprite index before d0
-	move.l		d1,a0				; We want to address it
+	move.l		#VarHWSprites,d1		; Get base address to the sprite mirror table
+	add			d0,d1					; Add the offset to the sprite index before d0
+	move.l		d1,a0					; We want to address it
 
 	; a0 is now the address to the sprite slot in the sprite mirror table
 	; d2 is the sprite index
@@ -613,7 +620,7 @@ _rendCopySpriteToVRAM_Index:
 	push		d0
 
 	move.l		#VRAM_SpriteAttributes_Start,d1
-	mulu		#8,d0
+	mulu		#hw_sprite_byte_size,d0
 	add.l		d1,d0
 	jsr			_rendIntegerToVRAMAddress
 	; Now d0 is the destination address in VRAM
@@ -624,7 +631,7 @@ _rendCopySpriteToVRAM_Index:
 
 	; Get the source address
 	pop			d0
-	mulu		#8,d0
+	mulu		#_cpu_sprite_size,d0
 	add.l		#VarHWSprites,d0
 	move.l		d0,a0
 	; Now a0 is the source
