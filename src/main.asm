@@ -1,9 +1,18 @@
+screen_width				equ			320
+screen_height				equ			224
+
+room_width					equ			512
+room_height					equ			512
+
+camera_padding_horizontal	equ			96
+camera_padding_vertical		equ			64
+
 	rsreset
-_hero_sprite_handle		rs.l		1
-_hero_sprite_pos_x		rs.w		1
-_hero_sprite_pos_y		rs.w		1
-_camera_pos_x			rs.w		1
-_camera_pos_y			rs.w		1
+_hero_sprite_handle			rs.l		1
+_hero_sprite_pos_x			rs.w		1
+_hero_sprite_pos_y			rs.w		1
+_camera_pos_x				rs.w		1
+_camera_pos_y				rs.w		1
 
 
 
@@ -170,9 +179,9 @@ _cameraUpdate:
 	;
 	; Check if player is too far left
 	;
-	sub			d0,d1					; d2 = CameraX - HeroSpriteX		(30-40=10 pixels to the left)
-	sub			#96,d1					; delta -= padding					(10-32=-22)
-	cmp			#0,d1					;
+	sub			d0,d1								; d2 = CameraX - HeroSpriteX		(30-40=10 pixels to the left)
+	sub			#camera_padding_horizontal,d1		; delta -= padding					(10-32=-22)
+	cmp			#0,d1								;
 	bge			.no_adjust_left
 	add			d1,d0
 
@@ -202,16 +211,16 @@ _cameraUpdate:
 	;
 	;
 
-	sub			d0,d1					; d2 = CameraX - HeroSpriteX		(30-40=10 pixels to the left)
-	sub			#320-96-16,d1					; delta -= padding					(10-32=-22)
-	cmp			#0,d1					;
+	sub			d0,d1													; d2 = CameraX - HeroSpriteX		(30-40=10 pixels to the left)
+	sub			#screen_width-camera_padding_horizontal-16,d1			; delta -= padding					(10-32=-22)
+	cmp			#0,d1													;
 	ble			.no_adjust_right
 	add			d1,d0
 
 	; Now when we've adjust the camera to the left we need to make sure it isn't too far off to the left
-	cmp			#512-320,d0
+	cmp			#room_width-screen_width,d0
 	ble			.right_ok
-	move		#512-320,d0
+	move		#room_width-screen_width,d0
 .right_ok:
 	move		d0,_camera_pos_x(a2)		; If we need to adjust the camera then d2 will be a negative value, hence moving the camera to the left when we add d2 to the camera position
 .no_adjust_right:
@@ -226,9 +235,9 @@ _cameraUpdate:
 	;
 	; Check if player is too far left
 	;
-	sub			d0,d1					; d2 = CameraX - HeroSpriteX		(30-40=10 pixels to the left)
-	sub			#64,d1					; delta -= padding					(10-32=-22)
-	cmp			#0,d1					;
+	sub			d0,d1							; d2 = CameraX - HeroSpriteX		(30-40=10 pixels to the left)
+	sub			#camera_padding_vertical,d1		; delta -= padding					(10-32=-22)
+	cmp			#0,d1							;
 	bge			.no_adjust_up
 	add			d1,d0
 
@@ -258,16 +267,16 @@ _cameraUpdate:
 	;
 	;
 
-	sub			d0,d1					; d2 = CameraX - HeroSpriteX		(30-40=10 pixels to the left)
-	sub			#224-64-16,d1			; delta -= padding					(10-32=-22)
-	cmp			#0,d1					;
+	sub			d0,d1													; d2 = CameraX - HeroSpriteX		(30-40=10 pixels to the left)
+	sub			#screen_height-camera_padding_vertical-16,d1			; delta -= padding					(10-32=-22)
+	cmp			#0,d1													;
 	ble			.no_adjust_down
 	add			d1,d0
 
 	; Now when we've adjust the camera to the left we need to make sure it isn't too far off to the left
-	cmp			#512-224,d0
+	cmp			#room_height-screen_height,d0
 	ble			.down_ok
-	move		#512-224,d0
+	move		#room_height-screen_height,d0
 .down_ok:
 	move		d0,_camera_pos_y(a2)		; If we need to adjust the camera then d2 will be a negative value, hence moving the camera to the left when we add d2 to the camera position
 .no_adjust_down:
