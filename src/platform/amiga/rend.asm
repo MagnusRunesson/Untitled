@@ -63,6 +63,9 @@ rendSetSpritePosition:
 ;==============================================================================
 
 rendLoadTileBank:
+	; fileLoad accept the file ID as d0, so no need to do any tricks here
+	_get_workmem_ptr	TilebankMem,a0
+	bsr					fileLoad
 	rts
 
 
@@ -78,6 +81,9 @@ rendLoadTileBank:
 ;==============================================================================
 
 rendLoadTileMap:
+	; fileLoad accept the file ID as d0, so no need to do any tricks here
+	_get_workmem_ptr	TilebankMem,a0
+	bsr					fileLoad
 	rts
 
 
