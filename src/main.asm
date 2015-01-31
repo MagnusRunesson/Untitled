@@ -75,6 +75,9 @@ main:
 	jsr			rendWaitVSync(pc)
 	perf_start
 
+	jsr			gomRender
+
+
 	;
 	; Slow loop to test performance thingie
 	;
@@ -86,21 +89,30 @@ main:
 	; Transform hero sprite position from world space
 	; to screen space and update hero sprite position
 	;
-	move		_camera_pos_x(a2),d3
-	move		_camera_pos_y(a2),d4
-	move.l		_hero_go_handle(a2),d0	; d0 should be sprite index
-	move		_hero_sprite_pos_x(a2),d1		; d1 should be x position
-	move		_hero_sprite_pos_y(a2),d2		; d2 should be y position
-	sub			d3,d1
-	sub			d4,d2
+	;move		_camera_pos_x(a2),d3
+	;move		_camera_pos_y(a2),d4
+	;move.l		_hero_go_handle(a2),d0	; d0 should be sprite index
+	;move		_hero_sprite_pos_x(a2),d1		; d1 should be x position
+	;move		_hero_sprite_pos_y(a2),d2		; d2 should be y position
+	;sub			d3,d1
+	;sub			d4,d2
 
-	jsr			rendSetSpritePosition(pc)
+	;jsr			rendSetSpritePosition(pc)
+
+	move.l		_hero_go_handle(a2),d0
+	move.w		_hero_sprite_pos_x(a2),d1
+	move.w		_hero_sprite_pos_y(a2),d2
+	jsr			gomSetPosition(pc)
 
 	;
 	; Update background position
 	;
-	clr			d0
-	clr			d1
+	;clr			d0
+	;clr			d1
+	move		_camera_pos_x(a2),d0
+	move		_camera_pos_y(a2),d1
+	jsr			gomSetCameraPosition(pc)
+	
 	move		_camera_pos_x(a2),d0
 	move		_camera_pos_y(a2),d1
 	jsr			rendSetScrollXY(pc)			; d0=x position, d1=y position
@@ -112,17 +124,13 @@ main:
 	move.w		_testanim_time(a2),d1
 	lsr			#4,d1
 	and			#1,d1
-	jsr			rendSetSpriteFrame
+	jsr			rendSetSpriteFrame(pc)
 
 	; Increment animation time
 	move.w		_testanim_time(a2),d0
 	add.w		#1,d0
 	and.w		#$ff,d0
 	move.w		d0,_testanim_time(a2)
-
-	nop
-	nop
-
 
 	;
 	bra			.main_loop
