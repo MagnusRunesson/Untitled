@@ -22,7 +22,6 @@
 		
 mainbeginstartsector	equ ((mainbegin-bootblockbegin)/TD_SECTOR)
 mainnumsectors			equ	((mainend-mainbegin)/TD_SECTOR)
-	printv mainnumsectors
 		
 	dc.b	'DOS',0
 	dc.l	0
