@@ -27,8 +27,7 @@ _go_world_pos_y		rs.w		1							; Game object world Y position
 _go_sprite_handle	rs.w		1							; Hardware sprite handle for the associated sprite
 _go_anim_time		rs.w		1							; Current animation time
 _go_sort			rs.w		1							; Sort value for object compared to other objects. Haven't decided if lower sort means drawn before or after higher sort values
-_go_size			rs.w		1
-
+_go_size			rs.w		0
 ;
 ; The state variables of the game object manager
 ;
@@ -38,8 +37,7 @@ _gom_watermark		rs.w		1							; To unload game objects
 _gom_camera_x		rs.w		1							; Camera world X position, so we can do world to screen transform
 _gom_camera_y		rs.w		1							; Camera world Y position, same reason as above
 _gom_gameobjects	rs.b		_gom_max_objects*_go_size	; All game objects goes here
-_gom_size			rs.w		1
-
+_gom_size			rs.w		0
 
 ;==============================================================================
 ;

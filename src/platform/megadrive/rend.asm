@@ -23,7 +23,7 @@ hw_sprite_byte_size		= 8
 	rsreset
 _cpu_sprite_mirror		rs.b		8
 _cpu_sprite_tileid		rs.w		1
-_cpu_sprite_size		rs.l		1
+_cpu_sprite_size		rs.l		0
 
 ;
 ; CPU Memory map
