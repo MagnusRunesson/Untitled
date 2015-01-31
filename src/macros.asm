@@ -13,6 +13,10 @@ push			MACRO
 	move.l		\1,-(sp)
 	ENDM
 
+pushm			MACRO
+	movem.l		\1,-(sp)
+	ENDM
+
 ;
 ; Will write a value from the current stack address into a register, and then increment the stack pointer
 ;
@@ -21,6 +25,10 @@ push			MACRO
 ;
 pop				MACRO
 	move.l		(sp)+,\1
+	ENDM
+
+popm			MACRO
+	movem.l		(sp)+,\1
 	ENDM
 
 
