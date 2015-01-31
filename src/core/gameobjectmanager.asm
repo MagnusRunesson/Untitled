@@ -120,8 +120,119 @@ gomLoadObject:
 
 	rts
 
+;==============================================================================
+;
+; Input
+;	d0=Game object handle
+;	d1=World position X
+;	d2=World position Y
+;
+;==============================================================================
+
+gomSetPosition:
+	jsr				memGetGameObjectManagerBaseAddress(pc)
+	add.l			#_gom_gameobjects,a0
+	mulu			#_go_size,d0
+	add.l			d0,a0
+	; a0 is now pointing to the game object instance
+
+	move.w			d1,_go_world_pos_x(a0)
+	move.w			d2,_go_world_pos_y(a0)
+
+	rts
 
 
+gomSetCameraPosition:
+	jsr				memGetGameObjectManagerBaseAddress(pc)
+	move			d0,_gom_camera_x(a0)
+	move			d1,_gom_camera_y(a0)
+	rts
+
+;==============================================================================
+;
+; Transform all world positions to screen
+; positions and refresh all sprite positions
+;
+;==============================================================================
+
+gomRender:
+	pushm			d2-d7/a2-a7
+
+	; Iterate over all game objects
+	; For each game object:
+	;	Transform them from world space to screen space
+	;	Push the new screen space position to the renderer
+
+	; Fetch the address to the game object manager
+	jsr				memGetGameObjectManagerBaseAddress(pc)
+	move.l			a0,a2
+	; Now a2 is the address to the game object manager
+
+	; Fetch the camera position
+	move.w			_gom_camera_x(a2),d3
+	move.w			_gom_camera_y(a2),d4
+
+	; Update the background position
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+
+	;clr.l			d0
+	;clr.l			d1
+	;move.w			d3,d0
+	;move.w			d4,d1
+	;jsr				rendSetScrollXY(pc)			; d0=x position, d1=y position
+
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+
+	; Fetch the number of game objects allocated.
+	clr.l			d5
+	move.w			_gom_numobjects(a0),d5
+	sub.w			#1,d5		; dbra needs to subtract one otherwise we'll loop too many times
+
+	; Calculate the address of the last object in the list (i.e., the
+	; object we will work on first, since the ID is going from max to 0)
+
+	; d2 is the game object ID
+	move.l			a2,a3			; a2 is the game object manager base address
+	add.w			#_gom_gameobjects,a3
+	move.w			d5,d0
+	mulu			#_go_size,d0
+	add.w			d0,a3
+
+	; d0 is trash
+	; d1 is trash
+	; d2 is trash
+	; d3 is camera X
+	; d4 is camera Y
+	; d5 is the game object ID, which is also used as the loop counter
+	; a2 is the game object manager base address
+	; a3 is now the address to the last game object and will be used for as a pointer to the current game object we're working on
+
+.loop:
+	move		_go_sprite_handle(a3),d0	; d0 = sprite handle
+	move		_go_world_pos_x(a3),d1		; d1 = game object world position X
+	move		_go_world_pos_y(a3),d2		; d2 = game object world position Y
+	sub			d3,d1						; World to camera space on X
+	sub			d4,d2						; World to camera space on Y
+	jsr			rendSetSpritePosition(pc)	; Refresh hardware sprite position
+
+	; Go to next game object (i.e. the game object that is
+	; before this in memory, since we're iterating down)
+	sub				#_go_size,a3
+	dbra			d5,.loop
+
+	popm			d2-d7/a2-a7
+
+	rts
 
 
 
