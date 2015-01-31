@@ -13,7 +13,7 @@ _hero_sprite_pos_x			rs.w		1
 _hero_sprite_pos_y			rs.w		1
 _camera_pos_x				rs.w		1
 _camera_pos_y				rs.w		1
-_potion_go_handle		rs.w		1
+_potion_go_handle			rs.w		1
 _testanim_time				rs.w		1
 
 
