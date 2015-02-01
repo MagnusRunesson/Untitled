@@ -68,11 +68,11 @@ entryPoint:
 
 	bsr			trackdiskInit
 
-;	move.l		#473,d0				; 
-;	moveq		#(35840/512),d1		; 70
-;	lea			Bplmem(pc),a0
+	;move.l		#_data_untitled_splash_planar/512,d0
+	;moveq		#_data_untitled_splash_planar_length,d1
+	;_get_workmem_ptr	BitplaneMem,a0
 
-;	bsr			trackdiskLoadBlock
+	;bsr			trackdiskLoadBlock
 	
 	; rainbow
 ;again
@@ -145,21 +145,24 @@ Copper_color
 	;dc.w	color+28,$008F
 	;dc.w	color+30,$0F00
 
-	dc.w	color+0,$0e0e	
+	dc.w	color+0,$0000	
 	dc.w	color+2,$0000
 	dc.w	color+4,$0444
-	dc.w	color+6,$0a88
+	dc.w	color+6,$088a
 	dc.w	color+8,$0eee
-	dc.w	color+10,$0a40
-	dc.w	color+12,$0c80
+	dc.w	color+10,$004a
+	dc.w	color+12,$008c
 	dc.w	color+14,$0282
 	dc.w	color+16,$02a2
 	dc.w	color+18,$04c4
-	dc.w	color+20,$0028
-	dc.w	color+22,$006a
+	dc.w	color+20,$0820
+	dc.w	color+22,$0a60
 	dc.w	color+24,$0e0e
 	dc.w	color+26,$0e0e
-	dc.w	color+28,$028e
-	dc.w	color+30,$040e	      
+	dc.w	color+28,$0e82
+	dc.w	color+30,$0e04
 
 	dc.w	$FFFF,$FFFE
+	;0e0e 0000 0444 0a88 0eee 0a40 0c80 0282
+	;02a2 04c4 0028 006a 0e0e 0e0e 028e 040e
+	
