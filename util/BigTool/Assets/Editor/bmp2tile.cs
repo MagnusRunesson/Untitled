@@ -739,6 +739,8 @@ public class bmp2tile : EditorWindow
 		m_tilePalette.Export( outBaseName + "_palette.bin" );
 		m_planarImage.Export( outBaseName + "_planar.bin" );
 		*/
+
+        Debug.Log("Export is finished!");
 	}
 
 	void AddFile( ref string _asmData, ref string _asmFileList, ref string _asmFileMap, string _filename )
