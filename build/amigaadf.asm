@@ -46,11 +46,11 @@ mainend
 workmembegin
 
 TrackdiskMfmBuffer
-	dcb.w		12800/2,$FBFF	; mFmBuFFer
+	dcb.w		12800/2,$FBFF			; mFmBuFFer
 	;dcb.b		6800,$bf ; some more
 
 TrackdiskTrackBuffer
-	dcb.w		512*11/2,$ACBF	; trACkBuFfer
+	dcb.w		512*11/2,$ACBF			; trACkBuFfer
 	;dcb.b		512*5,$cb ; som emore
 
 BitplaneMem
@@ -58,15 +58,15 @@ BitplaneMem
 	cnop		0,_chunk_size,1
 
 TilebankMem
-	dcb.w		1+100*256,$EBAE		; tilEBAnkmEm
+	dcb.w		1+256*32/2,$EBAE		; tilEBAnkmEm
 	cnop		0,_chunk_size
 
 TilemapMem
-	dcb.w		2+(64*64),$0EAE		; tilEmApmEm
+	dcb.w		2+(64*64),$0EAE			; tilEmApmEm
 	cnop		0,_chunk_size
 
 PaletteMem
-	dcb.w		512/2,$AEEE		; pAlEttEmEm
+	dcb.w		16,$AEEE				; pAlEttEmEm
 	cnop		0,_chunk_size
 
 SharedWorkMem
