@@ -108,9 +108,9 @@ public class TileBank
 		return null;
 	}
 
-	public void Export( string _outfilename )
+	public void ExportMegaDrive( string _outfilename )
 	{
-		Debug.Log ("Exporting tile bank to " + _outfilename );
+		Debug.Log ("Exporting tile bank (Mega Drive) to " + _outfilename );
 
 		int headersize = 2;
 
@@ -145,6 +145,36 @@ public class TileBank
 			}
 		}
 
+		System.IO.File.WriteAllBytes( _outfilename, outBytes );
+	}
+
+	public void ExportAmiga( string _outfilename )
+	{
+		Debug.Log ("Exporting tile bank (Amiga) to " + _outfilename );
+
+		int headersize = 0;
+
+		int numTiles = m_tiles.Count;
+
+		// Export size = number of tiles * 64 pixels / 2 (because there are 2 bytes per pixel)
+		int outsize = headersize + (numTiles * 32); // 8*8 pixels, 8 bits per bytes/only 4 bits used
+		byte[] outBytes = new byte[ outsize ];
+		
+		Debug.Log ("exporting " + numTiles + " tiles");
+		//Halp.Write16( outBytes, 0, numTiles );
+		
+		int iTile;
+		for( iTile=0; iTile<numTiles; iTile++ )
+		{
+			Tile t = m_tiles[ iTile ];
+
+			ChunkyToPlanar c2p = new ChunkyToPlanar(4, 8, 4, 1);
+			for(int y=0; y<Tile.Height; y++ )
+			{
+				c2p.ChunkyToPlanar8Pixels(t.m_pixels, 0, y, outBytes, 0, iTile*8+y);
+          	}
+		}
+		
 		System.IO.File.WriteAllBytes( _outfilename, outBytes );
 	}
 }
