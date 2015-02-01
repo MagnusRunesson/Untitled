@@ -195,7 +195,7 @@ gomRender:
 
 	; Fetch the number of game objects allocated.
 	clr.l			d5
-	move.w			_gom_numobjects(a0),d5
+	move.w			_gom_numobjects(a2),d5
 	sub.w			#1,d5		; dbra needs to subtract one otherwise we'll loop too many times
 
 	; Calculate the address of the last object in the list (i.e., the
