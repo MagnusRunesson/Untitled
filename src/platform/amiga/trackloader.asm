@@ -277,7 +277,6 @@ _trackdiskSetDirection
 ;==============================================================================
 
 _waitDiskReady
-	move.w  	#$0F00,$dff180
 	btst.b		#CIAB_DSKRDY,ciapra(a4)	;check for disk ready signal
 	bne.s		_waitDiskReady
 
@@ -366,7 +365,6 @@ _trackdiskWaitTimer
     lsr.w		#8,d7
     move.b  	d7,ciatahi(a6)
 .wait
-	move.w  	d6,$dff180
     btst.b  	#CIAICRB_TA,ciaicr(a6)
     beq.s   	.wait
     move.l		(sp)+,d0
