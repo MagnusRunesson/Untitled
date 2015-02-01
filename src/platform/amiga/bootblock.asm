@@ -31,8 +31,6 @@ bootblockcodestart
 
 	; The code is called with an open trackdisk.device I/O request pointer in A1
 	move.l	a1,a3
-
-	move.w	#$0F0F,$DFF180
 	
 	; allocate memory
 	move.l	#(487*1024),d0	; 487k is max alloc (at least on fs-uae a500)
