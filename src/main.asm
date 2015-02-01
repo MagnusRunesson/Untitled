@@ -68,8 +68,30 @@ main:
 	move.l		d0,_hero_go_handle(a2)
 
 .main_loop:
+	;
+	; Read player input and update player world positions
+	;
 	bsr			_inputUpdate
+
+	;
+	; Update hero position with the game object manager
+	;
+	move.l		_hero_go_handle(a2),d0
+	move.w		_hero_sprite_pos_x(a2),d1
+	move.w		_hero_sprite_pos_y(a2),d2
+	jsr			gomSetPosition(pc)
+
+	;
+	; Update camera so the player doesn't go out of bounds
+	;
 	bsr			_cameraUpdate
+
+	;
+	; Update camera position with the game object manager
+	;
+	move		_camera_pos_x(a2),d0
+	move		_camera_pos_y(a2),d1
+	jsr			gomSetCameraPosition(pc)
 
 	perf_stop
 	jsr			rendWaitVSync(pc)
@@ -84,21 +106,6 @@ main:
 ;	move.l		#8000,d1
 ;.perf_loop_test:
 ;	dbra		d1,.perf_loop_test
-
-	;
-	; Update hero position with the game object manager
-	;
-	move.l		_hero_go_handle(a2),d0
-	move.w		_hero_sprite_pos_x(a2),d1
-	move.w		_hero_sprite_pos_y(a2),d2
-	jsr			gomSetPosition(pc)
-
-	;
-	; Update camera position with the game object manager
-	;
-	move		_camera_pos_x(a2),d0
-	move		_camera_pos_y(a2),d1
-	jsr			gomSetCameraPosition(pc)
 
 	;
 	; Update animation
