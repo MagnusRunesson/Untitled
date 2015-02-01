@@ -96,6 +96,7 @@ rendLoadTileBank:
 ;==============================================================================
 
 rendLoadTileMap:
+
 	; fileLoad accept the file ID as d0, so no need to do any tricks here
 	movem.l			a0-a6/d0-d7,-(sp)
 	
@@ -168,5 +169,12 @@ rendLoadSprite:
 ;==============================================================================
 
 rendLoadPalette:
+	movem.l			a0-a6/d0-d7,-(sp)
+
+	; fileLoad accept the file ID as d0, so no need to do any tricks here
+	_get_workmem_ptr	TilemapMem,a0
+	jsr			fileLoad
+
+	movem.l			(sp)+,a0-a6/d0-d7
 	rts
 
