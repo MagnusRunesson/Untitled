@@ -108,17 +108,17 @@ class PlanarImage
 		//			Debug.Log (chunkyYOffs);
 		//			Debug.Log (yoffsPlane3);
 		int tile = 0;
-		for (int y = 0; y < m_height; y+=8) 
-		{		
-			for (int x = 0; x < m_width; x+=8)
-			{		
-				for (int yInner = 0; yInner < 8; yInner++)
-				{
-					c2p.ChunkyToPlanar8Pixels (chunkyImage, x, y+yInner, planarData, 0, (tile*8)+yInner);						
-				}
-				tile++;
-			}
-		}
+        for (int x = 0; x < m_width; x += 8)
+        {
+            for (int y = 0; y < m_height; y += 8)
+            {
+                for (int yInner = 0; yInner < 8; yInner++)
+                {
+                    c2p.ChunkyToPlanar8Pixels(chunkyImage, x, y + yInner, planarData, 0, (tile * 8) + yInner);
+                }
+                tile++;
+            }
+        }
 
 		return planarData;
 	}
