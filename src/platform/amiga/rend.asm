@@ -1,4 +1,4 @@
-	
+
 	; include		"hardware/custom.i"
 	; include		"hardware/dmabits.i"
 	; include		"exec_lib.i"
@@ -77,8 +77,10 @@ rendSetSpriteFrame:
 
 rendLoadTileBank:
 	; fileLoad accept the file ID as d0, so no need to do any tricks here
+	
 	_get_workmem_ptr	TilebankMem,a0
 	bsr					fileLoad
+	
 	rts
 
 
@@ -95,8 +97,47 @@ rendLoadTileBank:
 
 rendLoadTileMap:
 	; fileLoad accept the file ID as d0, so no need to do any tricks here
-	_get_workmem_ptr	TilebankMem,a0
+	movem.l			a0-a6/d0-d7,-(sp)
+	
+	_get_workmem_ptr	TilemapMem,a0
 	bsr					fileLoad
+
+	_get_workmem_ptr	TilemapMem,a0
+	_get_workmem_ptr	TilebankMem,a1
+	_get_workmem_ptr	BitplaneMem,a5
+
+	addq.l			#2,a0		; don't care about header for now
+
+	moveq			#32-1,d7	; d7=y dbra
+.yloop
+	moveq			#64-1,d6	; d6=x dbra
+.xloop
+
+	moveq			#0,d0
+	move.w			(a0)+,d0
+
+	move.l			a1,a2
+	mulu			#8*4,d0
+	add.l			d0,a2
+
+
+	move.l			a5,a4
+	moveq			#8-1,d5
+.drawLoop
+	move.b			(a2)+,(a4)
+	move.b			(a2)+,64(a4)
+	move.b			(a2)+,128(a4)
+	move.b			(a2)+,192(a4)
+	add.l			#256,a4
+	dbf				d5,.drawLoop
+
+	addq.l			#1,a5
+	dbf				d6,.xloop
+
+	add.l			#(7*256)+192,a5
+	dbf				d7,.yloop
+
+	movem.l			(sp)+,a0-a6/d0-d7
 	rts
 
 
@@ -128,3 +169,4 @@ rendLoadSprite:
 
 rendLoadPalette:
 	rts
+
