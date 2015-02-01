@@ -58,7 +58,7 @@ BitplaneMem
 	cnop		0,_chunk_size,1
 
 TilebankMem
-	dcb.w		100/2,$EBAE		; tilEBAnkmEm
+	dcb.w		1+100*256,$EBAE		; tilEBAnkmEm
 	cnop		0,_chunk_size
 
 TilemapMem
