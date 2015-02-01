@@ -45,7 +45,11 @@ main:
 	ifd is_mega_drive
 	move.l		#fileid_testtiles_bank,d0
 	else
-	move.l		#fileid_testtiles_planar,d0
+	move.l		#fileid_testtiles_bank_amiga,d0
+
+	printv _data_testtiles_bank_amiga_pos
+	printv _data_testtiles_bank_amiga_length
+
 	endif
 	jsr			rendLoadTileBank(pc)
 
