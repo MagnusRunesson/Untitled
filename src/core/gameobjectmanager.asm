@@ -173,25 +173,11 @@ gomRender:
 	move.w			_gom_camera_y(a2),d4
 
 	; Update the background position
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-
 	clr.l			d0
 	clr.l			d1
 	move.w			d3,d0
 	move.w			d4,d1
 	jsr				rendSetScrollXY(pc)			; d0=x position, d1=y position
-
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
 
 	; Fetch the number of game objects allocated.
 	clr.l			d5
