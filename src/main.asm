@@ -113,9 +113,9 @@ main:
 	move		_camera_pos_y(a2),d1
 	jsr			gomSetCameraPosition(pc)
 	
-	move		_camera_pos_x(a2),d0
-	move		_camera_pos_y(a2),d1
-	jsr			rendSetScrollXY(pc)			; d0=x position, d1=y position
+	;move		_camera_pos_x(a2),d0
+	;move		_camera_pos_y(a2),d1
+	;jsr			rendSetScrollXY(pc)			; d0=x position, d1=y position
 
 	;
 	; Update animation
