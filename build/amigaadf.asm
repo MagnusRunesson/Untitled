@@ -46,29 +46,40 @@ mainend
 workmembegin
 
 TrackdiskMfmBuffer
-	dcb.w		12800 /2,$FBFF	; mFmBuFFer
+	dcb.w		12800/2,$FBFF	; mFmBuFFer
 	;dcb.b		6800,$bf ; some more
 
 TrackdiskTrackBuffer
-	dcb.w		512*11 /2,$ACBF	; trACkBuFfer
+	dcb.w		512*11/2,$ACBF	; trACkBuFfer
 	;dcb.b		512*5,$cb ; som emore
 
 BitplaneMem
 	;incbin		"../src/incbin/untitled_splash_planar.bin"
 	;blk.b		(64*64*8*8*4/8)-(*-Bplmem),$01
-	dcb.w		64*64*8*8*4/8 /2,$BAEE	; BitplAnEmEm
+	dcb.w		64*64*8*8*4/8/2,$BAEE	; BitplAnEmEm
+	cnop		0,_chunk_size,1
 
 TilebankMem
 	dcb.w		100/2,$EBAE		; tilEBAnkmEm
+	cnop		0,_chunk_size
 
-MapMem
-	dcb.w		64*64*2/2,$AEAE		; mApmEm
+TilemapMem
+	dcb.w		2+(64*64),$0EAE		; tilEmApmEm
+	cnop		0,_chunk_size
+
+;MapMem
+;	dcb.w		64*64*2/2,$AEAE		; mApmEm
+;	cnop		0,_chunk_size
 
 PaletteMem
 	dcb.w		512/2,$AEEE		; pAlEttEmEm
+	cnop		0,_chunk_size
+
+SharedWorkMem
+	dcb.w		totalmem_size/2,$AEDE	;shArEDworkmEm
 
 workmemend
 
-databegin	
+databegin		
 	include		"../src/incbin/data.asm"
 dataend
