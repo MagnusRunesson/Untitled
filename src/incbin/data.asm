@@ -288,3 +288,13 @@ _data_testmap_map:
 _data_testmap_map_pos                   equ _data_testmap_map/_chunk_size
 _data_testmap_map_length                equ ((_data_testmap_map_end-_data_testmap_map)+(_chunk_size-1))/_chunk_size
 _data_testmap_map_end:
+
+
+; testmap2_map.bin
+
+	cnop		0,_chunk_size
+_data_testmap2_map:
+	incbin	"../src/incbin/testmap2_map.bin"
+_data_testmap2_map_pos                  equ _data_testmap2_map/_chunk_size
+_data_testmap2_map_length               equ ((_data_testmap2_map_end-_data_testmap2_map)+(_chunk_size-1))/_chunk_size
+_data_testmap2_map_end:

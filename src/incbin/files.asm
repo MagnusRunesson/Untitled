@@ -27,6 +27,7 @@ fileid_herotestpng_palette              equ 25
 fileid_herotestpng_sprite               equ 26
 fileid_herotestpng_sprite_planar        equ 27
 fileid_testmap_map                      equ 28
+fileid_testmap2_map                     equ 29
 
 FileIDMap:
 	dc.w	_data_herotest_sprite_chunky_pos,_data_herotest_sprite_chunky_length
@@ -58,3 +59,4 @@ FileIDMap:
 	dc.w	_data_herotestpng_sprite_pos,_data_herotestpng_sprite_length
 	dc.w	_data_herotestpng_sprite_planar_pos,_data_herotestpng_sprite_planar_length
 	dc.w	_data_testmap_map_pos,_data_testmap_map_length
+	dc.w	_data_testmap2_map_pos,_data_testmap2_map_length
