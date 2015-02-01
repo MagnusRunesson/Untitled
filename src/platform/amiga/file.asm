@@ -15,8 +15,8 @@ fileLoad:
 	asl.l		#2,d0
 	add.l		d0,a1
 	moveq		#0,d0
-	moveq		#0,d1
 	move.w		(a1)+,d0
+	moveq		#0,d1	
 	move.w		(a1),d1
 
 	bsr			trackdiskLoadBlock
