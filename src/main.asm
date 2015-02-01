@@ -72,6 +72,7 @@ main:
 	; Read player input and update player world positions
 	;
 	bsr			_inputUpdate
+	bsr			_checkBorders
 
 	;
 	; Update hero position with the game object manager
@@ -307,5 +308,46 @@ _cameraUpdate:
 .no_adjust_down:
 
 
+.done:
+	rts
+
+
+_checkBorders:
+	move.w		_hero_sprite_pos_x(a2),d0
+	cmp.w		#0,d0
+	bge			.no_left
+
+	;
+	; Load room to the left
+	;
+	move.l		#fileid_testmap_map,d0
+	move.l		#0,d1
+	jsr			rendLoadTileMap(pc)
+
+	;
+	; Warp hero to the right of the new map
+	;
+	move.w		#511-16,_hero_sprite_pos_x(a2)
+
+	; Done
+	bra			.done
+
+.no_left:
+	cmp.w		#511-16,d0
+	ble			.no_right
+
+	;
+	; Load room to the right
+	;
+	move.l		#fileid_testmap2_map,d0
+	move.l		#0,d1
+	jsr			rendLoadTileMap(pc)
+
+	;
+	; Warp hero to the left of the new map
+	;
+	move.w		#0,_hero_sprite_pos_x(a2)
+
+.no_right:
 .done:
 	rts
