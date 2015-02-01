@@ -128,24 +128,38 @@ Copper_bplpt
 	dc.w	bplpt+12,$0000
 	dc.w	bplpt+14,$0000
 Copper_color
-	dc.w	color+0,$0000	
-	dc.w	color+2,$0EEE
-	dc.w	color+4,$0CCC
-	dc.w	color+6,$0888
-	dc.w	color+8,$0666	
-	dc.w	color+10,$0444
-	dc.w	color+12,$0222
-	dc.w	color+14,$0000
-	dc.w	color+16,$00F0
-	dc.w	color+18,$000F
-	dc.w	color+20,$0FF0
-	dc.w	color+22,$00FF
-	dc.w	color+24,$0F0F
-	dc.w	color+26,$0F80
-	dc.w	color+28,$008F
-	dc.w	color+30,$0F00
-	
+	;dc.w	color+0,$0000	
+	;dc.w	color+2,$0EEE
+	;dc.w	color+4,$0CCC
+	;dc.w	color+6,$0888
+	;dc.w	color+8,$0666	
+	;dc.w	color+10,$0444
+	;dc.w	color+12,$0222
+	;dc.w	color+14,$0000
+	;dc.w	color+16,$00F0
+	;dc.w	color+18,$000F
+	;dc.w	color+20,$0FF0
+	;dc.w	color+22,$00FF
+	;dc.w	color+24,$0F0F
+	;dc.w	color+26,$0F80
+	;dc.w	color+28,$008F
+	;dc.w	color+30,$0F00
+
+	dc.w	color+0,$0e0e	
+	dc.w	color+2,$0000
+	dc.w	color+4,$0444
+	dc.w	color+6,$0a88
+	dc.w	color+8,$0eee
+	dc.w	color+10,$0a40
+	dc.w	color+12,$0c80
+	dc.w	color+14,$0282
+	dc.w	color+16,$02a2
+	dc.w	color+18,$04c4
+	dc.w	color+20,$0028
+	dc.w	color+22,$006a
+	dc.w	color+24,$0e0e
+	dc.w	color+26,$0e0e
+	dc.w	color+28,$028e
+	dc.w	color+30,$040e	      
+
 	dc.w	$FFFF,$FFFE
-
-
-
