@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="64" height="64" tilewidth="8" tileheight="8" nextobjectid="1">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="64" height="64" tilewidth="8" tileheight="8" nextobjectid="9">
  <tileset firstgid="1" name="testtiles" tilewidth="8" tileheight="8">
   <image source="../data/testtiles.bmp" width="128" height="128"/>
   <terraintypes>
@@ -49,6 +49,7 @@
   <tile id="137" terrain="1,1,2,2"/>
   <tile id="138" terrain="1,2,2,2"/>
  </tileset>
+ <tileset firstgid="257" source="Objects (editor only).tsx"/>
  <layer name="Tile Layer 1" width="64" height="64">
   <data encoding="csv">
 60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,104,105,107,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,40,41,41,58,58,42,
@@ -117,4 +118,8 @@
 60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,40,41,41,42,59,60,60,19,20,60,60,60,60,60,60
 </data>
  </layer>
+ <objectgroup name="Objects">
+  <object id="6" gid="258" x="166.5" y="49"/>
+  <object id="8" gid="258" x="434" y="45"/>
+ </objectgroup>
 </map>
