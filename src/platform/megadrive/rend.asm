@@ -529,11 +529,11 @@ rendLoadPalette:
 	cmp.w		d0,d2
 	beq			.done
 
-	; Push the slot index onto the stack
-	move.l		d1,-(sp)
-
 	; Remember that this palette file have been loaded
 	move.w		d0,(VarLoadedPalette)
+
+	; Push the slot index onto the stack
+	move.l		d1,-(sp)
 
 	; fileLoad accept the file ID as d0, so no need to do any tricks here
 	jsr			fileLoad
