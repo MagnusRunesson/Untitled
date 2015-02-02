@@ -36,6 +36,7 @@ VarLockedSpriteAddress	so.l	1										; Locked address where we can free tiles 
 VarNextSpriteSlot		so.l	1										; Next available sprite index in our sprite tables
 VarLockedSpriteSlot		so.l	1										; Locked sprite index for free
 VarLoadedPalette		so.w	1										; The file ID of the last loaded palette
+VarLoadedTileBank		so.w	1										; The file ID of the last loaded tile bank
 VarHWSprites			so.b	_cpu_sprite_size*rend_num_sprites		; This is reserved to the cpu ram mirror of the VRAM
 	clrso
 
@@ -73,6 +74,7 @@ rendInit:
 	move.l		#VRAM_SpriteTiles_Start,(VarNextSpriteAddress)
 	move.l		#VRAM_SpriteTiles_Start,(VarLockedSpriteAddress)
 	move.w		#-1,(VarLoadedPalette)
+	move.w		#-1,(VarLoadedTileBank)
 
 	; Clear all mirror sprites
 	move.l		#0,d0
@@ -166,6 +168,13 @@ rendSetScrollXY:
 ;
 ;==============================================================================
 rendLoadTileBank:
+	move.w		(VarLoadedTileBank),d1
+	cmp.w		d0,d1
+	beq			.done
+
+	; Remember which tile bank has been loaded
+	move.w		d0,(VarLoadedTileBank)
+
 	; fileLoad accept the file ID as d0, so no need to do any tricks here
 	jsr			fileLoad
 	; a0 is the return address from fileLoad, so it is set to the source address now
@@ -183,6 +192,7 @@ rendLoadTileBank:
 	; d1=size to copy
 	; a0=source address
 	jsr			_rendCopyToVRAM
+.done:
 
 	rts
 
