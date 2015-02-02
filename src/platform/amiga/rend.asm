@@ -205,6 +205,26 @@ rendLoadPalette:
 	_get_workmem_ptr	TilemapMem,a0
 	jsr			fileLoad
 
+	_get_workmem_ptr	TilemapMem,a0
+	lea			Copper_color+2(pc),a1
+	moveq		#16-1,d0
+.loop
+	move.w		(a0)+,d1
+	move.w		d1,d2
+	move.w		d1,d3
+	and.w		#$00F0,d1
+	and.w		#$0F00,d2
+	and.w		#$000F,d3	
+	ror.w		#8,d2
+	rol.w		#8,d3
+	or.w		d2,d1
+	or.w		d3,d1
+
+	move.w		d1,(a1)
+	addq.l		#4,a1
+	dbf			d0,.loop
+
+
 	movem.l			(sp)+,a0-a6/d0-d7
 	rts
 
