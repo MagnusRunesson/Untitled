@@ -35,6 +35,7 @@ VarNextSpriteAddress	so.l	1										; The address where the last loaded sprite 
 VarLockedSpriteAddress	so.l	1										; Locked address where we can free tiles to
 VarNextSpriteSlot		so.l	1										; Next available sprite index in our sprite tables
 VarLockedSpriteSlot		so.l	1										; Locked sprite index for free
+VarLoadedPalette		so.w	1										; The file ID of the last loaded palette
 VarHWSprites			so.b	_cpu_sprite_size*rend_num_sprites		; This is reserved to the cpu ram mirror of the VRAM
 	clrso
 
@@ -71,6 +72,7 @@ rendInit:
 	move.l		#0,(VarLockedSpriteSlot)
 	move.l		#VRAM_SpriteTiles_Start,(VarNextSpriteAddress)
 	move.l		#VRAM_SpriteTiles_Start,(VarLockedSpriteAddress)
+	move.w		#-1,(VarLoadedPalette)
 
 	; Clear all mirror sprites
 	move.l		#0,d0
@@ -498,8 +500,19 @@ rendLoadTileMap:
 ;
 ;==============================================================================
 rendLoadPalette:
+	; Check if the requested palette is the one that we've already
+	; loaded. In that case we can just ignore the request, because
+	; this palette is already loaded.
+	push		d2
+	move.w		(VarLoadedPalette),d2
+	cmp.w		d0,d2
+	beq			.done
+
 	; Push the slot index onto the stack
 	move.l		d1,-(sp)
+
+	; Remember that this palette file have been loaded
+	move.w		d0,(VarLoadedPalette)
 
 	; fileLoad accept the file ID as d0, so no need to do any tricks here
 	jsr			fileLoad
@@ -520,6 +533,8 @@ rendLoadPalette:
 	; a0=source address
 	jsr			_rendCopyToVRAM
 
+.done:
+	pop			d2
 	rts
 
 .SlotAddresses:
