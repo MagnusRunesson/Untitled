@@ -47,8 +47,8 @@ main:
 	else
 	move.l		#fileid_testtiles_bank_amiga,d0
 
-	printv _data_testtiles_bank_amiga_pos
-	printv _data_testtiles_bank_amiga_length
+	;printv _data_testtiles_bank_amiga_pos
+	;printv _data_testtiles_bank_amiga_length
 
 	endif
 	jsr			rendLoadTileBank(pc)
