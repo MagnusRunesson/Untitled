@@ -37,6 +37,7 @@ VarNextSpriteSlot		so.l	1										; Next available sprite index in our sprite t
 VarLockedSpriteSlot		so.l	1										; Locked sprite index for free
 VarLoadedPalette		so.w	1										; The file ID of the last loaded palette
 VarLoadedTileBank		so.w	1										; The file ID of the last loaded tile bank
+VarLoadedTileMap		so.w	1										; The file ID of the last loaded tile map
 VarHWSprites			so.b	_cpu_sprite_size*rend_num_sprites		; This is reserved to the cpu ram mirror of the VRAM
 	clrso
 
@@ -75,6 +76,7 @@ rendInit:
 	move.l		#VRAM_SpriteTiles_Start,(VarLockedSpriteAddress)
 	move.w		#-1,(VarLoadedPalette)
 	move.w		#-1,(VarLoadedTileBank)
+	move.w		#-1,(VarLoadedTileMap)
 
 	; Clear all mirror sprites
 	move.l		#0,d0
@@ -417,6 +419,13 @@ rendSetSpriteFrame:
 rendLoadTileMap:
 	;
 	push		d2
+	move.w		(VarLoadedTileMap),d2
+	cmp.w		d0,d2
+	beq			.done
+
+	; Remember which tile map has been loaded
+	move.w		d0,(VarLoadedTileMap)
+
 	push		d3
 
 	; Push the slot ID onto the stack
@@ -491,6 +500,8 @@ rendLoadTileMap:
 	move.w		d0,($00C00004)
 
 	pop			d3
+
+.done:
 	pop			d2
 
 	rts
