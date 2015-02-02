@@ -9,10 +9,11 @@
 	include		"hardware/intbits.i"
 	include		"exec/exec.i"
 	include		"devices/trackdisk.i"
-	; ..and my includes created from commodores C-header files
+	; includes created from commodores C-header files
 	include		"exec_lib.i"
 	include		"graphics_lib.i"
 	
+	; local includes
 	include		"../src/platform/amiga/const.asm"
 	include		"../src/platform/amiga/macros.asm"
 
