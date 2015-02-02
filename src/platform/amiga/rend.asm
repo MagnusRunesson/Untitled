@@ -12,18 +12,11 @@
 ;==============================================================================
 
 rendInit:
-	lea			Copper_bplpt(pc),a0
-	_get_workmem_ptr BitplaneMem,a1
-	move.l		a1,d0
-	moveq		#4-1,d1
-.bplconLoop
-	swap.w		d0
-	move.w		d0,2(a0)
-	swap.w		d0
-	move.w		d0,6(a0)
-	add.l		#64,d0
-	add.l		#8,a0	
-	dbra		d1,.bplconLoop
+	lea			_custom,a2
+
+	_get_workmem_ptr BitplaneMem,a0
+	subq.l		#2,a0
+	bsr			_setupBitplanePointers
 	
 	; move.w		#$2c81,diwstrt(a2)
 	; move.w		#$0cc1,diwstop(a2)
@@ -35,6 +28,27 @@ rendInit:
 	lea			Copper(pc),a0
 	move.l		a0,cop1lc(a2)
 	move.w		d0,copjmp1(a2)
+	rts
+
+;==============================================================================
+;
+; Setup bitplane pointers
+; a0=pointers to bitplanes
+;
+;==============================================================================
+_setupBitplanePointers
+	move.l		a0,d0
+	lea			Copper_bplpt(pc),a0	
+	moveq		#4-1,d1
+.bplconLoop
+	swap.w		d0
+	move.w		d0,2(a0)
+	swap.w		d0
+	move.w		d0,6(a0)
+	add.l		#64,d0
+	add.l		#8,a0	
+	dbra		d1,.bplconLoop
+
 	rts
 
 ;==============================================================================
@@ -66,6 +80,41 @@ rendWaitVSync:
 ;==============================================================================
 
 rendSetScrollXY:
+	;lea		Copper_color+2(pc),a0
+	;move.w	d0,(a0)
+
+
+	_get_workmem_ptr BitplaneMem,a0
+
+	subq.l		#2,a0					; make up for ddfstrt
+
+	move.l		d0,d2					
+	and.l		#$fffffff0,d0			; x scroll high bits (bpl ptr)
+	asr.l		#3,d0
+	add.l		d0,a0
+
+	lsl.l		#8,d1					; y scroll (bpl ptr)
+	add.l		d1,a0
+	bsr 		_setupBitplanePointers
+
+	;and.l		#$0f,d2					; x scroll low bits (bplcon0 bits)
+
+	moveq		#0,d0
+	sub.w		d2,d0
+	and.l		#$0f,d0
+
+	move.l		d0,d2
+	lsl.w		#4,d2
+	or.w		d2,d0	
+	
+	lea			Copper_bplcon1+2,a0
+	move.w		(a0),d2
+	and.w		#$ff00,d2
+	or.w		d0,d2
+	move.w		d2,(a0)
+
+
+
 	rts
 
 
@@ -139,7 +188,7 @@ rendLoadTileMap:
 
 	addq.l			#2,a0		; don't care about header for now
 
-	moveq			#32-1,d7	; d7=y dbra
+	moveq			#64-1,d7	; d7=y dbra
 .yloop
 	moveq			#64-1,d6	; d6=x dbra
 .xloop
@@ -245,14 +294,16 @@ rendLoadPalette:
 ;
 ;==============================================================================
 Copper
+Copper_bplcon0
 	dc.w	bplcon0,$4200
+Copper_bplcon1
 	dc.w	bplcon1,$0000
 	dc.w	diwstrt,$2c81
 	dc.w	diwstop,$2cc1
-	dc.w	ddfstrt,$0038
+	dc.w	ddfstrt,$0030
 	dc.w	ddfstop,$00d0
-	dc.w	bpl1mod,$00d8	; 3*64+24=D8, 3*64=C0, 3*40=78
-	dc.w	bpl2mod,$00d8
+	dc.w	bpl1mod,$00d6	; 3*64+24=D8, 3*64=C0, 3*40=78
+	dc.w	bpl2mod,$00d6
 Copper_bplpt
 	dc.w	bplpt+0,$0000
 	dc.w	bplpt+2,$0000
