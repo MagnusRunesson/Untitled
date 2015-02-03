@@ -80,18 +80,13 @@ rendWaitVSync:
 ;==============================================================================
 
 rendSetScrollXY:
-	;lea		Copper_color+2(pc),a0
-	;move.w	d0,(a0)
-
-	;and			#511,d0
-	;and			#511,d1
-
+	movem.l		d2-d3,-(sp)
 
 	subq.l		#2,a0					; make up for ddfstrt
 
 	move.l		d0,d2
 
-	add.l		#15,d0
+	subq.l		#1,d0
 	and.l		#$fffffff0,d0			; d0=x scroll high bits (bpl ptr)
 	asr.l		#3,d0
 
@@ -114,6 +109,7 @@ rendSetScrollXY:
 	or.w		d2,d0
 	move.w		d0,(a0)
 
+	movem.l		(sp)+,d2-d3
 	rts
 
 
