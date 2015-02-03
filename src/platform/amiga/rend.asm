@@ -82,36 +82,53 @@ rendWaitVSync:
 rendSetScrollXY:
 	;lea		Copper_color+2(pc),a0
 	;move.w	d0,(a0)
-
+	and			#511,d0
+	and			#511,d1
 
 	_get_workmem_ptr BitplaneMem,a0
 
 	subq.l		#2,a0					; make up for ddfstrt
 
-	move.l		d0,d2					
+	move.l		d0,d2	
+	add.l		#15,d0				
 	and.l		#$fffffff0,d0			; x scroll high bits (bpl ptr)
-	asr.l		#3,d0
+	asr.l		#4,d0
 	add.l		d0,a0
 
 	lsl.l		#8,d1					; y scroll (bpl ptr)
 	add.l		d1,a0
 	bsr 		_setupBitplanePointers
 
-	;and.l		#$0f,d2					; x scroll low bits (bplcon0 bits)
+	;subq.l		#1,d2
+	;muls		#-1,d2
+	;add			#512,d2
 
-	moveq		#0,d0
-	sub.w		d2,d0
-	and.l		#$0f,d0
-
-	move.l		d0,d2
-	lsl.w		#4,d2
-	or.w		d2,d0	
+	and.l		#$0f,d2					; x scroll low bits (bplcon0 bits)
+	move.l		d2,d0
+	rol.w		#4,d0
+	or.w		d0,d2	
+	not.w		d2
 	
 	lea			Copper_bplcon1+2,a0
-	move.w		(a0),d2
-	and.w		#$ff00,d2
-	or.w		d0,d2
-	move.w		d2,(a0)
+	move.w		(a0),d0
+	and.w		#$ff00,d0
+	or.w		d2,d0
+	move.w		d0,(a0)
+
+
+	;moveq		#0,d0
+	;sub.w		d2,d0
+	;and.l		#$0f,d0
+
+	;move.l		d0,d2
+	;lsl.w		#4,d2
+	;or.w		d2,d0	
+	
+	;lea			Copper_bplcon1+2,a0
+	;move.w		(a0),d2
+	;and.w		#$ff00,d2
+	;or.w		d0,d2
+	;move.w		d2,(a0)
 
 
 
