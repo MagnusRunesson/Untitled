@@ -12,3 +12,4 @@ util/BigTool/Library
 build/out
 util/BigTool/Temp
 projects/*.sublime-workspace
+src/platform/amiga/amiga_lib/not_fixed_yet
