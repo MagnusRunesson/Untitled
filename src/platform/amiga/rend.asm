@@ -280,8 +280,18 @@ rendLoadPalette:
 	cnop	0,4
 	
 
+SpriteTest:
+	dc.w	$2c40,$3100		;vstart, hstart, vstop
+	dc.w	$0990,$07e0
+	dc.w	$13c8,$0ff0
+	dc.w	$23c4,$1ff8
+	dc.w	$13c8,$0ff0
+	dc.w	$0990,$07e0
+	dc.w	$0000,$0000
 
-
+SpriteBlank:
+	dc.w	$0000,$0000
+	dc.w	$0000,$0000
 
 ;==============================================================================
 ;
