@@ -318,23 +318,59 @@ Copper_bplpt
 	dc.w	bplpt+10,$0000
 	dc.w	bplpt+12,$0000
 	dc.w	bplpt+14,$0000
-
+Copper_sprpt
+	dc.w	sprpt+0,$0000
+	dc.w	sprpt+2,$0000
+	dc.w	sprpt+4,$0000
+	dc.w	sprpt+6,$0000
+	dc.w	sprpt+8,$0000
+	dc.w	sprpt+10,$0000
+	dc.w	sprpt+12,$0000
+	dc.w	sprpt+14,$0000
+	dc.w	sprpt+16,$0000
+	dc.w	sprpt+18,$0000
+	dc.w	sprpt+20,$0000
+	dc.w	sprpt+22,$0000
+	dc.w	sprpt+24,$0000
+	dc.w	sprpt+26,$0000
+	dc.w	sprpt+28,$0000
+	dc.w	sprpt+30,$0000	
 Copper_color
-	dc.w	color+0, $0000	
-	dc.w	color+2, $0000
-	dc.w	color+4, $0000
-	dc.w	color+6, $0000
-	dc.w	color+8, $0000
+	dc.w	color+0,$0000	;0
+	dc.w	color+2,$0000
+	dc.w	color+4,$0000
+	dc.w	color+6,$0000
+	dc.w	color+8,$0000	;4
 	dc.w	color+10,$0000
 	dc.w	color+12,$0000
 	dc.w	color+14,$0000
-	dc.w	color+16,$0000
+	dc.w	color+16,$0000	;8
 	dc.w	color+18,$0000
 	dc.w	color+20,$0000
 	dc.w	color+22,$0000
-	dc.w	color+24,$0000
+	dc.w	color+24,$0000	;12
 	dc.w	color+26,$0000
 	dc.w	color+28,$0000
 	dc.w	color+30,$0000
+
+	dc.w	color+32,$0000	;16
+	;dc.w	color+34,$0000
+	;dc.w	color+36,$0000
+	;dc.w	color+38,$0000
+	dc.w	color+34,$0FF0
+	dc.w	color+36,$00FF
+	dc.w	color+38,$0F0F
+	dc.w	color+40,$0000	;20
+	dc.w	color+42,$0000
+	dc.w	color+44,$0000
+	dc.w	color+46,$0000
+	dc.w	color+48,$0000	;24
+	dc.w	color+50,$0000
+	dc.w	color+52,$0000
+	dc.w	color+54,$0000
+	dc.w	color+56,$0000	;28
+	dc.w	color+58,$0000
+	dc.w	color+60,$0000
+	dc.w	color+62,$0000
 Copper_end
 	dc.w	$FFFF,$FFFE
