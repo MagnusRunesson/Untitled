@@ -18,6 +18,26 @@ rendInit:
 	subq.l		#2,a0
 	bsr			_setupBitplanePointers
 	
+	lea 		SpriteTest(pc),a0
+	lea 		Copper_sprpt+2(pc),a1
+	move.l		a0,d0
+	swap.w		d0
+	move.w		d0,(a1)
+	swap.w		d0
+	move.w		d0,4(a1)
+
+	lea			SpriteBlank,a0
+	move.l		a0,d0
+	addq		#8,a1
+	moveq		#7-1,d1
+.spriteLoop
+	swap.w		d0
+	move.w		d0,(a1)
+	swap.w		d0
+	move.w		d0,4(a1)
+	addq		#8,a1
+	dbf			d1,.spriteLoop
+
 	; move.w		#$2c81,diwstrt(a2)
 	; move.w		#$0cc1,diwstop(a2)
 	; move.w		#$0038,ddfstrt(a2)
