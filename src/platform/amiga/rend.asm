@@ -145,6 +145,27 @@ rendSetScrollXY:
 ;==============================================================================
 
 rendSetSpritePosition:
+
+
+	; temp hack to move player character (sprite ID=1)
+	
+	;	$2c40,$3100		;vstart, hstart, vstop
+
+	cmp.l		#1,d0
+	bne.s		.skip
+	
+	add.w		#$40,d1
+	add.w		#$2c,d2
+	and.l		#$00FF,d1
+	and.l		#$00FF,d2
+	lsl.w		#8,d2
+	or.w		d2,d1
+	lea			SpriteTest(pc),a0
+	move.w		d1,(a0)+
+	add.w		#$0500,d1
+	and.w		#$ff00,d1
+	move.w		d1,(a0)+
+.skip
 	rts
 
 
