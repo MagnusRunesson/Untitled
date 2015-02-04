@@ -5,7 +5,7 @@ entryPoint:
 
 	
 	
-	move.w		#(DMAF_SETCLR|DMAF_COPPER|DMAF_RASTER|DMAF_BLITTER|DMAF_MASTER),dmacon(a2)
+	move.w		#(DMAF_SETCLR|DMAF_SPRITE|DMAF_BLITTER|DMAF_COPPER|DMAF_RASTER|DMAF_MASTER),dmacon(a2)
 	move.w		#$7FFF,intena(a5)
 	
 	
