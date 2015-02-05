@@ -42,13 +42,22 @@ public class ChunkyToPlanar
 		int planarYOffsPlane6 = (_planarY * m_planarStepPerRow) + (m_planarStepPerPlane * (6-m_firstPlane));
 		int planarYOffsPlane7 = (_planarY * m_planarStepPerRow) + (m_planarStepPerPlane * (7-m_firstPlane));
 
-		if ((m_firstPlane<=0) && (m_lastPlane>=0)) _planarData[planarYOffsPlane0 + _planarX/8] = (byte)(((a & 0x01) << 7) | ((b & 0x01) << 6) | ((c & 0x01) << 5) | ((d & 0x01) << 4) | ((e & 0x01) << 3) | ((f & 0x01) << 2) | ((g & 0x01) << 1) | ((h & 0x01))); // a0b0c0d0e0f0g0h0
-		if ((m_firstPlane<=1) && (m_lastPlane>=1)) _planarData[planarYOffsPlane1 + _planarX/8] = (byte)(((a & 0x02) << 6) | ((b & 0x02) << 5) | ((c & 0x02) << 4) | ((d & 0x02) << 3) | ((e & 0x02) << 2) | ((f & 0x02) << 1) | ((g & 0x02)) | ((h & 0x02) >> 1)); // a1b1c1d1e1f1g1h1
-		if ((m_firstPlane<=2) && (m_lastPlane>=2)) _planarData[planarYOffsPlane2 + _planarX/8] = (byte)(((a & 0x04) << 5) | ((b & 0x04) << 4) | ((c & 0x04) << 3) | ((d & 0x04) << 2) | ((e & 0x04) << 1) | ((f & 0x04)) | ((g & 0x04) >> 1) | ((h & 0x04) >> 2)); // a2b2c2d2e2f2g2h2
-		if ((m_firstPlane<=3) && (m_lastPlane>=3)) _planarData[planarYOffsPlane3 + _planarX/8] = (byte)(((a & 0x08) << 4) | ((b & 0x08) << 3) | ((c & 0x08) << 2) | ((d & 0x08) << 1) | ((e & 0x08)) | ((f & 0x08) >> 1) | ((g & 0x08) >> 2) | ((h & 0x08) >> 3)); // a3b3c3d3e3f3g3h3
-		if ((m_firstPlane<=4) && (m_lastPlane>=4)) _planarData[planarYOffsPlane4 + _planarX/8] = (byte)(((a & 0x10) << 3) | ((b & 0x10) << 2) | ((c & 0x10) << 1) | ((d & 0x10)) | ((e & 0x10) >> 1) | ((f & 0x10) >> 2) | ((g & 0x10) >> 3) | ((h & 0x10) >> 4)); // a4b4c4d4e4f4g4h4
-		if ((m_firstPlane<=5) && (m_lastPlane>=5)) _planarData[planarYOffsPlane5 + _planarX/8] = (byte)(((a & 0x20) << 2) | ((b & 0x20) << 1) | ((c & 0x20)) | ((d & 0x20) >> 1) | ((e & 0x20) >> 2) | ((f & 0x20) >> 3) | ((g & 0x20) >> 4) | ((h & 0x20) >> 5)); // a5b5c5d5e5f5g5h5
-		if ((m_firstPlane<=6) && (m_lastPlane>=6)) _planarData[planarYOffsPlane6 + _planarX/8] = (byte)(((a & 0x40) << 1) | ((b & 0x40)) | ((c & 0x40) >> 1) | ((d & 0x40) >> 2) | ((e & 0x40) >> 3) | ((f & 0x40) >> 4) | ((g & 0x40) >> 5) | ((h & 0x40) >> 6)); // a6b6c6d6e6f6g6h6
-		if ((m_firstPlane<=7) && (m_lastPlane>=7)) _planarData[planarYOffsPlane7 + _planarX/8] = (byte)(((a & 0x80)) | ((b & 0x80) >> 1) | ((c & 0x80) >> 2) | ((d & 0x80) >> 3) | ((e & 0x80) >> 4) | ((f & 0x80) >> 5) | ((g & 0x80) >> 6) | ((h & 0x80) >> 7)); // a7b7c7d7e7f7g7h7
+		byte plane0 = (byte)(((a & 0x01) << 7) | ((b & 0x01) << 6) | ((c & 0x01) << 5) | ((d & 0x01) << 4) | ((e & 0x01) << 3) | ((f & 0x01) << 2) | ((g & 0x01) << 1) | ((h & 0x01))); // a0b0c0d0e0f0g0h0;
+		byte plane1 = (byte)(((a & 0x02) << 6) | ((b & 0x02) << 5) | ((c & 0x02) << 4) | ((d & 0x02) << 3) | ((e & 0x02) << 2) | ((f & 0x02) << 1) | ((g & 0x02)) | ((h & 0x02) >> 1)); // a1b1c1d1e1f1g1h1
+		byte plane2 = (byte)(((a & 0x04) << 5) | ((b & 0x04) << 4) | ((c & 0x04) << 3) | ((d & 0x04) << 2) | ((e & 0x04) << 1) | ((f & 0x04)) | ((g & 0x04) >> 1) | ((h & 0x04) >> 2)); // a2b2c2d2e2f2g2h2
+		byte plane3 = (byte)(((a & 0x08) << 4) | ((b & 0x08) << 3) | ((c & 0x08) << 2) | ((d & 0x08) << 1) | ((e & 0x08)) | ((f & 0x08) >> 1) | ((g & 0x08) >> 2) | ((h & 0x08) >> 3)); // a3b3c3d3e3f3g3h3
+		byte plane4 = (byte)(((a & 0x10) << 3) | ((b & 0x10) << 2) | ((c & 0x10) << 1) | ((d & 0x10)) | ((e & 0x10) >> 1) | ((f & 0x10) >> 2) | ((g & 0x10) >> 3) | ((h & 0x10) >> 4)); // a4b4c4d4e4f4g4h4
+		byte plane5 = (byte)(((a & 0x20) << 2) | ((b & 0x20) << 1) | ((c & 0x20)) | ((d & 0x20) >> 1) | ((e & 0x20) >> 2) | ((f & 0x20) >> 3) | ((g & 0x20) >> 4) | ((h & 0x20) >> 5)); // a5b5c5d5e5f5g5h5
+		byte plane6 = (byte)(((a & 0x40) << 1) | ((b & 0x40)) | ((c & 0x40) >> 1) | ((d & 0x40) >> 2) | ((e & 0x40) >> 3) | ((f & 0x40) >> 4) | ((g & 0x40) >> 5) | ((h & 0x40) >> 6)); // a6b6c6d6e6f6g6h6
+		byte plane7 = (byte)(((a & 0x80)) | ((b & 0x80) >> 1) | ((c & 0x80) >> 2) | ((d & 0x80) >> 3) | ((e & 0x80) >> 4) | ((f & 0x80) >> 5) | ((g & 0x80) >> 6) | ((h & 0x80) >> 7)); // a7b7c7d7e7f7g7h7
+
+		if ((m_firstPlane<=0) && (m_lastPlane>=0)) _planarData[planarYOffsPlane0 + _planarX/8] = plane0;
+		if ((m_firstPlane<=1) && (m_lastPlane>=1)) _planarData[planarYOffsPlane1 + _planarX/8] = plane1;
+		if ((m_firstPlane<=2) && (m_lastPlane>=2)) _planarData[planarYOffsPlane2 + _planarX/8] = plane2;
+		if ((m_firstPlane<=3) && (m_lastPlane>=3)) _planarData[planarYOffsPlane3 + _planarX/8] = plane3;
+		if ((m_firstPlane<=4) && (m_lastPlane>=4)) _planarData[planarYOffsPlane4 + _planarX/8] = plane4;
+		if ((m_firstPlane<=5) && (m_lastPlane>=5)) _planarData[planarYOffsPlane5 + _planarX/8] = plane5;
+		if ((m_firstPlane<=6) && (m_lastPlane>=6)) _planarData[planarYOffsPlane6 + _planarX/8] = plane6;
+		if ((m_firstPlane<=7) && (m_lastPlane>=7)) _planarData[planarYOffsPlane7 + _planarX/8] = plane7;
     }
 }
