@@ -50,7 +50,7 @@ public class AmigaSprite
 		//		Debug.Log ("planarStepPerRow: " + planarStepPerRow);
 		//		Debug.Log ("planarStepPerPlane: " + planarStepPerPlane);
 
-		int dataSizeForSingleSprite = m_imageHeight * m_imageWidth * 4 / 8; // 4 bitplanes data, 8 bits per byte
+		int dataSizeForSingleSprite = m_imageHeight * m_imageWidth * 2 / 8; // 4 bitplanes data, 8 bits per byte
 		int headerAndEndSizeForSingleSprite = 8;
 
 		int planarDataSize = 2 * (headerAndEndSizeForSingleSprite+dataSizeForSingleSprite); // 2 sprites=16 colors "attached" sprite
