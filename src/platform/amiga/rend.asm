@@ -18,7 +18,7 @@ rendInit:
 	subq.l		#2,a0
 	bsr			_setupBitplanePointers
 	
-	lea 		Sprite0Test(pc),a0
+	lea 		SpriteExportTest(pc),a0
 	lea 		Copper_sprpt+2(pc),a1
 	move.l		a0,d0
 	swap.w		d0
@@ -26,7 +26,7 @@ rendInit:
 	swap.w		d0
 	move.w		d0,4(a1)
 	
-	lea 		Sprite1Test(pc),a0
+	lea 		SpriteExportTest+136(pc),a0
 	addq		#8,a1
 	move.l		a0,d0
 	swap.w		d0
@@ -171,7 +171,7 @@ rendSetSpritePosition:
 	move.l		d2,d4		; d4=vstart (high bit)
 	
 	move.l		d2,d5		; d5=vstop (low bits)
-	add.l		#5,d5
+	add.l		#16,d5		; sprite heigth
 	move.l		d5,d6		; d6=vstop (high bit)
 
 	lsr.w		#1,d1
@@ -191,8 +191,8 @@ rendSetSpritePosition:
 	and.w		#$0004,d4
 	or.w		d4,d5		;d5=sprxctl
 	
-	lea			Sprite0Test(pc),a0
-	lea			Sprite1Test(pc),a1
+	lea			SpriteExportTest(pc),a0
+	lea			SpriteExportTest+136(pc),a1
 	move.w		d1,(a0)+
 	move.w		d1,(a1)+
 	move.w		d5,(a0)
@@ -321,12 +321,17 @@ rendLoadSprite:
 rendLoadPalette:
 	movem.l			a0-a6/d0-d7,-(sp)
 
+	move.l		d1,d3
 	; fileLoad accept the file ID as d0, so no need to do any tricks here
-	_get_workmem_ptr	TilemapMem,a0
+	_get_workmem_ptr	PaletteMem,a0
 	jsr			fileLoad
 
-	_get_workmem_ptr	TilemapMem,a0
+	_get_workmem_ptr	PaletteMem,a0
 	lea			Copper_color+2(pc),a1
+	lsl.l		#6,d3
+	;mulu		#16*4,d3
+	add.l		d3,a1
+
 	moveq		#16-1,d0
 .loop
 	move.w		(a0)+,d1
@@ -355,8 +360,10 @@ rendLoadPalette:
 ;==============================================================================
 	cnop	0,4
 	
+SpriteExportTest
+	incbin	"../src/incbin/herotest_sprite_amiga.bin"
 
-Sprite0Test
+;Sprite0Test
 	dc.w	$2c40,$3100		;vstart, hstart, vstop
 	dc.w    $0c30,$0000
 	dc.w    $1818,$0420
@@ -365,7 +372,7 @@ Sprite0Test
 	dc.w    $0c30,$0000
 	dc.w    $0000,$0000
 
-Sprite1Test
+;Sprite1Test
 	dc.w    $2c40,$3180     ;same as sprite 0 except  attach  bit on
 	dc.w    $07e0,$0000     
 	dc.w    $0ff0,$0000
@@ -439,12 +446,12 @@ Copper_color
 	dc.w	color+30,$0000
 
 	dc.w	color+32,$0000	;16
-	;dc.w	color+34,$0000
-	;dc.w	color+36,$0000
-	;dc.w	color+38,$0000
-	dc.w	color+34,$0FF0
-	dc.w	color+36,$00FF
-	dc.w	color+38,$0F0F
+	dc.w	color+34,$0000
+	dc.w	color+36,$0000
+	dc.w	color+38,$0000
+	;dc.w	color+34,$0FF0
+	;dc.w	color+36,$00FF
+	;dc.w	color+38,$0F0F
 	dc.w	color+40,$0000	;20
 	dc.w	color+42,$0000
 	dc.w	color+44,$0000
