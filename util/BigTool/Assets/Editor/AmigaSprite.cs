@@ -44,8 +44,8 @@ public class AmigaSprite
 	private byte[] ChunkyToPlanarSpriteFrames (byte[] chunkyImage)
 	{
 		int chunkyStepPerRow = m_imageWidth;
-		int planarStepPerRow = 2;
-		int planarStepPerPlane = 1;
+		int planarStepPerRow = 4;
+		int planarStepPerPlane = 2;
 		//		Debug.Log ("chunkyStepPerRow: " + chunkyStepPerRow);
 		//		Debug.Log ("planarStepPerRow: " + planarStepPerRow);
 		//		Debug.Log ("planarStepPerPlane: " + planarStepPerPlane);
@@ -61,10 +61,10 @@ public class AmigaSprite
 
 		for (int frame = 0; frame < m_numberOfFrames; frame++) {
 						for (int x = 0; x < m_spriteWidth; x += 8) {
-								for (int y = 0; y < m_imageHeight; y += 8) {
-										for (int yInner = 0; yInner < 8; yInner++) {
-												c2p1.ChunkyToPlanar8Pixels (chunkyImage, x, y + yInner, spriteData, 0, 1 + (frame * (m_imageHeight+2)) + yInner);
-												c2p2.ChunkyToPlanar8Pixels (chunkyImage, x, y + yInner, spriteData, 0, 3 + m_imageHeight + (frame * (m_imageHeight+2)) + yInner);
+								for (int y = 0; y < m_imageHeight; y ++) {
+										{
+												c2p1.ChunkyToPlanar8Pixels (chunkyImage, x+(frame*m_spriteWidth), y, spriteData, x, 1 + (frame * (m_imageHeight + 2)) + y);
+												c2p2.ChunkyToPlanar8Pixels (chunkyImage, x+(frame*m_spriteWidth), y, spriteData, x, 3 + m_imageHeight + (frame * (m_imageHeight + 2)) + y);
 										}
 								}
 						}
