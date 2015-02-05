@@ -18,18 +18,26 @@ rendInit:
 	subq.l		#2,a0
 	bsr			_setupBitplanePointers
 	
-	lea 		SpriteTest(pc),a0
+	lea 		Sprite0Test(pc),a0
 	lea 		Copper_sprpt+2(pc),a1
 	move.l		a0,d0
 	swap.w		d0
 	move.w		d0,(a1)
 	swap.w		d0
 	move.w		d0,4(a1)
+	
+	lea 		Sprite1Test(pc),a0
+	addq		#8,a1
+	move.l		a0,d0
+	swap.w		d0
+	move.w		d0,(a1)
+	swap.w		d0
+	move.w		d0,4(a1)
 
-	lea			SpriteBlank,a0
+	lea			SpriteBlank(pc),a0
 	move.l		a0,d0
 	addq		#8,a1
-	moveq		#7-1,d1
+	moveq		#6-1,d1
 .spriteLoop
 	swap.w		d0
 	move.w		d0,(a1)
@@ -151,21 +159,48 @@ rendSetSpritePosition:
 	
 	;	$2c40,$3100		;vstart, hstart, vstop
 
+	movem.l		d2-d7/a2-a5,-(sp)
+	
 	cmp.l		#1,d0
 	bne.s		.skip
 	
-	add.w		#$40,d1
-	add.w		#$2c,d2
-	and.l		#$00FF,d1
-	and.l		#$00FF,d2
+	add.w		#$81,d1		; d1=hstart (high bits)
+	move.l		d1,d3		; d3=hstart (low bit)
+	
+	add.w		#$2c,d2		; d2=vstart (low bits)
+	move.l		d2,d4		; d4=vstart (high bit)
+	
+	move.l		d2,d5		; d5=vstop (low bits)
+	add.l		#5,d5
+	move.l		d5,d6		; d6=vstop (high bit)
+
+	lsr.w		#1,d1
+	and.w		#$00ff,d1	; <- remove?
 	lsl.w		#8,d2
-	or.w		d2,d1
-	lea			SpriteTest(pc),a0
+	and.w		#$ff00,d2	; <- remove?
+	or.w		d2,d1		; d1=sprxpos
+
+	lsl.w		#8,d5
+	and.w		#$ff00,d5	; <- remove?
+	and.w		#$0001,d3
+	or.w		d3,d5
+	lsl.w		#8-1,d6		; bit pos 8 -> pos 1
+	and.w		#$0002,d6
+	or.w		d6,d5
+	lsl.w		#8-2,d4		; bit pos 8 -> pos 2
+	and.w		#$0004,d4
+	or.w		d4,d5		;d5=sprxctl
+	
+	lea			Sprite0Test(pc),a0
+	lea			Sprite1Test(pc),a1
 	move.w		d1,(a0)+
-	add.w		#$0500,d1
-	and.w		#$ff00,d1
-	move.w		d1,(a0)+
+	move.w		d1,(a1)+
+	move.w		d5,(a0)
+	or.w		#$0080,d5	; attach
+	move.w		d5,(a1)
+	
 .skip
+	movem.l		(sp)+,d2-d7/a2-a5
 	rts
 
 
@@ -321,16 +356,25 @@ rendLoadPalette:
 	cnop	0,4
 	
 
-SpriteTest:
+Sprite0Test
 	dc.w	$2c40,$3100		;vstart, hstart, vstop
-	dc.w	$0990,$07e0
-	dc.w	$13c8,$0ff0
-	dc.w	$23c4,$1ff8
-	dc.w	$13c8,$0ff0
-	dc.w	$0990,$07e0
-	dc.w	$0000,$0000
+	dc.w    $0c30,$0000
+	dc.w    $1818,$0420
+	dc.w    $342c,$0e70
+	dc.w    $1818,$0420
+	dc.w    $0c30,$0000
+	dc.w    $0000,$0000
 
-SpriteBlank:
+Sprite1Test
+	dc.w    $2c40,$3180     ;same as sprite 0 except  attach  bit on
+	dc.w    $07e0,$0000     
+	dc.w    $0ff0,$0000
+	dc.w    $1ff8,$0000
+	dc.w    $0ff0,$0000
+	dc.w    $07e0,$0000
+	dc.w    $0000,$0000
+
+SpriteBlank
 	dc.w	$0000,$0000
 	dc.w	$0000,$0000
 
