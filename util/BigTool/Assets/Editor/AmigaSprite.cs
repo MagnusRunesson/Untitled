@@ -7,24 +7,26 @@ public class AmigaSprite
 {
 	private int m_imageWidth;
 	private int m_imageHeight;
+	private int m_numberOfFrames;
 	private int m_spriteWidth;
 	private byte[] m_spriteData;
 
 	public AmigaSprite( PalettizedImage _palettizedImage, PalettizedImageConfig _imageConfig )
 	{
 		m_imageWidth = _palettizedImage.m_width;
-		m_spriteWidth = m_imageWidth / _imageConfig.GetNumFrames ();
 		m_imageHeight = _palettizedImage.m_height;
-		
+		m_numberOfFrames = _imageConfig.GetNumFrames ();
+		m_spriteWidth = m_imageWidth / m_numberOfFrames;
+
 		SanityChecks (_palettizedImage, _imageConfig);
 
-		m_spriteData = ChunkyToPlanarTilesInterleaved (_palettizedImage.m_image);
+		m_spriteData = ChunkyToPlanarSpriteFrames (_palettizedImage.m_image);
 	}
 	
 	void SanityChecks (PalettizedImage _palettizedImage, PalettizedImageConfig _imageConfig)
 	{
-		if ((m_spriteWidth % 16) != 0) {
-			Debug.LogException (new UnityException ("PANIC! PlanarImage can only handle images with: spriteWidth % 16 == 0"));
+		if (m_spriteWidth != 16) {
+			Debug.LogException (new UnityException ("PANIC! AmigaSprites must be 16 pixels wide! Did you specify number of frames correctly?"));
 		}
 		
 //		int numberOfColorsUsed = 0;
@@ -39,37 +41,44 @@ public class AmigaSprite
 //		}
 	}
 
-	private byte[] ChunkyToPlanarTilesInterleaved (byte[] chunkyImage)
+	private byte[] ChunkyToPlanarSpriteFrames (byte[] chunkyImage)
 	{
 		int chunkyStepPerRow = m_imageWidth;
-		int planarStepPerRow = 4;
+		int planarStepPerRow = 2;
 		int planarStepPerPlane = 1;
 		//		Debug.Log ("chunkyStepPerRow: " + chunkyStepPerRow);
 		//		Debug.Log ("planarStepPerRow: " + planarStepPerRow);
 		//		Debug.Log ("planarStepPerPlane: " + planarStepPerPlane);
-		ChunkyToPlanar c2p = new ChunkyToPlanar(0, 3, chunkyStepPerRow, planarStepPerRow, planarStepPerPlane);
-		
-		int planarDataSize = m_imageHeight * m_imageWidth * 4 / 8;	
+
+		int dataSizeForSingleSprite = m_imageHeight * m_imageWidth * 4 / 8; // 4 bitplanes data, 8 bits per byte
+		int headerAndEndSizeForSingleSprite = 8;
+
+		int planarDataSize = 2 * (headerAndEndSizeForSingleSprite+dataSizeForSingleSprite); // 2 sprites=16 colors "attached" sprite
 		byte[] spriteData = new byte[planarDataSize];
-		
-		//			Debug.Log (m_height);
-		//			Debug.Log (m_width);
-		//			Debug.Log (m_numberOfBitPlanes);
-		//			Debug.Log (planarDataSize);
-		//			Debug.Log (chunkyYOffs);
-		//			Debug.Log (yoffsPlane3);
-		int tile = 0;
-		for (int x = 0; x < m_imageWidth; x += 8)
-		{
-			for (int y = 0; y < m_imageHeight; y += 8)
-			{
-				for (int yInner = 0; yInner < 8; yInner++)
-				{
-					c2p.ChunkyToPlanar8Pixels(chunkyImage, x, y + yInner, spriteData, 0, (tile * 8) + yInner);
+
+		ChunkyToPlanar c2p1 = new ChunkyToPlanar(0, 1, chunkyStepPerRow, planarStepPerRow, planarStepPerPlane);
+		ChunkyToPlanar c2p2 = new ChunkyToPlanar(2, 3, chunkyStepPerRow, planarStepPerRow, planarStepPerPlane);
+
+		for (int frame = 0; frame < m_numberOfFrames; frame++) {
+						for (int x = 0; x < m_spriteWidth; x += 8) {
+								for (int y = 0; y < m_imageHeight; y += 8) {
+										for (int yInner = 0; yInner < 8; yInner++) {
+												c2p1.ChunkyToPlanar8Pixels (chunkyImage, x, y + yInner, spriteData, 0, 1 + (frame * (m_imageHeight+2)) + yInner);
+												c2p2.ChunkyToPlanar8Pixels (chunkyImage, x, y + yInner, spriteData, 0, 3 + m_imageHeight + (frame * (m_imageHeight+2)) + yInner);
+										}
+								}
+						}
 				}
-				tile++;
-			}
-		}
+
+		Halp.Write16 (spriteData, 0, 0x2c40);
+		Halp.Write16 (spriteData, 2, 0x3c00);
+		Halp.Write16 (spriteData, 4+dataSizeForSingleSprite, 0x0000);
+		Halp.Write16 (spriteData, 6+dataSizeForSingleSprite, 0x0000);
+
+		Halp.Write16 (spriteData, 8+dataSizeForSingleSprite, 0x2c40);
+		Halp.Write16 (spriteData, 10+dataSizeForSingleSprite, 0x3c80);
+		Halp.Write16 (spriteData, 12+dataSizeForSingleSprite*2, 0x0000);
+		Halp.Write16 (spriteData, 14+dataSizeForSingleSprite*2, 0x0000);
 
 		return spriteData;
 	}

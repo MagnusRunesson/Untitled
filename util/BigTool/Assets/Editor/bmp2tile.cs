@@ -657,9 +657,9 @@ public class bmp2tile : EditorWindow
 				if( imageConfig.m_importAsSprite )
 				{
 					Sprite sprite = new Sprite( imageConfig );
-					//AmigaSprite amigaSprite = new AmigaSprite( imageData, imageConfig);
+					AmigaSprite amigaSprite = new AmigaSprite( imageData, imageConfig);
 					tileBank.ExportMegaDrive( outBaseName + "_sprite_chunky.bin" );
-					tileBank.ExportAmiga( outBaseName + "_sprite_amiga.bin" );
+					amigaSprite.Export( outBaseName + "_sprite_amiga.bin" );
 					tilePalette.Export( outBaseName + "_palette.bin" );
 					sprite.Export( outBaseName + "_sprite.bin" );
 					//planarImage.Export( outBaseName + "_sprite_planar.bin" );
