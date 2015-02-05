@@ -79,7 +79,7 @@ class PlanarImage
 		{		
 			for (int x = 0; x < m_width; x+=8)
 			{		
-				c2p.ChunkyToPlanar8Pixels (chunkyImage, x, y, planarData, x/8, y);						
+				c2p.ChunkyToPlanar8Pixels (chunkyImage, x, y, planarData, x, y);						
 			}
 		}
 
