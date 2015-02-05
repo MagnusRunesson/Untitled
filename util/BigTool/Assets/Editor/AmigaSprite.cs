@@ -63,8 +63,9 @@ public class AmigaSprite
 						for (int x = 0; x < m_spriteWidth; x += 8) {
 								for (int y = 0; y < m_imageHeight; y ++) {
 										{
-												c2p1.ChunkyToPlanar8Pixels (chunkyImage, x+(frame*m_spriteWidth), y, spriteData, x, 1 + (frame * (m_imageHeight + 2)) + y);
-												c2p2.ChunkyToPlanar8Pixels (chunkyImage, x+(frame*m_spriteWidth), y, spriteData, x, 3 + m_imageHeight + (frame * (m_imageHeight + 2)) + y);
+												c2p2.ChunkyToPlanar8Pixels (chunkyImage, x + (frame * m_spriteWidth), y, spriteData, x, (frame * 2 * (m_imageHeight + 2)) + 1 + y);
+												c2p1.ChunkyToPlanar8Pixels (chunkyImage, x + (frame * m_spriteWidth), y, spriteData, x, (frame * 2 * (m_imageHeight + 2)) + 3 + m_imageHeight + y);
+					
 										}
 								}
 						}
