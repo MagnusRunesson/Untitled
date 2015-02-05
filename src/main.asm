@@ -45,6 +45,11 @@ main:
 	ifd is_mega_drive
 	move.l		#fileid_testtiles_bank,d0
 	else
+	move.l		#fileid_testtiles_palette,d0
+	moveq		#1,d1
+	jsr			rendLoadPalette(pc)
+
+
 	move.l		#fileid_testtiles_bank_amiga,d0
 
 	;printv _data_testtiles_bank_amiga_pos
