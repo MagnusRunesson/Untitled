@@ -26,12 +26,16 @@ fileid_herotestpng_sprite_chunky        equ 24
 fileid_herotestpng_sprite_amiga         equ 25
 fileid_herotestpng_palette              equ 26
 fileid_herotestpng_sprite               equ 27
-fileid_signpost_bank                    equ 28
-fileid_signpost_bank_amiga              equ 29
-fileid_signpost_map                     equ 30
-fileid_signpost_palette                 equ 31
-fileid_testmap_map                      equ 32
-fileid_testmap2_map                     equ 33
+fileid_housetiles_bank                  equ 28
+fileid_housetiles_bank_amiga            equ 29
+fileid_housetiles_map                   equ 30
+fileid_housetiles_palette               equ 31
+fileid_signpost_bank                    equ 32
+fileid_signpost_bank_amiga              equ 33
+fileid_signpost_map                     equ 34
+fileid_signpost_palette                 equ 35
+fileid_testmap_map                      equ 36
+fileid_testmap2_map                     equ 37
 
 FileIDMap:
 	dc.w	_data_herotest_sprite_chunky_pos,_data_herotest_sprite_chunky_length
@@ -62,6 +66,10 @@ FileIDMap:
 	dc.w	_data_herotestpng_sprite_amiga_pos,_data_herotestpng_sprite_amiga_length
 	dc.w	_data_herotestpng_palette_pos,_data_herotestpng_palette_length
 	dc.w	_data_herotestpng_sprite_pos,_data_herotestpng_sprite_length
+	dc.w	_data_housetiles_bank_pos,_data_housetiles_bank_length
+	dc.w	_data_housetiles_bank_amiga_pos,_data_housetiles_bank_amiga_length
+	dc.w	_data_housetiles_map_pos,_data_housetiles_map_length
+	dc.w	_data_housetiles_palette_pos,_data_housetiles_palette_length
 	dc.w	_data_signpost_bank_pos,_data_signpost_bank_length
 	dc.w	_data_signpost_bank_amiga_pos,_data_signpost_bank_amiga_length
 	dc.w	_data_signpost_map_pos,_data_signpost_map_length

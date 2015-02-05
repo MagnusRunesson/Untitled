@@ -280,6 +280,46 @@ _data_herotestpng_sprite_length         equ ((_data_herotestpng_sprite_end-_data
 _data_herotestpng_sprite_end:
 
 
+; housetiles_bank.bin
+
+	cnop		0,_chunk_size
+_data_housetiles_bank:
+	incbin	"../src/incbin/housetiles_bank.bin"
+_data_housetiles_bank_pos               equ _data_housetiles_bank/_chunk_size
+_data_housetiles_bank_length            equ ((_data_housetiles_bank_end-_data_housetiles_bank)+(_chunk_size-1))/_chunk_size
+_data_housetiles_bank_end:
+
+
+; housetiles_bank_amiga.bin
+
+	cnop		0,_chunk_size
+_data_housetiles_bank_amiga:
+	incbin	"../src/incbin/housetiles_bank_amiga.bin"
+_data_housetiles_bank_amiga_pos         equ _data_housetiles_bank_amiga/_chunk_size
+_data_housetiles_bank_amiga_length      equ ((_data_housetiles_bank_amiga_end-_data_housetiles_bank_amiga)+(_chunk_size-1))/_chunk_size
+_data_housetiles_bank_amiga_end:
+
+
+; housetiles_map.bin
+
+	cnop		0,_chunk_size
+_data_housetiles_map:
+	incbin	"../src/incbin/housetiles_map.bin"
+_data_housetiles_map_pos                equ _data_housetiles_map/_chunk_size
+_data_housetiles_map_length             equ ((_data_housetiles_map_end-_data_housetiles_map)+(_chunk_size-1))/_chunk_size
+_data_housetiles_map_end:
+
+
+; housetiles_palette.bin
+
+	cnop		0,_chunk_size
+_data_housetiles_palette:
+	incbin	"../src/incbin/housetiles_palette.bin"
+_data_housetiles_palette_pos            equ _data_housetiles_palette/_chunk_size
+_data_housetiles_palette_length         equ ((_data_housetiles_palette_end-_data_housetiles_palette)+(_chunk_size-1))/_chunk_size
+_data_housetiles_palette_end:
+
+
 ; signpost_bank.bin
 
 	cnop		0,_chunk_size
