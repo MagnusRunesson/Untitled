@@ -445,8 +445,7 @@ public class bmp2tile : EditorWindow
 			m_paletteRemapRect = new Rect( m_imageSettingsRect.x + m_imageSettingsRect.width + m_windowPadding, m_imageSettingsRect.y, 100.0f, 15.0f + (16.0f * 30.0f) );
 
 			//
-			int numberOfBitplanesIsHardcodedForNow = 4;
-//			m_planarImage = new PlanarImage( m_currentImageData, numberOfBitplanesIsHardcodedForNow);
+//			m_planarImage = new PlanarImage( m_currentImageData);
 			bool OptimizedTilebank = (m_currentImageConfig.m_importAsSprite == false); // If we import the image as a sprite we should not optimize the tile bank
 			m_tileBank = new TileBank( m_currentImageData, OptimizedTilebank );
 			m_tileMap = new TileMap( m_tileBank, m_currentImageData );
@@ -574,8 +573,7 @@ public class bmp2tile : EditorWindow
 			m_paletteRemapRect = new Rect( m_imageSettingsRect.x + m_imageSettingsRect.width + m_windowPadding, m_imageSettingsRect.y, 100.0f, 15.0f + (16.0f * 30.0f) );
 			
 			//
-			int numberOfBitplanesIsHardcodedForNow = 4;
-			m_planarImage = new PlanarImage( m_currentImageData, numberOfBitplanesIsHardcodedForNow);
+			m_planarImage = new PlanarImage( m_currentImageData);
 			bool OptimizedTilebank = (m_currentImageConfig.m_importAsSprite == false); // If we import the image as a sprite we should not optimize the tile bank
 			m_tileBank = new TileBank( m_currentImageData, OptimizedTilebank );
 			m_tileMap = new TileMap( m_tileBank, m_currentImageData );
@@ -651,8 +649,7 @@ public class bmp2tile : EditorWindow
 				imageConfig.SetImage( imageData );
 
 				// Convert to tile banks / planar images
-				int numberOfBitplanesIsHardcodedForNow = 4;
-//				PlanarImage planarImage = new PlanarImage( imageData, numberOfBitplanesIsHardcodedForNow);
+//				PlanarImage planarImage = new PlanarImage( imageData);
 				TileBank tileBank = new TileBank( imageData, (imageConfig.m_importAsSprite==false) );
 				TilePalette tilePalette = new TilePalette( imageData );
 
@@ -660,6 +657,7 @@ public class bmp2tile : EditorWindow
 				if( imageConfig.m_importAsSprite )
 				{
 					Sprite sprite = new Sprite( imageConfig );
+					//AmigaSprite amigaSprite = new AmigaSprite( imageData, imageConfig);
 					tileBank.ExportMegaDrive( outBaseName + "_sprite_chunky.bin" );
 					tileBank.ExportAmiga( outBaseName + "_sprite_amiga.bin" );
 					tilePalette.Export( outBaseName + "_palette.bin" );
@@ -729,8 +727,7 @@ public class bmp2tile : EditorWindow
 			m_paletteRemapRect = new Rect( m_tileBankWindowRect.x + m_tileBankWindowRect.width + m_windowPadding, m_tileBankWindowRect.y, 100.0f, 15.0f + (16.0f * 30.0f) );
 			
 			//
-			int numberOfBitplanesIsHardcodedForNow = 4;
-			m_planarImage = new PlanarImage( m_imageData, numberOfBitplanesIsHardcodedForNow);
+			m_planarImage = new PlanarImage( m_imageData);
 			m_tileBank = new TileBank( m_imageData );
 			m_tileMap = new TileMap( m_tileBank, m_imageData );
 			m_tilePalette = new TilePalette( m_imageData );

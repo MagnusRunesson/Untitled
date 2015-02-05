@@ -5,14 +5,12 @@ using System;
 
 class PlanarImage
 {
-	private int m_numberOfBitPlanes;
 	private int m_width;
 	private int m_height;
 	private byte[] m_planarData;
 
-	public PlanarImage( PalettizedImage _palettizedImage, int _numberOfBitPlanes )
+	public PlanarImage( PalettizedImage _palettizedImage )
 	{
-		m_numberOfBitPlanes = _numberOfBitPlanes;
 		m_width = _palettizedImage.m_width;
 		m_height = _palettizedImage.m_height;
 
@@ -28,16 +26,16 @@ class PlanarImage
 			Debug.LogException (new UnityException ("PANIC! PlanarImage can only handle images with: width % 8 == 0"));
 		}
 
-		int numberOfColorsUsed = 0;
-		for (int c = 0; c <  _palettizedImage.m_colorUsed.Count; c++) {
-			if (_palettizedImage.m_colorUsed [c]) {
-				numberOfColorsUsed = c;
-			}
-		}
-		int maxNumberOfColors = (int)Math.Pow (m_numberOfBitPlanes, 2);
-		if (numberOfColorsUsed > maxNumberOfColors) {
-			Debug.LogException (new UnityException (String.Format ("PANIC! Trying to create PlanarImage with more colors than _numberOfBitplanes allows [{0} > {1}]!", numberOfColorsUsed, maxNumberOfColors)));
-		}
+//		int numberOfColorsUsed = 0;
+//		for (int c = 0; c <  _palettizedImage.m_colorUsed.Count; c++) {
+//			if (_palettizedImage.m_colorUsed [c]) {
+//				numberOfColorsUsed = c;
+//			}
+//		}
+//		int maxNumberOfColors = (int)Math.Pow (4, 2);
+//		if (numberOfColorsUsed > maxNumberOfColors) {
+//			Debug.LogException (new UnityException (String.Format ("PANIC! Trying to create PlanarImage with more colors than _numberOfBitplanes allows [{0} > {1}]!", numberOfColorsUsed, maxNumberOfColors)));
+//		}
 	}
 	
 	private byte[] ChunkyToPlanarImageSequential (byte[] chunkyImage)
@@ -49,7 +47,7 @@ class PlanarImage
 //		Debug.Log ("planarStepPerRow: " + planarStepPerRow);
 //		Debug.Log ("planarStepPerPlane: " + planarStepPerPlane);
 
-        ChunkyToPlanar c2p = new ChunkyToPlanar(m_numberOfBitPlanes, chunkyStepPerRow, planarStepPerRow, planarStepPerPlane);
+		ChunkyToPlanar c2p = new ChunkyToPlanar(0, 3, chunkyStepPerRow, planarStepPerRow, planarStepPerPlane);
 
         return ChunkyToPlanarImage(chunkyImage, c2p);
 	}
@@ -57,18 +55,18 @@ class PlanarImage
 	private byte[] ChunkyToPlanarImageInterleaved (byte[] chunkyImage)
 	{
 		int chunkyStepPerRow = m_width;
-		int planarStepPerRow = m_width/8*m_numberOfBitPlanes;
+		int planarStepPerRow = m_width/8*4;
 		int planarStepPerPlane = m_width/8;
 //		Debug.Log ("chunkyStepPerRow: " + chunkyStepPerRow);
 //		Debug.Log ("planarStepPerRow: " + planarStepPerRow);
 //		Debug.Log ("planarStepPerPlane: " + planarStepPerPlane);
-        ChunkyToPlanar c2p = new ChunkyToPlanar(m_numberOfBitPlanes, chunkyStepPerRow, planarStepPerRow, planarStepPerPlane);
+		ChunkyToPlanar c2p = new ChunkyToPlanar(0, 3, chunkyStepPerRow, planarStepPerRow, planarStepPerPlane);
         return ChunkyToPlanarImage(chunkyImage, c2p);
 	}
 	
 	private byte[] ChunkyToPlanarImage (byte[] chunkyImage, ChunkyToPlanar c2p)
 	{
-		int planarDataSize = m_height * m_width * m_numberOfBitPlanes / 8;	
+		int planarDataSize = m_height * m_width * 4 / 8;	
 		byte[] planarData = new byte[planarDataSize];
 		
 		//			Debug.Log (m_height);
@@ -91,14 +89,14 @@ class PlanarImage
 	private byte[] ChunkyToPlanarTilesInterleaved (byte[] chunkyImage)
 	{
 		int chunkyStepPerRow = m_width;
-		int planarStepPerRow = m_numberOfBitPlanes;
+		int planarStepPerRow = 4;
 		int planarStepPerPlane = 1;
 		//		Debug.Log ("chunkyStepPerRow: " + chunkyStepPerRow);
 		//		Debug.Log ("planarStepPerRow: " + planarStepPerRow);
 		//		Debug.Log ("planarStepPerPlane: " + planarStepPerPlane);
-        ChunkyToPlanar c2p = new ChunkyToPlanar(m_numberOfBitPlanes, chunkyStepPerRow, planarStepPerRow, planarStepPerPlane);
+		ChunkyToPlanar c2p = new ChunkyToPlanar(0, 3, chunkyStepPerRow, planarStepPerRow, planarStepPerPlane);
 		
-		int planarDataSize = m_height * m_width * m_numberOfBitPlanes / 8;	
+		int planarDataSize = m_height * m_width * 4 / 8;	
 		byte[] planarData = new byte[planarDataSize];
 		
 		//			Debug.Log (m_height);

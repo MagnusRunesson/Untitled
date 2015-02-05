@@ -168,7 +168,7 @@ public class TileBank
 		{
 			Tile t = m_tiles[ iTile ];
 
-			ChunkyToPlanar c2p = new ChunkyToPlanar(4, 8, 4, 1);
+			ChunkyToPlanar c2p = new ChunkyToPlanar(0, 3, 8, 4, 1);
 			for(int y=0; y<Tile.Height; y++ )
 			{
 				c2p.ChunkyToPlanar8Pixels(t.m_pixels, 0, y, outBytes, 0, iTile*8+y);
