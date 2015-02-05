@@ -4,14 +4,11 @@ using System.Collections.Generic;
 
 public class Sprite
 {
-	PalettizedImage m_imageData;
 	PalettizedImageConfig m_imageConfig;
 
-	public Sprite( PalettizedImage _imageData, PalettizedImageConfig _imageConfig )
+	public Sprite(PalettizedImageConfig _imageConfig )
 	{
-		m_imageData = _imageData;
 		m_imageConfig = _imageConfig;
-
 	}
 
 	public void Export( string _outfilename )

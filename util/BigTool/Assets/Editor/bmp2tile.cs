@@ -659,7 +659,7 @@ public class bmp2tile : EditorWindow
 				// Export it
 				if( imageConfig.m_importAsSprite )
 				{
-					Sprite sprite = new Sprite( imageData, imageConfig );
+					Sprite sprite = new Sprite( imageConfig );
 					tileBank.ExportMegaDrive( outBaseName + "_sprite_chunky.bin" );
 					tileBank.ExportAmiga( outBaseName + "_sprite_amiga.bin" );
 					tilePalette.Export( outBaseName + "_palette.bin" );
