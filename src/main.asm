@@ -130,7 +130,7 @@ main:
 
 	move.w		_potion2_go_handle(a2),d0	; d0 is game object handle
 	add.w		#30,d3
-	and.w		#$ffff,d3
+	and.w		#$1ff,d3
 	add.w		#8,d1						; d1 is world X position
 	move.w		(a3,d3),d2					; d2 is world Y position, from sin table. Can be negative.
 	asr.w		#2,d2
@@ -139,7 +139,7 @@ main:
 
 	move.w		_potion3_go_handle(a2),d0	; d0 is game object handle
 	add.w		#30,d3
-	and.w		#$ffff,d3
+	and.w		#$1ff,d3
 	add.w		#8,d1						; d1 is world X position
 	move.w		(a3,d3),d2					; d2 is world Y position, from sin table. Can be negative.
 	asr.w		#2,d2
@@ -148,7 +148,7 @@ main:
 
 	move.w		_potion4_go_handle(a2),d0	; d0 is game object handle
 	add.w		#30,d3
-	and.w		#$ffff,d3
+	and.w		#$1ff,d3
 	add.w		#8,d1						; d1 is world X position
 	move.w		(a3,d3),d2					; d2 is world Y position, from sin table. Can be negative.
 	asr.w		#2,d2
