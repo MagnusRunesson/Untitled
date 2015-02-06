@@ -87,21 +87,21 @@ main:
 	;
 	lea			potion_go(pc),a0
 	jsr			gomLoadObject(pc)
-	move.l		d0,_potion2_go_handle(a2)
+	move.w		d0,_potion2_go_handle(a2)
 
 	;
 	; Load more the potions
 	;
 	lea			potion_go(pc),a0
 	jsr			gomLoadObject(pc)
-	move.l		d0,_potion3_go_handle(a2)
+	move.w		d0,_potion3_go_handle(a2)
 
 	;
 	; Load more the potions
 	;
 	lea			potion_go(pc),a0
 	jsr			gomLoadObject(pc)
-	move.l		d0,_potion4_go_handle(a2)
+	move.w		d0,_potion4_go_handle(a2)
 
 .main_loop:
 	;
