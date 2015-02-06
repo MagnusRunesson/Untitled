@@ -51,6 +51,15 @@ public class ChunkyToPlanar
 		byte plane6 = (byte)(((a & 0x40) << 1) | ((b & 0x40)) | ((c & 0x40) >> 1) | ((d & 0x40) >> 2) | ((e & 0x40) >> 3) | ((f & 0x40) >> 4) | ((g & 0x40) >> 5) | ((h & 0x40) >> 6)); // a6b6c6d6e6f6g6h6
 		byte plane7 = (byte)(((a & 0x80)) | ((b & 0x80) >> 1) | ((c & 0x80) >> 2) | ((d & 0x80) >> 3) | ((e & 0x80) >> 4) | ((f & 0x80) >> 5) | ((g & 0x80) >> 6) | ((h & 0x80) >> 7)); // a7b7c7d7e7f7g7h7
 
+//		plane0 = (byte)(0x00 + _chunkyY);
+//		plane1 = (byte)(0x10 + _chunkyY);
+//		plane2 = (byte)(0x20 + _chunkyY);
+//		plane3 = (byte)(0x30 + _chunkyY);
+//		plane4 = (byte)(0x40 + _chunkyY);
+//		plane5 = (byte)(0x50 + _chunkyY);
+//		plane6 = (byte)(0x60 + _chunkyY);
+//		plane7 = (byte)(0x70 + _chunkyY);
+		
 		if ((m_firstPlane<=0) && (m_lastPlane>=0)) _planarData[planarYOffsPlane0 + _planarX/8] = plane0;
 		if ((m_firstPlane<=1) && (m_lastPlane>=1)) _planarData[planarYOffsPlane1 + _planarX/8] = plane1;
 		if ((m_firstPlane<=2) && (m_lastPlane>=2)) _planarData[planarYOffsPlane2 + _planarX/8] = plane2;

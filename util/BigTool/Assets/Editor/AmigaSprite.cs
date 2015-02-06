@@ -46,14 +46,10 @@ public class AmigaSprite
 		int chunkyStepPerRow = m_imageWidth;
 		int planarStepPerRow = 4;
 		int planarStepPerPlane = 2;
-		//		Debug.Log ("chunkyStepPerRow: " + chunkyStepPerRow);
-		//		Debug.Log ("planarStepPerRow: " + planarStepPerRow);
-		//		Debug.Log ("planarStepPerPlane: " + planarStepPerPlane);
 
-		int dataSizeForSingleSprite = m_imageHeight * m_imageWidth * 2 / 8; // 4 bitplanes data, 8 bits per byte
-		int headerAndEndSizeForSingleSprite = 8;
+		int dataSizePerFrame = 16 + (m_imageHeight * 2 * 4); // 2 bytes per row per bitplane, 4 bitplanes
 
-		int planarDataSize = 2 * (headerAndEndSizeForSingleSprite+dataSizeForSingleSprite); // 2 sprites=16 colors "attached" sprite
+		int planarDataSize = m_numberOfFrames * dataSizePerFrame; // 
 		byte[] spriteData = new byte[planarDataSize];
 
 		ChunkyToPlanar c2p1 = new ChunkyToPlanar(0, 1, chunkyStepPerRow, planarStepPerRow, planarStepPerPlane);
@@ -63,24 +59,24 @@ public class AmigaSprite
 						for (int x = 0; x < m_spriteWidth; x += 8) {
 								for (int y = 0; y < m_imageHeight; y ++) {
 										{
-												c2p2.ChunkyToPlanar8Pixels (chunkyImage, x + (frame * m_spriteWidth), y, spriteData, x, (frame * 2 * (m_imageHeight + 2)) + 1 + y);
-												c2p1.ChunkyToPlanar8Pixels (chunkyImage, x + (frame * m_spriteWidth), y, spriteData, x, (frame * 2 * (m_imageHeight + 2)) + 3 + m_imageHeight + y);
+												c2p1.ChunkyToPlanar8Pixels (chunkyImage, x + (frame * m_spriteWidth), y, spriteData, x, (frame * 2 * (m_imageHeight + 2)) + 1 + y);
+												c2p2.ChunkyToPlanar8Pixels (chunkyImage, x + (frame * m_spriteWidth), y, spriteData, x, (frame * 2 * (m_imageHeight + 2)) + 3 + m_imageHeight + y);
 					
 										}
 								}
 						}
+
+						int baseGrej = frame * dataSizePerFrame;
+						Halp.Write16 (spriteData, baseGrej + 0, 0x2c40);
+						Halp.Write16 (spriteData, baseGrej + 2, 0x3c00);
+						Halp.Write16 (spriteData, baseGrej - 4 + (dataSizePerFrame / 2), 0x0000);
+						Halp.Write16 (spriteData, baseGrej - 2 + (dataSizePerFrame / 2), 0x0000);
+
+						Halp.Write16 (spriteData, baseGrej + 0 + (dataSizePerFrame / 2), 0x2c40);
+						Halp.Write16 (spriteData, baseGrej + 2 + (dataSizePerFrame / 2), 0x3c80);
+						Halp.Write16 (spriteData, baseGrej - 4 + dataSizePerFrame, 0x0000);
+						Halp.Write16 (spriteData, baseGrej - 2 + dataSizePerFrame, 0x0000);		
 				}
-
-		Halp.Write16 (spriteData, 0, 0x2c40);
-		Halp.Write16 (spriteData, 2, 0x3c00);
-		Halp.Write16 (spriteData, 4+dataSizeForSingleSprite, 0x0000);
-		Halp.Write16 (spriteData, 6+dataSizeForSingleSprite, 0x0000);
-
-		Halp.Write16 (spriteData, 8+dataSizeForSingleSprite, 0x2c40);
-		Halp.Write16 (spriteData, 10+dataSizeForSingleSprite, 0x3c80);
-		Halp.Write16 (spriteData, 12+dataSizeForSingleSprite*2, 0x0000);
-		Halp.Write16 (spriteData, 14+dataSizeForSingleSprite*2, 0x0000);
-
 		return spriteData;
 	}
 
