@@ -51,7 +51,7 @@ main:
 	ifd is_mega_drive
 	move.l		#fileid_testtiles_bank,d0
 	else
-	move.l		#fileid_testtiles_palette,d0
+	move.l		#fileid_testsprite_palette,d0
 	moveq		#1,d1
 	jsr			rendLoadPalette(pc)
 
