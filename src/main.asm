@@ -15,6 +15,10 @@ _camera_pos_x				rs.w		1
 _camera_pos_y				rs.w		1
 _potion_go_handle			rs.w		1
 _testanim_time				rs.w		1
+_potion2_go_handle			rs.w		1
+_potion3_go_handle			rs.w		1
+_potion4_go_handle			rs.w		1
+_potionanim_time			rs.w		1
 
 
 main:
@@ -23,6 +27,7 @@ main:
 	;
 	jsr			memGetUserBaseAddress(pc)	;
 	move.l		a0,a2						; a2 will be user mem from now on
+	lea			sintable(pc),a3				; a3 will be sinus table
 
 	;
 	; Setup local variables
@@ -34,6 +39,7 @@ main:
 
 	;
 	move		#0,_testanim_time(a2)
+	move.w		#0,_potionanim_time(a2)
 
 	;
 	; Load world graphics
@@ -76,6 +82,27 @@ main:
 	jsr			gomLoadObject(pc)
 	move.l		d0,_hero_go_handle(a2)
 
+	;
+	; Load more the potions
+	;
+	lea			potion_go(pc),a0
+	jsr			gomLoadObject(pc)
+	move.l		d0,_potion2_go_handle(a2)
+
+	;
+	; Load more the potions
+	;
+	lea			potion_go(pc),a0
+	jsr			gomLoadObject(pc)
+	move.l		d0,_potion3_go_handle(a2)
+
+	;
+	; Load more the potions
+	;
+	lea			potion_go(pc),a0
+	jsr			gomLoadObject(pc)
+	move.l		d0,_potion4_go_handle(a2)
+
 .main_loop:
 	;
 	; Read player input and update player world positions
@@ -90,6 +117,46 @@ main:
 	move.w		_hero_sprite_pos_x(a2),d1
 	move.w		_hero_sprite_pos_y(a2),d2
 	jsr			gomSetPosition(pc)
+
+	;
+	move.w		_potion_go_handle(a2),d0	; d0 is game object handle
+	move.w		_potionanim_time(a2),d3
+	lsl.w		#1,d3
+	move.w		#30,d1						; d1 is world X position
+	move.w		(a3,d3),d2					; d2 is world Y position, from sin table. Can be negative.
+	asr.w		#2,d2
+	add.w		#100,d2
+	jsr			gomSetPosition(pc)
+
+	move.w		_potion2_go_handle(a2),d0	; d0 is game object handle
+	add.w		#30,d3
+	and.w		#$ffff,d3
+	add.w		#8,d1						; d1 is world X position
+	move.w		(a3,d3),d2					; d2 is world Y position, from sin table. Can be negative.
+	asr.w		#2,d2
+	add.w		#100,d2
+	jsr			gomSetPosition(pc)
+
+	move.w		_potion3_go_handle(a2),d0	; d0 is game object handle
+	add.w		#30,d3
+	and.w		#$ffff,d3
+	add.w		#8,d1						; d1 is world X position
+	move.w		(a3,d3),d2					; d2 is world Y position, from sin table. Can be negative.
+	asr.w		#2,d2
+	add.w		#100,d2
+	jsr			gomSetPosition(pc)
+
+	move.w		_potion4_go_handle(a2),d0	; d0 is game object handle
+	add.w		#30,d3
+	and.w		#$ffff,d3
+	add.w		#8,d1						; d1 is world X position
+	move.w		(a3,d3),d2					; d2 is world Y position, from sin table. Can be negative.
+	asr.w		#2,d2
+	add.w		#100,d2
+	jsr			gomSetPosition(pc)
+
+
+
 
 	;
 	; Update camera so the player doesn't go out of bounds
@@ -133,6 +200,15 @@ main:
 	add.w		#1,d0
 	and.w		#$ff,d0
 	move.w		d0,_testanim_time(a2)
+
+	;
+	; Increment potion animation time
+	;
+	move.w		_potionanim_time(a2),d0
+	add.w		#1,d0
+	and.w		#$ff,d0
+	move.w		d0,_potionanim_time(a2)
+
 
 	;
 	bra			.main_loop
