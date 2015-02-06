@@ -26,7 +26,7 @@ rendInit:
 	swap.w		d0
 	move.w		d0,4(a1)
 	
-	lea 		SpriteExportTest+136(pc),a0
+	lea 		SpriteExportTest+72(pc),a0
 	addq		#8,a1
 	move.l		a0,d0
 	swap.w		d0
@@ -156,8 +156,6 @@ rendSetSpritePosition:
 
 
 	; temp hack to move player character (sprite ID=1)
-	
-	;	$2c40,$3100		;vstart, hstart, vstop
 
 	movem.l		d2-d7/a2-a5,-(sp)
 	
@@ -192,7 +190,7 @@ rendSetSpritePosition:
 	or.w		d4,d5		;d5=sprxctl
 	
 	lea			SpriteExportTest(pc),a0
-	lea			SpriteExportTest+136(pc),a1
+	lea			SpriteExportTest+72(pc),a1
 	move.w		d1,(a0)+
 	move.w		d1,(a1)+
 	move.w		d5,(a0)
