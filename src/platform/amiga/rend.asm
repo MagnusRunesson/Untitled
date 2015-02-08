@@ -206,7 +206,12 @@ testBob
 	lsr.l		#3,d1
 	and.l		#$fffffffe,d1
 	
+	add.l		#16,d2
 	lsl.l		#8,d2
+
+
+	and.w		#$0f,d3
+	ror.w		#4,d3
 
 	_get_workmem_ptr BitplaneMem,a1
 	add.l		d1,a1
@@ -218,14 +223,17 @@ testBob
 
 	move.l		a0,bltapt(a6)
 	move.l		a1,bltdpt(a6)
-	move.w		#0,bltamod(a6)
-	move.w		#62,bltdmod(a6)
+	move.w		#-2,bltamod(a6)
+	move.w		#60,bltdmod(a6)
 	move.w		#$ffff,bltafwm(a6)
 	move.w		#$ffff,bltalwm(a6)
 
-	move.w		#SRCA|DEST|$F0,bltcon0(a6)	; D=A:$f0
+	move.w		d3,d4
+	or.w		#SRCA|DEST|$F0,d4			; D=A:$f0
+	move.w		d4,bltcon0(a6)	
+	;move.w		#SRCA|DEST|$F0,bltcon0(a6)	; D=A:$f0
 	move.w		#$0000,bltcon1(a6)
-	move.w		#$1001,bltsize(a6)
+	move.w		#$1002,bltsize(a6)
 
 	movem.l		(sp)+,d0-d7/a0-a5
 	rts
