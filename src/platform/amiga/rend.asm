@@ -225,8 +225,8 @@ testBob
 	move.l		a1,bltdpt(a6)
 	move.w		#-2,bltamod(a6)
 	move.w		#60,bltdmod(a6)
-	move.w		#$ffff,bltafwm(a6)
-	move.w		#$ffff,bltalwm(a6)
+	move.w		#$0000,bltalwm(a6)
+	move.w		#$ffff,bltafwm(a6)	
 
 	move.w		d3,d4
 	or.w		#SRCA|DEST|$F0,d4			; D=A:$f0
