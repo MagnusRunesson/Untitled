@@ -213,26 +213,30 @@ testBob
 	and.w		#$0f,d3
 	ror.w		#4,d3
 
-	_get_workmem_ptr BitplaneMem,a1
-	add.l		d1,a1
-	add.l		d2,a1
+	_get_workmem_ptr BitplaneMem,a2
+	add.l		d1,a2
+	add.l		d2,a2
 
-	lea			TestBobGfx,a0
-
+	lea			TestBobGfx(pc),a0
+	lea			TestBobMask(pc),a1
 	bsr			waitBlit
 
-	move.l		a0,bltapt(a6)
-	move.l		a1,bltdpt(a6)
+	move.l		a0,bltbpt(a6)
+	move.l		a1,bltapt(a6)
+	move.l		a2,bltcpt(a6)
+	move.l		a2,bltdpt(a6)
 	move.w		#-2,bltamod(a6)
+	move.w		#-2,bltbmod(a6)
+	move.w		#60,bltcmod(a6)
 	move.w		#60,bltdmod(a6)
 	move.w		#$0000,bltalwm(a6)
 	move.w		#$ffff,bltafwm(a6)	
 
 	move.w		d3,d4
-	or.w		#SRCA|DEST|$F0,d4			; D=A:$f0
+	or.w		#SRCA|SRCB|SRCC|DEST|$CA,d4			; D=A:$f0 $E2
 	move.w		d4,bltcon0(a6)	
 	;move.w		#SRCA|DEST|$F0,bltcon0(a6)	; D=A:$f0
-	move.w		#$0000,bltcon1(a6)
+	move.w		d3,bltcon1(a6)
 	move.w		#$1002,bltsize(a6)
 
 	movem.l		(sp)+,d0-d7/a0-a5
@@ -426,7 +430,23 @@ TestBobGfx
 	dc.w	$7ffe,$0000,$3ffc,$0000
 	dc.w	$3ffc,$0000,$0000,$0000
 
-
+TestBobMask
+	dc.w	$0ff0,$0ff0,$0ff0,$0ff0
+	dc.w	$3ffc,$3ffc,$3ffc,$3ffc
+	dc.w	$7ffe,$7ffe,$7ffe,$7ffe
+	dc.w	$3ffc,$3ffc,$3ffc,$3ffc
+	dc.w	$0ff0,$0ff0,$0ff0,$0ff0
+	dc.w	$1ff8,$1ff8,$1ff8,$1ff8
+	dc.w	$1ff8,$1ff8,$1ff8,$1ff8
+	dc.w	$3ffc,$3ffc,$3ffc,$3ffc
+	dc.w	$3FFC,$3FFC,$3FFC,$3FFC
+	dc.w	$7FFE,$7FFE,$7FFE,$7FFE
+	dc.w	$7FFE,$7FFE,$7FFE,$7FFE
+	dc.w	$FFFF,$FFFF,$FFFF,$FFFF
+	dc.w	$FFFF,$FFFF,$FFFF,$FFFF
+	dc.w	$FFFF,$FFFF,$FFFF,$FFFF
+	dc.w	$7FFE,$7FFE,$7FFE,$7FFE
+	dc.w	$3ffc,$3ffc,$3ffc,$3ffc
 
 ;==============================================================================
 ;
