@@ -45,13 +45,6 @@ rendInit:
 	move.w		d0,4(a1)
 	addq		#8,a1
 	dbf			d1,.spriteLoop
-
-	; move.w		#$2c81,diwstrt(a2)
-	; move.w		#$0cc1,diwstop(a2)
-	; move.w		#$0038,ddfstrt(a2)
-	; move.w		#$00d0,ddfstop(a2)
-	; move.w		#$0000,bpl1mod(a2)
-	; move.w		#$0000,bpl2mod(a2)
 	
 	lea			Copper(pc),a0
 	move.l		a0,cop1lc(a2)
