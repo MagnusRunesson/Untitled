@@ -200,12 +200,12 @@ rendSetSpritePosition:
 testBob
 	movem.l		d0-d7/a0-a5,-(sp)
 
+	lea			_custom,a6
 	add.l		#16,d1
 	move.l		d1,d3
 	lsr.l		#3,d1
 	and.l		#$fffffffe,d1
 	
-	;mulu		#256,d2
 	lsl.l		#8,d2
 
 	_get_workmem_ptr BitplaneMem,a0
@@ -221,6 +221,14 @@ testBob
 
 	movem.l		(sp)+,d0-d7/a0-a5
 	rts
+
+waitBlit
+	btst.b		#DMAB_BLTDONE-8,dmaconr(a6)
+.waitBlit
+	btst.b		#DMAB_BLTDONE-8,dmaconr(a6)
+	bne.s		.waitBlit
+	rts
+
 ;==============================================================================
 ;
 ; Set which frame of a sprite animation that should be shown
