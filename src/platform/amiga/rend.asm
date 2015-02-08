@@ -208,16 +208,24 @@ testBob
 	
 	lsl.l		#8,d2
 
-	_get_workmem_ptr BitplaneMem,a0
-	add.l		d1,a0
-	add.l		d2,a0
+	_get_workmem_ptr BitplaneMem,a1
+	add.l		d1,a1
+	add.l		d2,a1
 
-	lea			TestBobGfx,a1
-	moveq		#16*4-1,d0
-.loop
-	move.w		(a1)+,(a0)
-	add.l		#64,a0
-	dbf			d0,.loop
+	lea			TestBobGfx,a0
+
+	bsr			waitBlit
+
+	move.l		a0,bltapt(a6)
+	move.l		a1,bltdpt(a6)
+	move.w		#0,bltamod(a6)
+	move.w		#62,bltdmod(a6)
+	move.w		#$ffff,bltafwm(a6)
+	move.w		#$ffff,bltalwm(a6)
+
+	move.w		#SRCA|DEST|$F0,bltcon0(a6)	; D=A:$f0
+	move.w		#$0000,bltcon1(a6)
+	move.w		#$1001,bltsize(a6)
 
 	movem.l		(sp)+,d0-d7/a0-a5
 	rts
