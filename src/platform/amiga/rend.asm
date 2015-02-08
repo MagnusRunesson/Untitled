@@ -155,6 +155,8 @@ rendSetSpritePosition:
 	cmp.l		#1,d0
 	bne.s		.skip
 	
+	bsr.s		testBob
+
 	add.w		#$81,d1		; d1=hstart (high bits)
 	move.l		d1,d3		; d3=hstart (low bit)
 	
@@ -195,6 +197,30 @@ rendSetSpritePosition:
 	rts
 
 
+testBob
+	movem.l		d0-d7/a0-a5,-(sp)
+
+	add.l		#16,d1
+	move.l		d1,d3
+	lsr.l		#3,d1
+	and.l		#$fffffffe,d1
+	
+	;mulu		#256,d2
+	lsl.l		#8,d2
+
+	_get_workmem_ptr BitplaneMem,a0
+	add.l		d1,a0
+	add.l		d2,a0
+
+	lea			TestBobGfx,a1
+	moveq		#16*4-1,d0
+.loop
+	move.w		(a1)+,(a0)
+	add.l		#64,a0
+	dbf			d0,.loop
+
+	movem.l		(sp)+,d0-d7/a0-a5
+	rts
 ;==============================================================================
 ;
 ; Set which frame of a sprite animation that should be shown
@@ -358,7 +384,7 @@ SpriteBlank
 	dc.w	$0000,$0000
 	dc.w	$0000,$0000
 
-TestBob
+TestBobGfx
 	dc.w	$0ff0,$0000,$0000,$0000
 	dc.w	$3fec,$0010,$0ff0,$0000
 	dc.w	$7fc2,$000c,$33fc,$0000
@@ -375,6 +401,8 @@ TestBob
 	dc.w	$ffff,$0000,$7f86,$0000
 	dc.w	$7ffe,$0000,$3ffc,$0000
 	dc.w	$3ffc,$0000,$0000,$0000
+
+
 
 ;==============================================================================
 ;
