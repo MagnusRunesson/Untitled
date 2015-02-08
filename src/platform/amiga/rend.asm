@@ -361,23 +361,6 @@ rendLoadPalette:
 SpriteExportTest
 	incbin	"../src/incbin/herotest_sprite_amiga.bin"
 
-;Sprite0Test
-	dc.w	$2c40,$3100		;vstart, hstart, vstop
-	dc.w    $0c30,$0000
-	dc.w    $1818,$0420
-	dc.w    $342c,$0e70
-	dc.w    $1818,$0420
-	dc.w    $0c30,$0000
-	dc.w    $0000,$0000
-
-;Sprite1Test
-	dc.w    $2c40,$3180     ;same as sprite 0 except  attach  bit on
-	dc.w    $07e0,$0000     
-	dc.w    $0ff0,$0000
-	dc.w    $1ff8,$0000
-	dc.w    $0ff0,$0000
-	dc.w    $07e0,$0000
-	dc.w    $0000,$0000
 
 SpriteBlank
 	dc.w	$0000,$0000
