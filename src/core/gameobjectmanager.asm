@@ -87,6 +87,7 @@ gomLoadObject:
 	move.w				(a0)+,d0			; Read the file ID for the sprite tiles into d0
 	move.w				(a0)+,d1			; Read the file ID for the sprite definition into d1
 	jsr					rendLoadSprite(pc)	;
+	push.w				d0
 
 	; Fetch the address to the game object manager
 	jsr					memGetGameObjectManagerBaseAddress(pc)
@@ -110,7 +111,8 @@ gomLoadObject:
 	; d1=unused
 
 	; Retain the sprite handle in this game object
-	move.w				d0,_go_sprite_handle(a0)
+	pop.w				d1
+	move.w				d1,_go_sprite_handle(a0)
 
 	; Setup default values for our new game object
 	move.w				#0,_go_anim_time(a0)
