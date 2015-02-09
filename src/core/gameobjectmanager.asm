@@ -38,6 +38,7 @@ _gom_watermark		rs.w		1							; To unload game objects
 _gom_camera_x		rs.w		1							; Camera world X position, so we can do world to screen transform
 _gom_camera_y		rs.w		1							; Camera world Y position, same reason as above
 _gom_gameobjects	rs.b		_gom_max_objects*_go_size	; All game objects goes here
+_gom_draworder		rs.b		_gom_max_objects			; This table describe which game object to draw when. First entry should be drawn first (i.e. earlier entries should be displayed "behind" later entries in this list)
 _gom_size			rs.w		0
 
 ;==============================================================================
@@ -111,8 +112,8 @@ gomLoadObject:
 	; d1=unused
 
 	; Retain the sprite handle in this game object
-	pop.w				d1
-	move.w				d1,_go_sprite_handle(a0)
+	pop.w				d2
+	move.w				d2,_go_sprite_handle(a0)
 
 	; Setup default values for our new game object
 	move.w				#0,_go_anim_time(a0)
@@ -120,7 +121,25 @@ gomLoadObject:
 	move.w				#0,_go_world_pos_y(a0)
 	move.w				#0,_go_sort(a0)
 
+	; We also need to add this object to the draw order array
+
+	; Fetch the address to the game object manager
+	jsr					memGetGameObjectManagerBaseAddress(pc)
+	clr.l				d0
+	move.w				_gom_numobjects(a0),d0
+	; a0=the address to the game object manager
+	; d0=the number of game objects in the scene
+
+	; Find the byte address to the next entry in the draw order table
+	add.l				#_gom_draworder,a0
+	add.l				d0,a0
+	; Now a0 is the address of the next entry in the draw order table
+
+	; Add the new game object last in the draw order table
+	move.b				d2,(a0)
+
 	rts
+
 
 ;==============================================================================
 ;
@@ -223,34 +242,102 @@ gomRender:
 	rts
 
 
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+
+	printt			"gom_draworder address in RAM:"
+	printv			gommem_base+_gom_draworder
+;
+; A simple bubble sort
+;
+gomSortObjects:
+	pushm			d2-d7/a2-a7
+
+	; Fetch the address of the draw order table
+	jsr				memGetGameObjectManagerBaseAddress(pc)
+	move.l			a0,a2
+	add.l			#_gom_draworder,a2
+	move.l			a0,a3
+	add.l			#_gom_gameobjects,a3
+
+	; 
+	move.w			_gom_numobjects(a0),d2
+	sub.w			#1,d2						; Don't check the last object in the array since we always compare pairs (we compare i and i+1)
+
+	; a2=address to the draw order table
+	; a3=address to the game object table
+	; d2=num game objects in scene-1 (because bubble sort compair pairs)
+.sort_again_loop:
+	clr				d0
+	move.w			d2,d0			; d0 is the game object index for the sort loop
+	clr				d1				; d1 is flag that determine if we should do another round
+
+.compare_loop:
+	clr				d4
+	clr				d5
+	move.b			(a2,d2),d4		; d4 is index to game object A
+	add.b			#1,d2
+	move.b			(a2,d2),d5		; d5 is index to game object B
+	sub.b			#1,d2
+	mulu			#_go_size,d4	; d4 is now byte offset from game object table start to game object A
+	mulu			#_go_size,d5	; d5 is now byte offset from game object table start to game object B
+	move.l			a3,a4
+	move.l			a3,a5
+	add.l			d4,a4						; a4 is now the address to game object A
+	add.l			d5,a5						; a5 is now the address to game object B
+	move.w			_go_world_pos_y(a4),d4		; d4 is now the sort value for game object A
+	move.w			_go_world_pos_y(a5),d5		; d5 is now the sort value for game object B
+
+	dbra			d2,.compare_loop
 
 
+	popm			d2-d7/a2-a7
+	rts
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
