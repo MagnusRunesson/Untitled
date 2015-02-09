@@ -72,8 +72,8 @@ move_vram_addr	MACRO
 ;
 ;==============================================================================
 rendInit:
-	move.l		#0,(VarNextSpriteSlot)
-	move.l		#0,(VarLockedSpriteSlot)
+	move.l		#1,(VarNextSpriteSlot)
+	move.l		#1,(VarLockedSpriteSlot)
 	move.l		#VRAM_SpriteTiles_Start,(VarNextSpriteAddress)
 	move.l		#VRAM_SpriteTiles_Start,(VarLockedSpriteAddress)
 	move.w		#-1,(VarLoadedPalette)
