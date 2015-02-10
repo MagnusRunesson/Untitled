@@ -176,7 +176,7 @@ main:
 	jsr			rendWaitVSync(pc)
 	perf_start
 
-	jsr			gomRender
+	jsr			gomRender(pc)
 
 
 	;
