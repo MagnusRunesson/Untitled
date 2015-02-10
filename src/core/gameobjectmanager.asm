@@ -268,7 +268,7 @@ gomRender:
 	nop
 
 	printt			"gom_draworder address in RAM:"
-	printv			gommem_base+_gom_draworder
+	printv			$00ff0000+gommem_base+_gom_draworder
 ;
 ; A simple bubble sort
 ;
@@ -283,24 +283,24 @@ gomSortObjects:
 	add.l			#_gom_gameobjects,a3
 
 	; 
-	move.w			_gom_numobjects(a0),d2
-	sub.w			#1,d2						; Don't check the last object in the array since we always compare pairs (we compare i and i+1)
+	move.w			_gom_numobjects(a0),d0
+	sub.w			#1,d0						; Don't check the last object in the array since we always compare pairs (we compare i and i+1)
 
 	; a2=address to the draw order table
 	; a3=address to the game object table
-	; d2=num game objects in scene-1 (because bubble sort compair pairs)
+	; d0=num game objects in scene-1 (because bubble sort compair pairs)
 .sort_again_loop:
-	clr				d0
-	move.w			d2,d0			; d0 is the game object index for the sort loop
+	clr				d2
+	move.w			d0,d2			; d0 is the game object index for the sort loop
+	move.w			d0,d3
+	add.w			#1,d3			; d3 is the "other" index to the draw order table (index to game object B)
 	clr				d1				; d1 is flag that determine if we should do another round
 
 .compare_loop:
 	clr				d4
 	clr				d5
 	move.b			(a2,d2),d4		; d4 is index to game object A
-	add.b			#1,d2
-	move.b			(a2,d2),d5		; d5 is index to game object B
-	sub.b			#1,d2
+	move.b			(a2,d3),d5		; d5 is index to game object B
 	mulu			#_go_size,d4	; d4 is now byte offset from game object table start to game object A
 	mulu			#_go_size,d5	; d5 is now byte offset from game object table start to game object B
 	move.l			a3,a4
@@ -310,7 +310,29 @@ gomSortObjects:
 	move.w			_go_world_pos_y(a4),d4		; d4 is now the sort value for game object A
 	move.w			_go_world_pos_y(a5),d5		; d5 is now the sort value for game object B
 
+	cmp				d4,d5
+	bge.w			.no_swap
+
+	;
+	; d4 is greater than d5, so we need to swap the objects
+	;
+	or.w			#1,d1			; Set the "loop again" flag
+
+	;
+	; Swap indices
+	;
+	move.b			(a2,d2),d4		; d4 is index to game object A
+	move.b			(a2,d3),d5		; d5 is index to game object B
+	move.b			d5,(a2,d2)
+	move.b			d4,(a2,d3)
+
+.no_swap:
+	sub.w			#1,d3
 	dbra			d2,.compare_loop
+
+	; Did we do any changes this iteration, so we need to check again?
+	cmp.w			#0,d1
+	bne				.sort_again_loop
 
 
 	popm			d2-d7/a2-a7
