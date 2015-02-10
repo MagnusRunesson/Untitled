@@ -103,8 +103,6 @@ main:
 	jsr			gomLoadObject(pc)
 	move.w		d0,_potion4_go_handle(a2)
 
-	jsr			gomSortObjects(pc)
-	
 .main_loop:
 	;
 	; Read player input and update player world positions
@@ -176,6 +174,7 @@ main:
 	jsr			rendWaitVSync(pc)
 	perf_start
 
+	jsr			gomSortObjects(pc)
 	jsr			gomRender(pc)
 
 
