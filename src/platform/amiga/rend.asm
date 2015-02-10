@@ -1,10 +1,4 @@
 
-	; include		"hardware/custom.i"
-	; include		"hardware/dmabits.i"
-	; include		"exec_lib.i"
-	; include		"graphics_lib.i"
-	
-
 ;==============================================================================
 ;
 ; Init
@@ -57,6 +51,7 @@ rendInit:
 ; a0=pointers to bitplanes
 ;
 ;==============================================================================
+
 _setupBitplanePointers
 	move.l		a0,d0
 	lea			Copper_bplpt(pc),a0	
@@ -70,6 +65,146 @@ _setupBitplanePointers
 	add.l		#8,a0	
 	dbra		d1,.bplconLoop
 
+	rts
+
+;==============================================================================
+;
+; Load a tile bank into CRAM
+;
+; d0=file ID of tile bank file to load into CRAM
+;
+;==============================================================================
+
+rendLoadTileBank:
+	; fileLoad accept the file ID as d0, so no need to do any tricks here
+	
+	_get_workmem_ptr	TilebankMem,a0
+	bsr					fileLoad
+	
+	rts
+
+;==============================================================================
+;
+; Load a tile map into memory
+;
+; d0=file ID of tile bank file to load into VRAM
+; d1=Which slot to store the map in.
+;		Slot #0 - Background layer (behind sprites)
+;		Slot #1 - Foreground layer (in front of sprites)
+;
+;==============================================================================
+
+rendLoadTileMap:
+
+	; fileLoad accept the file ID as d0, so no need to do any tricks here
+	movem.l			a0-a6/d0-d7,-(sp)
+	
+	_get_workmem_ptr	TilemapMem,a0
+	bsr					fileLoad
+
+	_get_workmem_ptr	TilemapMem,a0
+	_get_workmem_ptr	TilebankMem,a1
+	_get_workmem_ptr	BitplaneMem,a5
+
+	addq.l			#2,a0		; don't care about header for now
+
+	moveq			#64-1,d7	; d7=y dbra
+.yloop
+	moveq			#64-1,d6	; d6=x dbra
+.xloop
+
+	moveq			#0,d0
+	move.w			(a0)+,d0
+
+	move.l			a1,a2
+	mulu			#8*4,d0
+	add.l			d0,a2
+
+
+	move.l			a5,a4
+	moveq			#8-1,d5
+.drawLoop
+	move.b			(a2)+,(a4)
+	move.b			(a2)+,64(a4)
+	move.b			(a2)+,128(a4)
+	move.b			(a2)+,192(a4)
+	add.l			#256,a4
+	dbf				d5,.drawLoop
+
+	addq.l			#1,a5
+	dbf				d6,.xloop
+
+	add.l			#(7*256)+192,a5
+	dbf				d7,.yloop
+
+	movem.l			(sp)+,a0-a6/d0-d7
+	rts
+
+
+;==============================================================================
+;
+; Load a sprite into memory. Both allocates a sprite attribute slot and load 
+; the sprite tiles into CRAM.
+;
+; Input
+;	d0=file ID of tile bank file to load into VRAM
+;	d1=file ID of the sprite file that configures
+;
+; Output
+;	d0=Sprite handle
+;
+;==============================================================================
+
+rendLoadSprite:
+	rts
+
+
+;==============================================================================
+;
+; Load a palette map into CRAM
+;
+; d0=file ID of palette file to load into CRAM
+; d1=Which slot index to store the palette in
+;	Allowed slot indices are 0 to 3 inclusive
+;   Amiga actually retarget slot 2 to slot 0, and slot 3 to slot 1
+;
+;==============================================================================
+
+rendLoadPalette:
+	movem.l			a0-a6/d0-d7,-(sp)
+
+	move.l		d1,d3
+	
+	; fileLoad accept the file ID as d0, so no need to do any tricks here
+	_get_workmem_ptr	PaletteMem,a0
+	jsr			fileLoad
+
+	_get_workmem_ptr	PaletteMem,a0
+	lea			Copper_color+2(pc),a1
+	and.l		#$01,d3					; For now, Amiga retarget slot to slot 0 and 1
+	lsl.l		#6,d3
+	;mulu		#16*4,d3
+	add.l		d3,a1
+
+	moveq		#16-1,d0
+.loop
+	move.w		(a0)+,d1
+	move.w		d1,d2
+	move.w		d1,d3
+	and.w		#$00F0,d1
+	and.w		#$0F00,d2
+	and.w		#$000F,d3	
+	ror.w		#8,d2
+	rol.w		#8,d3
+	or.w		d2,d1
+	or.w		d3,d1
+
+	move.w		d1,(a1)
+	addq.l		#4,a1
+	dbf			d0,.loop
+
+
+	movem.l			(sp)+,a0-a6/d0-d7
 	rts
 
 ;==============================================================================
@@ -152,7 +287,7 @@ rendSetSpritePosition:
 
 	movem.l		d2-d7/a2-a5,-(sp)
 	
-	cmp.l		#1,d0
+	cmp.w		#1,d0
 	bne.s		testBob
 
 	add.w		#$81,d1		; d1=hstart (high bits)
@@ -257,141 +392,6 @@ rendSetSpriteFrame:
 	rts
 
 
-;==============================================================================
-;
-; Load a tile bank into VRAM
-;
-; d0=file ID of tile bank file to load into VRAM
-;
-;==============================================================================
-
-rendLoadTileBank:
-	; fileLoad accept the file ID as d0, so no need to do any tricks here
-	
-	_get_workmem_ptr	TilebankMem,a0
-	bsr					fileLoad
-	
-	rts
-
-
-;==============================================================================
-;
-; Load a tile map from disk into VRAM
-;
-; d0=file ID of tile bank file to load into VRAM
-; d1=Which slot to store the map in.
-;		Slot #0 - Background layer (behind sprites)
-;		Slot #1 - Foreground layer (in front of sprites)
-;
-;==============================================================================
-
-rendLoadTileMap:
-
-	; fileLoad accept the file ID as d0, so no need to do any tricks here
-	movem.l			a0-a6/d0-d7,-(sp)
-	
-	_get_workmem_ptr	TilemapMem,a0
-	bsr					fileLoad
-
-	_get_workmem_ptr	TilemapMem,a0
-	_get_workmem_ptr	TilebankMem,a1
-	_get_workmem_ptr	BitplaneMem,a5
-
-	addq.l			#2,a0		; don't care about header for now
-
-	moveq			#64-1,d7	; d7=y dbra
-.yloop
-	moveq			#64-1,d6	; d6=x dbra
-.xloop
-
-	moveq			#0,d0
-	move.w			(a0)+,d0
-
-	move.l			a1,a2
-	mulu			#8*4,d0
-	add.l			d0,a2
-
-
-	move.l			a5,a4
-	moveq			#8-1,d5
-.drawLoop
-	move.b			(a2)+,(a4)
-	move.b			(a2)+,64(a4)
-	move.b			(a2)+,128(a4)
-	move.b			(a2)+,192(a4)
-	add.l			#256,a4
-	dbf				d5,.drawLoop
-
-	addq.l			#1,a5
-	dbf				d6,.xloop
-
-	add.l			#(7*256)+192,a5
-	dbf				d7,.yloop
-
-	movem.l			(sp)+,a0-a6/d0-d7
-	rts
-
-
-;==============================================================================
-;
-; Load a sprite from disk to VRAM. This function is responsible for allocating
-; VRAM for the sprite and return some form of handle back to the game so the
-; game have a way to modify sprite properties such as position.
-;
-; Men fanken vet hur. :/
-;
-; d0=File ID
-;
-;==============================================================================
-
-rendLoadSprite:
-	rts
-
-
-;==============================================================================
-;
-; Load a palette map into CRAM
-;
-; d0=file ID of palette file to load into CRAM
-; d1=Which slot index to store the palette in
-;	Allowed slot indices are 0 to 3 inclusive
-;
-;==============================================================================
-
-rendLoadPalette:
-	movem.l			a0-a6/d0-d7,-(sp)
-
-	move.l		d1,d3
-	; fileLoad accept the file ID as d0, so no need to do any tricks here
-	_get_workmem_ptr	PaletteMem,a0
-	jsr			fileLoad
-
-	_get_workmem_ptr	PaletteMem,a0
-	lea			Copper_color+2(pc),a1
-	lsl.l		#6,d3
-	;mulu		#16*4,d3
-	add.l		d3,a1
-
-	moveq		#16-1,d0
-.loop
-	move.w		(a0)+,d1
-	move.w		d1,d2
-	move.w		d1,d3
-	and.w		#$00F0,d1
-	and.w		#$0F00,d2
-	and.w		#$000F,d3	
-	ror.w		#8,d2
-	rol.w		#8,d3
-	or.w		d2,d1
-	or.w		d3,d1
-
-	move.w		d1,(a1)
-	addq.l		#4,a1
-	dbf			d0,.loop
-
-
-	movem.l			(sp)+,a0-a6/d0-d7
-	rts
 
 ;==============================================================================
 ;
