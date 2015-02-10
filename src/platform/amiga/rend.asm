@@ -156,7 +156,16 @@ rendLoadTileMap:
 ;==============================================================================
 
 rendLoadSprite:
+
+	lea			.spriteCounterTemp(pc),a0
+	move.l		(a0),d0
+	move.l		d0,d1
+	addq.l		#1,d1
+	move.l		d1,(a0)
+
 	rts
+
+.spriteCounterTemp	dc.l	0
 
 
 ;==============================================================================
@@ -287,7 +296,7 @@ rendSetSpritePosition:
 
 	movem.l		d2-d7/a2-a5,-(sp)
 	
-	cmp.w		#1,d0
+	cmp.w		#2,d0
 	bne.s		testBob
 
 	add.w		#$81,d1		; d1=hstart (high bits)
