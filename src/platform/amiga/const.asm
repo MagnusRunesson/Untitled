@@ -1,5 +1,15 @@
-_chunk_size			equ		512			; same as TD_SECTOR (size of sector on floppy)
-; _chunk_size_shift	equ		9			; used for shifts
+;==============================================================================
+;
+; Amiga chunk size matches TD_SECTOR (size of sector on floppy)
+;
+;==============================================================================
+_chunk_size			equ		TD_SECTOR			
+
+;==============================================================================
+;
+; Amiga specific consts
+;
+;==============================================================================
 
 _custom				equ 	$dff000
 
