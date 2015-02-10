@@ -336,7 +336,6 @@ testBob
 	lsr.l		#3,d1
 	and.l		#$fffffffe,d1
 	
-	add.l		#16,d2
 	lsl.l		#8,d2
 
 
