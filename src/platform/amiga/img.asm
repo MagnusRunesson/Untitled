@@ -1,4 +1,12 @@
+;==============================================================================
+;
+; Loads image (tilebank, tilemap and palette) into memory and displays it as
+; a simple image
+;
 ; a0 = Pointer to image data to load
+;
+;==============================================================================
+
 imgLoad:
 	move	#0,d0				; Since I don't know how to fetch a word and clear the top bits I do this first
 	move.w	(a0)+,d0			; Fetch file ID of the tile bank and load it
