@@ -662,13 +662,10 @@ public class bmp2tile : EditorWindow
 					amigaSprite.Export( outBaseName + "_sprite_amiga.bin" );
 					tilePalette.Export( outBaseName + "_palette.bin" );
 					sprite.Export( outBaseName + "_sprite.bin" );
-					//planarImage.Export( outBaseName + "_sprite_planar.bin" );
 
-					AddFile( ref asmData, ref asmFileList, ref asmFileMap, outFileNameNoExt + "_sprite_chunky.bin" );
-					AddFile( ref asmData, ref asmFileList, ref asmFileMap, outFileNameNoExt + "_sprite_amiga.bin" );
+					AddFile( ref asmData, ref asmFileList, ref asmFileMap, outFileNameNoExt + "_sprite_chunky.bin", outFileNameNoExt + "_sprite_amiga.bin" );
 					AddFile( ref asmData, ref asmFileList, ref asmFileMap, outFileNameNoExt + "_palette.bin" );
 					AddFile( ref asmData, ref asmFileList, ref asmFileMap, outFileNameNoExt + "_sprite.bin" );
-					//AddFile( ref asmData, ref asmFileList, ref asmFileMap, outFileNameNoExt + "_sprite_planar.bin" );
 				}
 				else
 				{
@@ -678,11 +675,8 @@ public class bmp2tile : EditorWindow
 					tileBank.ExportAmiga( outBaseName + "_bank_amiga.bin" );
 					tileMap.Export( outBaseName + "_map.bin" );
 					tilePalette.Export( outBaseName + "_palette.bin" );
-//					planarImage.Export( outBaseName + "_bank_amiga.bin" );
-
-					//
-					AddFile( ref asmData, ref asmFileList, ref asmFileMap, outFileNameNoExt + "_bank.bin" );
-					AddFile( ref asmData, ref asmFileList, ref asmFileMap, outFileNameNoExt + "_bank_amiga.bin" );
+							
+					AddFile( ref asmData, ref asmFileList, ref asmFileMap, outFileNameNoExt + "_bank.bin", outFileNameNoExt + "_bank_amiga.bin" );
 					AddFile( ref asmData, ref asmFileList, ref asmFileMap, outFileNameNoExt + "_map.bin" );
 					AddFile( ref asmData, ref asmFileList, ref asmFileMap, outFileNameNoExt + "_palette.bin" );
 				}
@@ -743,7 +737,7 @@ public class bmp2tile : EditorWindow
         Debug.Log("Export is finished!");
 	}
 
-	void AddFile( ref string _asmData, ref string _asmFileList, ref string _asmFileMap, string _filename )
+	void AddFile( ref string _asmData, ref string _asmFileList, ref string _asmFileMap, string _filename, string _alternativeAmigaFilename = null )
 	{
 		//string asmFileName = System.IO.Path.GetFileNameWithoutExtension( _filename ).Replace( ' ', '_' );
 		string label = GetLabelNameFromFileName( _filename );
@@ -753,7 +747,20 @@ public class bmp2tile : EditorWindow
 		_asmData += "\n\n; " + _filename + "\n\n";
 		_asmData += "\tcnop\t\t0,_chunk_size\n";
 		_asmData += label + ":\n";
-		_asmData += "\tincbin\t\"../src/incbin/" + _filename + "\"\n";
+
+		if (_alternativeAmigaFilename == null) 
+		{
+			_asmData += "\tincbin\t\"../src/incbin/" + _filename + "\"\n";
+		}
+		else
+		{
+			_asmData += "\tifd\tis_mega_drive\n";
+			_asmData += "\tincbin\t\"../src/incbin/" + _filename + "\"\n";
+			_asmData += "\telse\n";
+			_asmData += "\tincbin\t\"../src/incbin/" + _alternativeAmigaFilename + "\"\n";
+			_asmData += "\tendif\n";
+		}
+
 		_asmData += (label + "_pos").PadRight( 40 ) + "equ " + label + "/_chunk_size\n";
 		_asmData += (label + "_length").PadRight( 40 ) +"equ ((" + label + "_end-" + label + ")+(_chunk_size-1))/_chunk_size\n";
 		_asmData += label + "_end:\n";
