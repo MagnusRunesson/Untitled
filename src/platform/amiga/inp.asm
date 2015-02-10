@@ -1,5 +1,3 @@
-	; include	"hardware/custom.i"
-
 		
 ;==============================================================================
 ;
@@ -8,6 +6,7 @@
 ; platform specific source file.
 ;
 ;==============================================================================
+
 INPUT_1_UP			equ		26
 INPUT_1_DOWN		equ		18
 INPUT_1_LEFT		equ		25
@@ -30,11 +29,13 @@ INPUT_ACTION3		equ		6
 
 
 ;==============================================================================
-; Read joypad 1
 ;
-; Returns the joypad values in the last byte of D7 with the following layout:
-; SACBRLDU (Start A C B Right Left Down Up)
+; Read joystick information
+;
+; Returns the joypad values into register d0
+;
 ;==============================================================================
+
 inpUpdate:
 	movem.l		d2/a5,-(sp)
 
