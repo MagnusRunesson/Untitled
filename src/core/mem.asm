@@ -25,11 +25,11 @@ gommem_end			=	gommem_base+gommem_size
 ;
 ;==================================================================================================
 memGetUserBaseAddress:
-	jsr				memGetPlatformBase
+	jsr				memGetPlatformBase(pc)
 	add.l			#usermem_base,a0
 	rts
 
 memGetGameObjectManagerBaseAddress:
-	jsr				memGetPlatformBase
+	jsr				memGetPlatformBase(pc)
 	add.l			#gommem_base,a0
 	rts
