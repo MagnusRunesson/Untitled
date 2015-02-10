@@ -4,20 +4,14 @@
 
 	cnop		0,_chunk_size
 _data_herotest_sprite_chunky:
+	ifd	is_mega_drive
 	incbin	"../src/incbin/herotest_sprite_chunky.bin"
+	else
+	incbin	"../src/incbin/herotest_sprite_amiga.bin"
+	endif
 _data_herotest_sprite_chunky_pos        equ _data_herotest_sprite_chunky/_chunk_size
 _data_herotest_sprite_chunky_length     equ ((_data_herotest_sprite_chunky_end-_data_herotest_sprite_chunky)+(_chunk_size-1))/_chunk_size
 _data_herotest_sprite_chunky_end:
-
-
-; herotest_sprite_amiga.bin
-
-	cnop		0,_chunk_size
-_data_herotest_sprite_amiga:
-	incbin	"../src/incbin/herotest_sprite_amiga.bin"
-_data_herotest_sprite_amiga_pos         equ _data_herotest_sprite_amiga/_chunk_size
-_data_herotest_sprite_amiga_length      equ ((_data_herotest_sprite_amiga_end-_data_herotest_sprite_amiga)+(_chunk_size-1))/_chunk_size
-_data_herotest_sprite_amiga_end:
 
 
 ; herotest_palette.bin
@@ -44,20 +38,14 @@ _data_herotest_sprite_end:
 
 	cnop		0,_chunk_size
 _data_herotest_big_sprite_chunky:
+	ifd	is_mega_drive
 	incbin	"../src/incbin/herotest_big_sprite_chunky.bin"
+	else
+	incbin	"../src/incbin/herotest_big_sprite_amiga.bin"
+	endif
 _data_herotest_big_sprite_chunky_pos    equ _data_herotest_big_sprite_chunky/_chunk_size
 _data_herotest_big_sprite_chunky_length equ ((_data_herotest_big_sprite_chunky_end-_data_herotest_big_sprite_chunky)+(_chunk_size-1))/_chunk_size
 _data_herotest_big_sprite_chunky_end:
-
-
-; herotest_big_sprite_amiga.bin
-
-	cnop		0,_chunk_size
-_data_herotest_big_sprite_amiga:
-	incbin	"../src/incbin/herotest_big_sprite_amiga.bin"
-_data_herotest_big_sprite_amiga_pos     equ _data_herotest_big_sprite_amiga/_chunk_size
-_data_herotest_big_sprite_amiga_length  equ ((_data_herotest_big_sprite_amiga_end-_data_herotest_big_sprite_amiga)+(_chunk_size-1))/_chunk_size
-_data_herotest_big_sprite_amiga_end:
 
 
 ; herotest_big_palette.bin
@@ -84,20 +72,14 @@ _data_herotest_big_sprite_end:
 
 	cnop		0,_chunk_size
 _data_testsprite_sprite_chunky:
+	ifd	is_mega_drive
 	incbin	"../src/incbin/testsprite_sprite_chunky.bin"
+	else
+	incbin	"../src/incbin/testsprite_sprite_amiga.bin"
+	endif
 _data_testsprite_sprite_chunky_pos      equ _data_testsprite_sprite_chunky/_chunk_size
 _data_testsprite_sprite_chunky_length   equ ((_data_testsprite_sprite_chunky_end-_data_testsprite_sprite_chunky)+(_chunk_size-1))/_chunk_size
 _data_testsprite_sprite_chunky_end:
-
-
-; testsprite_sprite_amiga.bin
-
-	cnop		0,_chunk_size
-_data_testsprite_sprite_amiga:
-	incbin	"../src/incbin/testsprite_sprite_amiga.bin"
-_data_testsprite_sprite_amiga_pos       equ _data_testsprite_sprite_amiga/_chunk_size
-_data_testsprite_sprite_amiga_length    equ ((_data_testsprite_sprite_amiga_end-_data_testsprite_sprite_amiga)+(_chunk_size-1))/_chunk_size
-_data_testsprite_sprite_amiga_end:
 
 
 ; testsprite_palette.bin
@@ -124,20 +106,14 @@ _data_testsprite_sprite_end:
 
 	cnop		0,_chunk_size
 _data_testsprite2_sprite_chunky:
+	ifd	is_mega_drive
 	incbin	"../src/incbin/testsprite2_sprite_chunky.bin"
+	else
+	incbin	"../src/incbin/testsprite2_sprite_amiga.bin"
+	endif
 _data_testsprite2_sprite_chunky_pos     equ _data_testsprite2_sprite_chunky/_chunk_size
 _data_testsprite2_sprite_chunky_length  equ ((_data_testsprite2_sprite_chunky_end-_data_testsprite2_sprite_chunky)+(_chunk_size-1))/_chunk_size
 _data_testsprite2_sprite_chunky_end:
-
-
-; testsprite2_sprite_amiga.bin
-
-	cnop		0,_chunk_size
-_data_testsprite2_sprite_amiga:
-	incbin	"../src/incbin/testsprite2_sprite_amiga.bin"
-_data_testsprite2_sprite_amiga_pos      equ _data_testsprite2_sprite_amiga/_chunk_size
-_data_testsprite2_sprite_amiga_length   equ ((_data_testsprite2_sprite_amiga_end-_data_testsprite2_sprite_amiga)+(_chunk_size-1))/_chunk_size
-_data_testsprite2_sprite_amiga_end:
 
 
 ; testsprite2_palette.bin
@@ -164,20 +140,14 @@ _data_testsprite2_sprite_end:
 
 	cnop		0,_chunk_size
 _data_testtiles_bank:
+	ifd	is_mega_drive
 	incbin	"../src/incbin/testtiles_bank.bin"
+	else
+	incbin	"../src/incbin/testtiles_bank_amiga.bin"
+	endif
 _data_testtiles_bank_pos                equ _data_testtiles_bank/_chunk_size
 _data_testtiles_bank_length             equ ((_data_testtiles_bank_end-_data_testtiles_bank)+(_chunk_size-1))/_chunk_size
 _data_testtiles_bank_end:
-
-
-; testtiles_bank_amiga.bin
-
-	cnop		0,_chunk_size
-_data_testtiles_bank_amiga:
-	incbin	"../src/incbin/testtiles_bank_amiga.bin"
-_data_testtiles_bank_amiga_pos          equ _data_testtiles_bank_amiga/_chunk_size
-_data_testtiles_bank_amiga_length       equ ((_data_testtiles_bank_amiga_end-_data_testtiles_bank_amiga)+(_chunk_size-1))/_chunk_size
-_data_testtiles_bank_amiga_end:
 
 
 ; testtiles_map.bin
@@ -204,20 +174,14 @@ _data_testtiles_palette_end:
 
 	cnop		0,_chunk_size
 _data_untitled_splash_bank:
+	ifd	is_mega_drive
 	incbin	"../src/incbin/untitled_splash_bank.bin"
+	else
+	incbin	"../src/incbin/untitled_splash_bank_amiga.bin"
+	endif
 _data_untitled_splash_bank_pos          equ _data_untitled_splash_bank/_chunk_size
 _data_untitled_splash_bank_length       equ ((_data_untitled_splash_bank_end-_data_untitled_splash_bank)+(_chunk_size-1))/_chunk_size
 _data_untitled_splash_bank_end:
-
-
-; untitled_splash_bank_amiga.bin
-
-	cnop		0,_chunk_size
-_data_untitled_splash_bank_amiga:
-	incbin	"../src/incbin/untitled_splash_bank_amiga.bin"
-_data_untitled_splash_bank_amiga_pos    equ _data_untitled_splash_bank_amiga/_chunk_size
-_data_untitled_splash_bank_amiga_length equ ((_data_untitled_splash_bank_amiga_end-_data_untitled_splash_bank_amiga)+(_chunk_size-1))/_chunk_size
-_data_untitled_splash_bank_amiga_end:
 
 
 ; untitled_splash_map.bin
@@ -244,20 +208,14 @@ _data_untitled_splash_palette_end:
 
 	cnop		0,_chunk_size
 _data_herotestpng_sprite_chunky:
+	ifd	is_mega_drive
 	incbin	"../src/incbin/herotestpng_sprite_chunky.bin"
+	else
+	incbin	"../src/incbin/herotestpng_sprite_amiga.bin"
+	endif
 _data_herotestpng_sprite_chunky_pos     equ _data_herotestpng_sprite_chunky/_chunk_size
 _data_herotestpng_sprite_chunky_length  equ ((_data_herotestpng_sprite_chunky_end-_data_herotestpng_sprite_chunky)+(_chunk_size-1))/_chunk_size
 _data_herotestpng_sprite_chunky_end:
-
-
-; herotestpng_sprite_amiga.bin
-
-	cnop		0,_chunk_size
-_data_herotestpng_sprite_amiga:
-	incbin	"../src/incbin/herotestpng_sprite_amiga.bin"
-_data_herotestpng_sprite_amiga_pos      equ _data_herotestpng_sprite_amiga/_chunk_size
-_data_herotestpng_sprite_amiga_length   equ ((_data_herotestpng_sprite_amiga_end-_data_herotestpng_sprite_amiga)+(_chunk_size-1))/_chunk_size
-_data_herotestpng_sprite_amiga_end:
 
 
 ; herotestpng_palette.bin
@@ -284,20 +242,14 @@ _data_herotestpng_sprite_end:
 
 	cnop		0,_chunk_size
 _data_housetiles_bank:
+	ifd	is_mega_drive
 	incbin	"../src/incbin/housetiles_bank.bin"
+	else
+	incbin	"../src/incbin/housetiles_bank_amiga.bin"
+	endif
 _data_housetiles_bank_pos               equ _data_housetiles_bank/_chunk_size
 _data_housetiles_bank_length            equ ((_data_housetiles_bank_end-_data_housetiles_bank)+(_chunk_size-1))/_chunk_size
 _data_housetiles_bank_end:
-
-
-; housetiles_bank_amiga.bin
-
-	cnop		0,_chunk_size
-_data_housetiles_bank_amiga:
-	incbin	"../src/incbin/housetiles_bank_amiga.bin"
-_data_housetiles_bank_amiga_pos         equ _data_housetiles_bank_amiga/_chunk_size
-_data_housetiles_bank_amiga_length      equ ((_data_housetiles_bank_amiga_end-_data_housetiles_bank_amiga)+(_chunk_size-1))/_chunk_size
-_data_housetiles_bank_amiga_end:
 
 
 ; housetiles_map.bin
@@ -324,20 +276,14 @@ _data_housetiles_palette_end:
 
 	cnop		0,_chunk_size
 _data_signpost_bank:
+	ifd	is_mega_drive
 	incbin	"../src/incbin/signpost_bank.bin"
+	else
+	incbin	"../src/incbin/signpost_bank_amiga.bin"
+	endif
 _data_signpost_bank_pos                 equ _data_signpost_bank/_chunk_size
 _data_signpost_bank_length              equ ((_data_signpost_bank_end-_data_signpost_bank)+(_chunk_size-1))/_chunk_size
 _data_signpost_bank_end:
-
-
-; signpost_bank_amiga.bin
-
-	cnop		0,_chunk_size
-_data_signpost_bank_amiga:
-	incbin	"../src/incbin/signpost_bank_amiga.bin"
-_data_signpost_bank_amiga_pos           equ _data_signpost_bank_amiga/_chunk_size
-_data_signpost_bank_amiga_length        equ ((_data_signpost_bank_amiga_end-_data_signpost_bank_amiga)+(_chunk_size-1))/_chunk_size
-_data_signpost_bank_amiga_end:
 
 
 ; signpost_map.bin
