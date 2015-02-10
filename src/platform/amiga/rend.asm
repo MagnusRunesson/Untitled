@@ -153,9 +153,7 @@ rendSetSpritePosition:
 	movem.l		d2-d7/a2-a5,-(sp)
 	
 	cmp.l		#1,d0
-	bne.s		.skip
-	
-	bsr.s		testBob
+	bne.s		testBob
 
 	add.w		#$81,d1		; d1=hstart (high bits)
 	move.l		d1,d3		; d3=hstart (low bit)
@@ -191,17 +189,14 @@ rendSetSpritePosition:
 	move.w		d5,(a0)
 	or.w		#$0080,d5	; attach
 	move.w		d5,(a1)
-	
-.skip
+
 	movem.l		(sp)+,d2-d7/a2-a5
 	rts
 
 
 testBob
-	movem.l		d0-d7/a0-a5,-(sp)
-
 	lea			_custom,a6
-	add.l		#16,d1
+
 	move.l		d1,d3
 	lsr.l		#3,d1
 	and.l		#$fffffffe,d1
@@ -239,7 +234,7 @@ testBob
 	move.w		d3,bltcon1(a6)
 	move.w		#$1002,bltsize(a6)
 
-	movem.l		(sp)+,d0-d7/a0-a5
+	movem.l		(sp)+,d2-d7/a2-a5
 	rts
 
 waitBlit
