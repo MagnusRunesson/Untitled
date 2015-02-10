@@ -48,20 +48,13 @@ main:
 	moveq		#0,d1
 	jsr			rendLoadPalette(pc)
 
-	ifd is_mega_drive
-	move.l		#fileid_testtiles_bank,d0
-	else
+	ifd is_amiga
 	move.l		#fileid_testsprite_palette,d0
 	moveq		#1,d1
 	jsr			rendLoadPalette(pc)
-
-
-	move.l		#fileid_testtiles_bank_amiga,d0
-
-	;printv _data_testtiles_bank_amiga_pos
-	;printv _data_testtiles_bank_amiga_length
-
 	endif
+
+	move.l		#fileid_testtiles_bank,d0
 	jsr			rendLoadTileBank(pc)
 
 	move.l		#fileid_testmap_map,d0
