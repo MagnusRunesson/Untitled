@@ -82,6 +82,7 @@ gomInit:
 ;==============================================================================
 
 gomLoadObject:
+	pushm.l				d2-d3
 	; First we load the sprite, while the registers are untouched
 	clr					d0
 	clr					d1
@@ -96,6 +97,7 @@ gomLoadObject:
 
 	; Find the next free game object ID
 	move.w				_gom_numobjects(a0),d0
+	move.w				d0,d3					; Retain the ID of the new object so we can return it properly
 
 	; "Allocate" the object ID
 	add.w				#1,_gom_numobjects(a0)
@@ -137,6 +139,12 @@ gomLoadObject:
 
 	; Add the new game object last in the draw order table
 	move.b				d2,(a0)
+
+	;
+	move.w				d3,d0				; Put the new object ID in the return register
+
+	;
+	popm.l				d2-d3
 
 	rts
 
@@ -226,6 +234,7 @@ gomRender:
 
 .loop:
 	move		_go_sprite_handle(a3),d0	; d0 = sprite handle
+
 	move		_go_world_pos_x(a3),d1		; d1 = game object world position X
 	move		_go_world_pos_y(a3),d2		; d2 = game object world position Y
 	sub			d3,d1						; World to camera space on X
