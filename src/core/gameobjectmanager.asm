@@ -250,34 +250,6 @@ gomRender:
 
 	rts
 
-
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-
-	printt			"gom_draworder address in RAM:"
-	printv			$00ff0000+gommem_base+_gom_draworder
 ;
 ; A simple bubble sort
 ;
@@ -346,29 +318,3 @@ gomSortObjects:
 
 	popm			d2-d7/a2-a7
 	rts
-
-
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
