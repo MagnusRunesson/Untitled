@@ -409,29 +409,30 @@ rendSetSpriteFrame:
 	cnop	0,4
 	
 SpriteExportTest
-	incbin	"../src/incbin/herotest_sprite_amiga.bin"
+	incbin	"../src/incbin/herotest_sprite_amiga_b_hw.bin"
 
 SpriteBlank
 	dc.w	$0000,$0000
 	dc.w	$0000,$0000
 
 TestBobGfx
-	dc.w	$0ff0,$0000,$0000,$0000
-	dc.w	$3fec,$0010,$0ff0,$0000
-	dc.w	$7fc2,$000c,$33fc,$0000
-	dc.w	$3f0c,$00f0,$0ff0,$0000
-	dc.w	$0ff0,$0000,$0000,$0000
-	dc.w	$11f8,$0e00,$0ff0,$0000
-	dc.w	$11f8,$0a00,$0f90,$0000
-	dc.w	$21fc,$1600,$1fd8,$0000
-	dc.w	$23fc,$1400,$1fe8,$0000
-	dc.w	$42fe,$2c00,$3fec,$0000
-	dc.w	$47fe,$3800,$3ff4,$0000
-	dc.w	$ffbf,$0000,$7ff2,$0000
-	dc.w	$fbff,$0000,$7fe2,$0000
-	dc.w	$ffff,$0000,$7f86,$0000
-	dc.w	$7ffe,$0000,$3ffc,$0000
-	dc.w	$3ffc,$0000,$0000,$0000
+	incbin	"../src/incbin/testsprite2_sprite_amiga_a_bob.bin"
+;	dc.w	$0ff0,$0000,$0000,$0000
+;	dc.w	$3fec,$0010,$0ff0,$0000
+;	dc.w	$7fc2,$000c,$33fc,$0000
+;	dc.w	$3f0c,$00f0,$0ff0,$0000
+;	dc.w	$0ff0,$0000,$0000,$0000
+;	dc.w	$11f8,$0e00,$0ff0,$0000
+;	dc.w	$11f8,$0a00,$0f90,$0000
+;	dc.w	$21fc,$1600,$1fd8,$0000
+;	dc.w	$23fc,$1400,$1fe8,$0000
+;	dc.w	$42fe,$2c00,$3fec,$0000
+;	dc.w	$47fe,$3800,$3ff4,$0000
+;	dc.w	$ffbf,$0000,$7ff2,$0000
+;	dc.w	$fbff,$0000,$7fe2,$0000
+;	dc.w	$ffff,$0000,$7f86,$0000
+;	dc.w	$7ffe,$0000,$3ffc,$0000
+;	dc.w	$3ffc,$0000,$0000,$0000
 
 TestBobMask
 	dc.w	$0ff0,$0ff0,$0ff0,$0ff0
