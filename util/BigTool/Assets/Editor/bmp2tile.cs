@@ -311,6 +311,11 @@ public class bmp2tile : EditorWindow
 
 		if( m_currentImageConfig.m_importAsSprite )
 		{
+			bool beforeB = m_currentImageConfig.m_importAsBSprite;
+			m_currentImageConfig.m_importAsBSprite = GUILayout.Toggle( beforeB, "Import as B-sprite" );
+			if( m_currentImageConfig.m_importAsBSprite != beforeB)
+				dirty = true;
+
 			GUILayout.Label( "Sprite w=" + m_currentImageConfig.GetSpriteWidth() + ", h=" + m_currentImageConfig.GetSpriteHeight() );
 
 			GUILayout.BeginHorizontal();

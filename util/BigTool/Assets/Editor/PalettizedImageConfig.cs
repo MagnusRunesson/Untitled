@@ -8,6 +8,7 @@ public class PalettizedImageConfig
 	
 	const string JSONKEY_COLORREMAPTABLE = "Color_Remap_Table";
 	const string JSONKEY_IMPORTASSPRITE = "Import_As_Sprite";
+	const string JSONKEY_IMPORTASBSPRITE = "Import_As_B_Sprite";
 	const string JSONKEY_SPRITENUMFRAMES = "Sprite_Num_Frames";
 	const string JSONKEY_FRAMETIMES = "Frame_Times";
 
@@ -15,6 +16,7 @@ public class PalettizedImageConfig
 
 	public Dictionary<int,int> m_colorRemapSourceToDest;
 	public bool m_importAsSprite;
+	public bool m_importAsBSprite;
 	public Dictionary<int,int> m_frameTimes;
 
 	int m_spriteFrames;
@@ -38,6 +40,7 @@ public class PalettizedImageConfig
 		LoadColorMapTable( (Dictionary<string,object>)dict[ JSONKEY_COLORREMAPTABLE ]);
 		LoadFrameTimes( dict );
 		LoadBool( ref m_importAsSprite, JSONKEY_IMPORTASSPRITE, dict );
+		LoadBool( ref m_importAsBSprite, JSONKEY_IMPORTASBSPRITE, dict);
 		LoadInt( ref m_spriteFrames, JSONKEY_SPRITENUMFRAMES, dict );
 	}
 
@@ -47,6 +50,7 @@ public class PalettizedImageConfig
 		Dictionary<string,object> jsonDict = new Dictionary<string, object>();
 		jsonDict[ JSONKEY_COLORREMAPTABLE ] = m_colorRemapSourceToDest;
 		jsonDict[ JSONKEY_IMPORTASSPRITE ] = m_importAsSprite;
+		jsonDict [JSONKEY_IMPORTASBSPRITE] = m_importAsBSprite;
 		jsonDict[ JSONKEY_SPRITENUMFRAMES ] = m_spriteFrames;
 		jsonDict[ JSONKEY_FRAMETIMES ] = m_frameTimes;
 
@@ -120,6 +124,7 @@ public class PalettizedImageConfig
 		// Sprite settings
 		//
 		m_importAsSprite = false;
+		m_importAsBSprite = false;
 		m_spriteFrames = 1;
 		m_frameTimes = new Dictionary<int, int>();
 	}
