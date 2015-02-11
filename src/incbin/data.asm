@@ -7,7 +7,7 @@ _data_herotest_sprite_chunky:
 	ifd	is_mega_drive
 	incbin	"../src/incbin/herotest_sprite_chunky.bin"
 	else
-	incbin	"../src/incbin/herotest_sprite_amiga.bin"
+	incbin	"../src/incbin/herotest_sprite_amiga_b_hw.bin"
 	endif
 _data_herotest_sprite_chunky_pos        equ _data_herotest_sprite_chunky/_chunk_size
 _data_herotest_sprite_chunky_length     equ ((_data_herotest_sprite_chunky_end-_data_herotest_sprite_chunky)+(_chunk_size-1))/_chunk_size
@@ -41,7 +41,7 @@ _data_herotest_big_sprite_chunky:
 	ifd	is_mega_drive
 	incbin	"../src/incbin/herotest_big_sprite_chunky.bin"
 	else
-	incbin	"../src/incbin/herotest_big_sprite_amiga.bin"
+	incbin	"../src/incbin/herotest_big_sprite_amiga_a_bob.bin"
 	endif
 _data_herotest_big_sprite_chunky_pos    equ _data_herotest_big_sprite_chunky/_chunk_size
 _data_herotest_big_sprite_chunky_length equ ((_data_herotest_big_sprite_chunky_end-_data_herotest_big_sprite_chunky)+(_chunk_size-1))/_chunk_size
@@ -75,7 +75,7 @@ _data_testsprite_sprite_chunky:
 	ifd	is_mega_drive
 	incbin	"../src/incbin/testsprite_sprite_chunky.bin"
 	else
-	incbin	"../src/incbin/testsprite_sprite_amiga.bin"
+	incbin	"../src/incbin/testsprite_sprite_amiga_a_bob.bin"
 	endif
 _data_testsprite_sprite_chunky_pos      equ _data_testsprite_sprite_chunky/_chunk_size
 _data_testsprite_sprite_chunky_length   equ ((_data_testsprite_sprite_chunky_end-_data_testsprite_sprite_chunky)+(_chunk_size-1))/_chunk_size
@@ -109,7 +109,7 @@ _data_testsprite2_sprite_chunky:
 	ifd	is_mega_drive
 	incbin	"../src/incbin/testsprite2_sprite_chunky.bin"
 	else
-	incbin	"../src/incbin/testsprite2_sprite_amiga.bin"
+	incbin	"../src/incbin/testsprite2_sprite_amiga_a_bob.bin"
 	endif
 _data_testsprite2_sprite_chunky_pos     equ _data_testsprite2_sprite_chunky/_chunk_size
 _data_testsprite2_sprite_chunky_length  equ ((_data_testsprite2_sprite_chunky_end-_data_testsprite2_sprite_chunky)+(_chunk_size-1))/_chunk_size
@@ -211,7 +211,7 @@ _data_herotestpng_sprite_chunky:
 	ifd	is_mega_drive
 	incbin	"../src/incbin/herotestpng_sprite_chunky.bin"
 	else
-	incbin	"../src/incbin/herotestpng_sprite_amiga.bin"
+	incbin	"../src/incbin/herotestpng_sprite_amiga_a_bob.bin"
 	endif
 _data_herotestpng_sprite_chunky_pos     equ _data_herotestpng_sprite_chunky/_chunk_size
 _data_herotestpng_sprite_chunky_length  equ ((_data_herotestpng_sprite_chunky_end-_data_herotestpng_sprite_chunky)+(_chunk_size-1))/_chunk_size
