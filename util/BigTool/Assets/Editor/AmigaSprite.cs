@@ -26,7 +26,7 @@ public class AmigaSprite
 	void SanityChecks (PalettizedImage _palettizedImage, PalettizedImageConfig _imageConfig)
 	{
 		if (m_spriteWidth != 16) {
-			Debug.LogException (new UnityException ("PANIC! AmigaSprites must be 16 pixels wide! Did you specify number of frames correctly?"));
+			Debug.LogException (new UnityException ("PANIC! Amiga A-Sprites (hw) must be 16 pixels wide! Did you specify number of frames correctly?"));
 		}
 		
 //		int numberOfColorsUsed = 0;
@@ -82,7 +82,7 @@ public class AmigaSprite
 
 	public void Export( string _outfilename )
 	{
-		Debug.Log ("Exporting Amiga Sprite to " + _outfilename );
+		Debug.Log ("Exporting Amiga A-Sprite (hw) to " + _outfilename );
 
 
 		System.IO.File.WriteAllBytes( _outfilename, m_spriteData );
