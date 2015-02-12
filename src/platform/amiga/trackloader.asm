@@ -1,4 +1,10 @@
 
+;==============================================================================
+;
+; Constants
+;
+;==============================================================================
+
 _mfm_sync_pattern						equ	($4489)
 _mfm_mask								equ	($55555555)
 _dsklen_dma_off							equ ($4000) ; http://amigadev.elowar.com/read/ADCD_2.1/Hardware_Manual_guide/node0192.html
@@ -10,7 +16,30 @@ _track_settle_delay_time_15_ms			equ (10641)	; (15 * 1000) / 1.4096836810788
 
 ;==============================================================================
 ;
-; Initialized trackdisk system
+; Structures
+;
+;==============================================================================
+
+_TrackdiskVars	RSRESET
+__TrackdiskMfmBufferPtr		rs.l	1
+__TrackdiskTrackBufferPtr	rs.l	1
+__TrackdiskCurrentCylinder	rs.w	1
+__TrackdiskCurrentDirection	rs.w	1	; [1=center, -1=outward]
+__TrackdiskCurrentSide		rs.b	1	; [0=lower head, 1=upper head]
+							rs.b	1	; pad
+_TrackdiskVarsSizeof		rs.b	0
+
+	dc.l	0	; __TrackdiskMfmBufferPtr
+	dc.l	0	; __TrackdiskTrackBufferPtr
+	dc.w	-1	; __TrackdiskCurrentCylinder
+	dc.w	0	; __TrackdiskCurrentDirection
+	dc.b	-1	; __TrackdiskCurrentSide
+	cnop	0,2
+
+
+;==============================================================================
+;
+; Initialize trackdisk system
 ;
 ;==============================================================================
 
@@ -370,20 +399,4 @@ _trackdiskWaitTimer
     move.l		(sp)+,d0
 	rts	
 
-
-_TrackdiskVars	RSRESET
-__TrackdiskMfmBufferPtr		rs.l	1
-__TrackdiskTrackBufferPtr	rs.l	1
-__TrackdiskCurrentCylinder	rs.w	1
-__TrackdiskCurrentDirection	rs.w	1	; [1=center, -1=outward]
-__TrackdiskCurrentSide		rs.b	1	; [0=lower head, 1=upper head]
-							rs.b	1	; pad
-_TrackdiskVarsSizeof		rs.b	0
-
-	dc.l	0	; __TrackdiskMfmBufferPtr
-	dc.l	0	; __TrackdiskTrackBufferPtr
-	dc.w	-1	; __TrackdiskCurrentCylinder
-	dc.w	0	; __TrackdiskCurrentDirection
-	dc.b	-1	; __TrackdiskCurrentSide
-	cnop	0,2
 
