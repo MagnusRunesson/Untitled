@@ -341,28 +341,6 @@ rendLoadSprite:
 ;	d0 = the number of entries in the table.
 ;
 ;==============================================================================
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-
 rendSetSpriteDrawOrder:
 	pushm		d2-d7/a2-a7
 
@@ -421,27 +399,6 @@ rendSetSpriteDrawOrder:
 	popm		d2-d7/a2-a7
 	rts
 
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
 
 ;==============================================================================
 ;

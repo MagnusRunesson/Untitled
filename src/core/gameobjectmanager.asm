@@ -325,13 +325,6 @@ gomSortObjects:
 	cmp.w			#0,d1
 	bne				.sort_again_loop
 
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-
 	;
 	; Fill the renderer draw table with sprite handles, in the correct order
 	;
@@ -359,13 +352,6 @@ gomSortObjects:
 	move.w			(a3,d1),d1					; d1 is now the sprite handle for this game object
 	move.b			d1,(a4)+
 	dbra			d2,.gom_to_sprite_loop
-
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
 
 	; At this point everything is sorted. Let the renderer know.
 	clr.l			d0
