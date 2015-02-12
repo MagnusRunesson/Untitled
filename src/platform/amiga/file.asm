@@ -7,7 +7,7 @@
 ;	a0=address to load file to
 ;
 ; Output
-;	none
+;	d0=file size
 ;
 ;==============================================================================
 fileLoad:
@@ -19,6 +19,8 @@ fileLoad:
 	moveq		#0,d1	
 	move.w		(a1),d1
 
+	move.l		d1,-(sp)
 	bsr			trackdiskLoadBlock
+	move.l		(sp)+,d0
 
 	rts
