@@ -1,3 +1,20 @@
+;==============================================================================
+;
+; Structures
+;
+;==============================================================================
+
+
+
+_RendScreen	RSRESET
+__RendScreenScrollX		rs.l	1
+__RendScreenScrollY		rs.l	1
+_RendScreenSizeof		rs.b	0
+
+	dc.l	0	; __RendScreenScrollX
+	dc.l	0	; __RendScreenScrollX
+
+	cnop	0,2
 
 ;==============================================================================
 ;
@@ -43,6 +60,12 @@ rendInit:
 	lea			Copper(pc),a0
 	move.l		a0,cop1lc(a2)
 	move.w		d0,copjmp1(a2)
+
+	; RendScreen defaults
+	lea			_RendScreen(pc),a0
+	move.l		#0,__RendScreenScrollX(a0)
+	move.l		#0,__RendScreenScrollY(a0)
+
 	rts
 
 ;==============================================================================
@@ -247,6 +270,11 @@ rendWaitVSync:
 rendSetScrollXY:
 	movem.l		d2-d3,-(sp)
 
+	; Update RendScreen structure
+	lea			_RendScreen(pc),a0
+	move.l		d0,__RendScreenScrollX(a0)
+	move.l		d1,__RendScreenScrollY(a0)
+
 	subq.l		#2,a0					; make up for ddfstrt
 
 	move.l		d0,d2
@@ -339,6 +367,10 @@ rendSetSpritePosition:
 
 
 testBob
+	lea			_RendScreen(pc),a0
+	add.l		__RendScreenScrollX(a0),d1
+	add.l		__RendScreenScrollY(a0),d2
+
 	lea			_custom,a6
 
 	move.l		d1,d3
