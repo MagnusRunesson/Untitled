@@ -275,7 +275,7 @@ gomSortObjects:
 	; 
 	move.w			_gom_numobjects(a0),d0
 	sub.w			#1,d0						; Don't check the last object in the array since we always compare pairs (we compare i and i+1)
-	;sub.w			#1,d0						; Compensate for dbra
+	sub.w			#1,d0						; Compensate for dbra
 
 	; a2=address to the draw order table
 	; a3=address to the game object table
