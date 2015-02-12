@@ -403,7 +403,10 @@ rendSetSpriteFrame:
 
 ;==============================================================================
 ;
-; Set the draw order of our sprites.
+; Set the draw order of our sprites. The table should contain sprite handles
+; in the order they should be drawn. That means that the sprite handle that
+; appear first in this table should be drawn first to the screen. The second
+; sprite that appears in the table should be dawn on top of the previous one.
 ;
 ; Input
 ;	a0 = address to table of draw orders. Each entry should be 1 byte
