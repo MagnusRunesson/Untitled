@@ -666,20 +666,20 @@ public class bmp2tile : EditorWindow
 					if( imageConfig.m_importAsBSprite )
 					{
 						AmigaSprite amigaSprite = new AmigaSprite( imageData, imageConfig);
-						alternativeAmigaSpriteName = "_sprite_amiga_b_hw.bin";
+						alternativeAmigaSpriteName = "_sprite_bank_amiga_b_hw.bin";
 						amigaSprite.Export( outBaseName + alternativeAmigaSpriteName );
 					}
 					else
 					{
 						AmigaBob amigaBob = new AmigaBob( imageData, imageConfig);
-						alternativeAmigaSpriteName = "_sprite_amiga_a_bob.bin";						
+						alternativeAmigaSpriteName = "_sprite_bank_amiga_a_bob.bin";						
 						amigaBob.Export( outBaseName + alternativeAmigaSpriteName );
 					}
-					tileBank.ExportMegaDrive( outBaseName + "_sprite_chunky.bin" );
+					tileBank.ExportMegaDrive( outBaseName + "_sprite_bank.bin" );
 					tilePalette.Export( outBaseName + "_palette.bin" );
 					sprite.Export( outBaseName + "_sprite.bin" );
 
-					AddFile( ref asmData, ref asmFileList, ref asmFileMap, outFileNameNoExt + "_sprite_chunky.bin", outFileNameNoExt + alternativeAmigaSpriteName );
+					AddFile( ref asmData, ref asmFileList, ref asmFileMap, outFileNameNoExt + "_sprite_bank.bin", outFileNameNoExt + alternativeAmigaSpriteName );
 					AddFile( ref asmData, ref asmFileList, ref asmFileMap, outFileNameNoExt + "_palette.bin" );
 					AddFile( ref asmData, ref asmFileList, ref asmFileMap, outFileNameNoExt + "_sprite.bin" );
 				}

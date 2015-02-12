@@ -425,14 +425,14 @@ rendSetSpriteDrawOrder:
 	cnop	0,4
 	
 SpriteExportTest
-	incbin	"../src/incbin/herotest_sprite_amiga_b_hw.bin"
+	incbin	"../src/incbin/herotest_sprite_bank_amiga_b_hw.bin"
 
 SpriteBlank
 	dc.w	$0000,$0000
 	dc.w	$0000,$0000
 
 TestBobGfx
-	incbin	"../src/incbin/testsprite2_sprite_amiga_a_bob.bin"
+	incbin	"../src/incbin/testsprite2_sprite_bank_amiga_a_bob.bin"
 
 
 ;==============================================================================
