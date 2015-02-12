@@ -117,7 +117,7 @@ main:
 	lsl.w		#1,d3
 	move.w		#30,d1						; d1 is world X position
 	move.w		(a3,d3),d2					; d2 is world Y position, from sin table. Can be negative.
-	asr.w		#2,d2
+	asr.w		#3,d2
 	add.w		#100,d2
 	jsr			gomSetPosition(pc)
 
@@ -126,7 +126,7 @@ main:
 	and.w		#$1ff,d3
 	add.w		#8,d1						; d1 is world X position
 	move.w		(a3,d3),d2					; d2 is world Y position, from sin table. Can be negative.
-	asr.w		#2,d2
+	asr.w		#3,d2
 	add.w		#100,d2
 	jsr			gomSetPosition(pc)
 
@@ -135,7 +135,7 @@ main:
 	and.w		#$1ff,d3
 	add.w		#8,d1						; d1 is world X position
 	move.w		(a3,d3),d2					; d2 is world Y position, from sin table. Can be negative.
-	asr.w		#2,d2
+	asr.w		#3,d2
 	add.w		#100,d2
 	jsr			gomSetPosition(pc)
 
@@ -144,7 +144,7 @@ main:
 	and.w		#$1ff,d3
 	add.w		#8,d1						; d1 is world X position
 	move.w		(a3,d3),d2					; d2 is world Y position, from sin table. Can be negative.
-	asr.w		#2,d2
+	asr.w		#3,d2
 	add.w		#100,d2
 	jsr			gomSetPosition(pc)
 
