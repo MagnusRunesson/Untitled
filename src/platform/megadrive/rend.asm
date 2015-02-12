@@ -334,6 +334,117 @@ rendLoadSprite:
 
 ;==============================================================================
 ;
+; Set the draw order of our sprites.
+;
+; Input
+;	a0 = address to table of draw orders. Each entry should be 1 byte
+;	d0 = the number of entries in the table.
+;
+;==============================================================================
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+
+rendSetSpriteDrawOrder:
+	pushm		d2-d7/a2-a7
+
+	; a0 and d0 is expected to be trashed by subroutine calls
+	move.l		a0,a2
+	clr.l		d2
+	move.b		d0,d2
+	;add.l		d2,a2
+	;add.l		#1,a2
+
+	; To compensate for the dbra that goes to -1 before quitting the loop
+	;sub.b		#1,d2
+
+	; Find the address to the link attribute in the mirror table
+	move.l		#VarHWSprites,d3
+	add.l		#_cpu_sprite_mirror,d3
+	add.l		#3,d3
+
+	; First sprite to write link value into is always sprite #0
+	clr			d4
+
+	; Clear d0 so we can use .b operations on it
+	clr			d0
+
+	move.l		#1,d6
+
+	; a2=address to draw order table
+	; d2=number of sprites
+	; d3=address to link attribute in first sprite
+	; d4=index of previous sprite (i.e. the sprite that we should write the current link value into)
+.loop:
+	move.l		d4,d0				; Retain the current sprite index in d0 because we need it for when we copy the CPU RAM to VRAM
+	mulu		#_cpu_sprite_size,d4
+	add.l		d3,d4
+	move.l		d4,a3
+	; a3 is now the address to the link attribute for the "current" sprite
+
+	clr.l		d4
+	move.b		(a2)+,d4			; d4 is now the index of the next sprite
+	move.b		d4,(a3)				; Write the index of the next sprite in the current sprite link attribute
+
+	; d0 is already set up to be the index to the current sprits
+	jsr			_rendCopySpriteToVRAM_Index
+
+	dbra		d2,.loop
+
+	; At the last sprite we need to close the link list, by setting the link value to 0
+	move.b		d4,d0				; Retain the current sprite index in d0 because we need it for when we copy the CPU RAM to VRAM
+	mulu		#_cpu_sprite_size,d4
+	add.l		d3,d4
+	move.l		d4,a3
+	; a3 is now the address to the link attribute for the "current" sprite
+	move.b		#0,(a3)
+	jsr			_rendCopySpriteToVRAM_Index
+
+	popm		d2-d7/a2-a7
+	rts
+
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+
+;==============================================================================
+;
 ; Set the screen coordinate of a sprite given its ID
 ;
 ; Input

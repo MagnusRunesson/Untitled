@@ -33,13 +33,16 @@ _go_size			rs.w		0
 ; The state variables of the game object manager
 ;
 	rsreset
-_gom_numobjects		rs.w		1							; How many objects we currently have loaded. This increments for each loaded game object.
-_gom_watermark		rs.w		1							; To unload game objects
-_gom_camera_x		rs.w		1							; Camera world X position, so we can do world to screen transform
-_gom_camera_y		rs.w		1							; Camera world Y position, same reason as above
-_gom_gameobjects	rs.b		_gom_max_objects*_go_size	; All game objects goes here
-_gom_draworder		rs.b		_gom_max_objects			; This table describe which game object to draw when. First entry should be drawn first (i.e. earlier entries should be displayed "behind" later entries in this list)
-_gom_size			rs.w		0
+_gom_numobjects			rs.w		1							; How many objects we currently have loaded. This increments for each loaded game object.
+_gom_watermark			rs.w		1							; To unload game objects
+_gom_camera_x			rs.w		1							; Camera world X position, so we can do world to screen transform
+_gom_camera_y			rs.w		1							; Camera world Y position, same reason as above
+_gom_gameobjects		rs.b		_gom_max_objects*_go_size	; All game objects goes here
+_gom_draworder			rs.b		_gom_max_objects			; This table describe which game object to draw when. First entry should be drawn first (i.e. earlier entries should be displayed "behind" later entries in this list)
+_gom_debug_a			rs.b		1
+_gom_draworder_sprites	rs.b		_gom_max_objects			; Before we send the draw order table to the renderer we need to convert it into sprite handles, not game object handles
+_gom_debug_b			rs.b		1
+_gom_size				rs.w		0
 
 ;==============================================================================
 ;
@@ -65,6 +68,11 @@ gomInit:
 .loop:
 	move.l		#0,(a0)+
 	dbra		d0,.loop
+
+	; Set debug stuff
+	jsr			memGetGameObjectManagerBaseAddress(pc)
+	move.b		#$ff,_gom_debug_a(a0)
+	move.b		#$ff,_gom_debug_b(a0)
 
 	rts
 
@@ -97,6 +105,7 @@ gomLoadObject:
 
 	; Find the next free game object ID
 	move.w				_gom_numobjects(a0),d0
+	clr.l				d3
 	move.w				d0,d3					; Retain the ID of the new object so we can return it properly
 
 	; "Allocate" the object ID
@@ -134,11 +143,11 @@ gomLoadObject:
 
 	; Find the byte address to the next entry in the draw order table
 	add.l				#_gom_draworder,a0
-	add.l				d0,a0
+	add.l				d3,a0
 	; Now a0 is the address of the next entry in the draw order table
 
 	; Add the new game object last in the draw order table
-	move.b				d2,(a0)
+	move.b				d3,(a0)
 
 	;
 	move.w				d3,d0				; Put the new object ID in the return register
@@ -266,6 +275,7 @@ gomSortObjects:
 	; 
 	move.w			_gom_numobjects(a0),d0
 	sub.w			#1,d0						; Don't check the last object in the array since we always compare pairs (we compare i and i+1)
+	;sub.w			#1,d0						; Compensate for dbra
 
 	; a2=address to the draw order table
 	; a3=address to the game object table
@@ -315,6 +325,55 @@ gomSortObjects:
 	cmp.w			#0,d1
 	bne				.sort_again_loop
 
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
 
+	;
+	; Fill the renderer draw table with sprite handles, in the correct order
+	;
+	move.l			a0,a4
+	add.l			#_gom_draworder_sprites,a4
+	move.l			a4,a1
+	add.l			#_go_sprite_handle,a3
+	clr.l			d2
+	move.w			_gom_numobjects(a0),d2
+	sub.w			#1,d2						; compensate for dbra
+	; a0=game object manager base address
+	; a1=draw order table, with sprite handles
+	; a2=draw order table, with game object handles
+	; a3=address to sprite handle of first game object
+	; a4=draw order table, with sprite handles (will be incremented on each write)
+	; d0=number of game objects in the game object manager
+
+	; Now we want to iterate over a2 and read that value, which is a game object handle, d0 times
+	; We want to use that game object handle to get the sprite handle for that game object (a3 + (go index*go_size))
+	; We want to write that sprite handle in the correct place in the draw order table of sprite handles (a4)
+.gom_to_sprite_loop:
+	clr.l			d1
+	move.b			(a2)+,d1					; d1 is now game object handle
+	mulu			#_go_size,d1				; d1 is now byte offset to game object data from game object base address
+	move.w			(a3,d1),d1					; d1 is now the sprite handle for this game object
+	move.b			d1,(a4)+
+	dbra			d2,.gom_to_sprite_loop
+
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+
+	; At this point everything is sorted. Let the renderer know.
+	clr.l			d0
+	move.w			_gom_numobjects(a0),d0
+	sub.w			#1,d0						; compensate for dbra
+	move.l			a1,a0							; Address to draw order table should be in a0
+	jsr				rendSetSpriteDrawOrder(pc)
+
+	; Done and done
 	popm			d2-d7/a2-a7
 	rts

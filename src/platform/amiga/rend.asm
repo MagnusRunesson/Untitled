@@ -403,6 +403,19 @@ rendSetSpriteFrame:
 
 ;==============================================================================
 ;
+; Set the draw order of our sprites.
+;
+; Input
+;	a0 = address to table of draw orders. Each entry should be 1 byte
+;	d0 = the number of entries in the table.
+;
+;==============================================================================
+rendSetSpriteDrawOrder:
+	rts
+
+
+;==============================================================================
+;
 ; Variables
 ;
 ;==============================================================================
