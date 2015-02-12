@@ -370,8 +370,8 @@ rendSetSpriteDrawOrder:
 	move.l		a0,a2
 	clr.l		d2
 	move.b		d0,d2
-	;add.l		d2,a2
-	;add.l		#1,a2
+	add.l		d2,a2
+	add.l		#1,a2
 
 	; To compensate for the dbra that goes to -1 before quitting the loop
 	;sub.b		#1,d2
@@ -401,7 +401,7 @@ rendSetSpriteDrawOrder:
 	; a3 is now the address to the link attribute for the "current" sprite
 
 	clr.l		d4
-	move.b		(a2)+,d4			; d4 is now the index of the next sprite
+	move.b		-(a2),d4			; d4 is now the index of the next sprite
 	move.b		d4,(a3)				; Write the index of the next sprite in the current sprite link attribute
 
 	; d0 is already set up to be the index to the current sprits
