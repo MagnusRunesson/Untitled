@@ -47,7 +47,7 @@ public class AmigaBob
 		int planarStepPerRow = m_spriteWidth / 8 * 4; // 4 bitplanes
 		int planarStepPerPlane = m_spriteWidth / 8;
 		
-		int dataSizePerFrame = m_imageHeight * m_spriteWidth / 8 * 4; // 8 pixels per byte, 4 bitplanes
+		int dataSizePerFrame = m_imageHeight * m_spriteWidth / 8 * 4 * 2; // 8 pixels per byte, 4 bitplanes, and dont forget antoher 4 bitplanes for the mask
 		
 		int planarDataSize = m_numberOfFrames * dataSizePerFrame; // 
 		byte[] spriteData = new byte[planarDataSize];
@@ -58,21 +58,34 @@ public class AmigaBob
 			for (int x = 0; x < m_spriteWidth; x += 8) {
 				for (int y = 0; y < m_imageHeight; y ++) {
 					{
-						c2p.ChunkyToPlanar8Pixels (chunkyImage, x + (frame * m_spriteWidth), y, spriteData, x, (frame * m_imageHeight) + y);										
+						c2p.ChunkyToPlanar8Pixels (chunkyImage, x + (frame * m_spriteWidth), y, spriteData, x, (frame * m_imageHeight * 2) + y);	
+						int srcxoffs = x / 8;
+						int srcyoffsframe = (frame * m_imageHeight * (m_spriteWidth / 8) * 4 * 2);
+						int srcyoffs = y * (m_spriteWidth / 8) * 4;
+
+						int srcoffsbpl0 = srcxoffs + srcyoffsframe + srcyoffs;
+						int srcoffsbpl1 = srcoffsbpl0 + (1 * (m_spriteWidth / 8));
+						int srcoffsbpl2 = srcoffsbpl0 + (2 * (m_spriteWidth / 8));
+						int srcoffsbpl3 = srcoffsbpl0 + (3 * (m_spriteWidth / 8));
+
+						byte mask = 0;
+						mask |= spriteData[srcoffsbpl0];
+						mask |= spriteData[srcoffsbpl1];
+						mask |= spriteData[srcoffsbpl2];
+						mask |= spriteData[srcoffsbpl3];
+
+						int dstoffsbpl0 = srcoffsbpl0 + (m_imageHeight * m_spriteWidth / 8) * 4;
+						int dstoffsbpl1 = srcoffsbpl1 + (m_imageHeight * m_spriteWidth / 8) * 4;
+						int dstoffsbpl2 = srcoffsbpl2 + (m_imageHeight * m_spriteWidth / 8) * 4;
+						int dstoffsbpl3 = srcoffsbpl3 + (m_imageHeight * m_spriteWidth / 8) * 4;
+
+						spriteData[dstoffsbpl0] = mask;
+						spriteData[dstoffsbpl1] = mask;
+						spriteData[dstoffsbpl2] = mask;
+						spriteData[dstoffsbpl3] = mask;
 					}
 				}
 			}
-//			
-//			int baseGrej = frame * dataSizePerFrame;
-//			Halp.Write16 (spriteData, baseGrej + 0, 0x2c40);
-//			Halp.Write16 (spriteData, baseGrej + 2, 0x3c00);
-//			Halp.Write16 (spriteData, baseGrej - 4 + (dataSizePerFrame / 2), 0x0000);
-//			Halp.Write16 (spriteData, baseGrej - 2 + (dataSizePerFrame / 2), 0x0000);
-//			
-//			Halp.Write16 (spriteData, baseGrej + 0 + (dataSizePerFrame / 2), 0x2c40);
-//			Halp.Write16 (spriteData, baseGrej + 2 + (dataSizePerFrame / 2), 0x3c80);
-//			Halp.Write16 (spriteData, baseGrej - 4 + dataSizePerFrame, 0x0000);
-//			Halp.Write16 (spriteData, baseGrej - 2 + dataSizePerFrame, 0x0000);		
 		}
 		return spriteData;
 	}
