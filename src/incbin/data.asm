@@ -1,17 +1,17 @@
 
 
-; herotest_sprite_chunky.bin
+; herotest_sprite_bank.bin
 
 	cnop		0,_chunk_size
-_data_herotest_sprite_chunky:
+_data_herotest_sprite_bank:
 	ifd	is_mega_drive
-	incbin	"../src/incbin/herotest_sprite_chunky.bin"
+	incbin	"../src/incbin/herotest_sprite_bank.bin"
 	else
-	incbin	"../src/incbin/herotest_sprite_amiga_b_hw.bin"
+	incbin	"../src/incbin/herotest_sprite_bank_amiga_b_hw.bin"
 	endif
-_data_herotest_sprite_chunky_pos        equ _data_herotest_sprite_chunky/_chunk_size
-_data_herotest_sprite_chunky_length     equ ((_data_herotest_sprite_chunky_end-_data_herotest_sprite_chunky)+(_chunk_size-1))/_chunk_size
-_data_herotest_sprite_chunky_end:
+_data_herotest_sprite_bank_pos          equ _data_herotest_sprite_bank/_chunk_size
+_data_herotest_sprite_bank_length       equ ((_data_herotest_sprite_bank_end-_data_herotest_sprite_bank)+(_chunk_size-1))/_chunk_size
+_data_herotest_sprite_bank_end:
 
 
 ; herotest_palette.bin
@@ -34,18 +34,18 @@ _data_herotest_sprite_length            equ ((_data_herotest_sprite_end-_data_he
 _data_herotest_sprite_end:
 
 
-; herotest_big_sprite_chunky.bin
+; herotest_big_sprite_bank.bin
 
 	cnop		0,_chunk_size
-_data_herotest_big_sprite_chunky:
+_data_herotest_big_sprite_bank:
 	ifd	is_mega_drive
-	incbin	"../src/incbin/herotest_big_sprite_chunky.bin"
+	incbin	"../src/incbin/herotest_big_sprite_bank.bin"
 	else
-	incbin	"../src/incbin/herotest_big_sprite_amiga_a_bob.bin"
+	incbin	"../src/incbin/herotest_big_sprite_bank_amiga_a_bob.bin"
 	endif
-_data_herotest_big_sprite_chunky_pos    equ _data_herotest_big_sprite_chunky/_chunk_size
-_data_herotest_big_sprite_chunky_length equ ((_data_herotest_big_sprite_chunky_end-_data_herotest_big_sprite_chunky)+(_chunk_size-1))/_chunk_size
-_data_herotest_big_sprite_chunky_end:
+_data_herotest_big_sprite_bank_pos      equ _data_herotest_big_sprite_bank/_chunk_size
+_data_herotest_big_sprite_bank_length   equ ((_data_herotest_big_sprite_bank_end-_data_herotest_big_sprite_bank)+(_chunk_size-1))/_chunk_size
+_data_herotest_big_sprite_bank_end:
 
 
 ; herotest_big_palette.bin
@@ -68,18 +68,18 @@ _data_herotest_big_sprite_length        equ ((_data_herotest_big_sprite_end-_dat
 _data_herotest_big_sprite_end:
 
 
-; testsprite_sprite_chunky.bin
+; testsprite_sprite_bank.bin
 
 	cnop		0,_chunk_size
-_data_testsprite_sprite_chunky:
+_data_testsprite_sprite_bank:
 	ifd	is_mega_drive
-	incbin	"../src/incbin/testsprite_sprite_chunky.bin"
+	incbin	"../src/incbin/testsprite_sprite_bank.bin"
 	else
-	incbin	"../src/incbin/testsprite_sprite_amiga_a_bob.bin"
+	incbin	"../src/incbin/testsprite_sprite_bank_amiga_a_bob.bin"
 	endif
-_data_testsprite_sprite_chunky_pos      equ _data_testsprite_sprite_chunky/_chunk_size
-_data_testsprite_sprite_chunky_length   equ ((_data_testsprite_sprite_chunky_end-_data_testsprite_sprite_chunky)+(_chunk_size-1))/_chunk_size
-_data_testsprite_sprite_chunky_end:
+_data_testsprite_sprite_bank_pos        equ _data_testsprite_sprite_bank/_chunk_size
+_data_testsprite_sprite_bank_length     equ ((_data_testsprite_sprite_bank_end-_data_testsprite_sprite_bank)+(_chunk_size-1))/_chunk_size
+_data_testsprite_sprite_bank_end:
 
 
 ; testsprite_palette.bin
@@ -102,18 +102,18 @@ _data_testsprite_sprite_length          equ ((_data_testsprite_sprite_end-_data_
 _data_testsprite_sprite_end:
 
 
-; testsprite2_sprite_chunky.bin
+; testsprite2_sprite_bank.bin
 
 	cnop		0,_chunk_size
-_data_testsprite2_sprite_chunky:
+_data_testsprite2_sprite_bank:
 	ifd	is_mega_drive
-	incbin	"../src/incbin/testsprite2_sprite_chunky.bin"
+	incbin	"../src/incbin/testsprite2_sprite_bank.bin"
 	else
-	incbin	"../src/incbin/testsprite2_sprite_amiga_a_bob.bin"
+	incbin	"../src/incbin/testsprite2_sprite_bank_amiga_a_bob.bin"
 	endif
-_data_testsprite2_sprite_chunky_pos     equ _data_testsprite2_sprite_chunky/_chunk_size
-_data_testsprite2_sprite_chunky_length  equ ((_data_testsprite2_sprite_chunky_end-_data_testsprite2_sprite_chunky)+(_chunk_size-1))/_chunk_size
-_data_testsprite2_sprite_chunky_end:
+_data_testsprite2_sprite_bank_pos       equ _data_testsprite2_sprite_bank/_chunk_size
+_data_testsprite2_sprite_bank_length    equ ((_data_testsprite2_sprite_bank_end-_data_testsprite2_sprite_bank)+(_chunk_size-1))/_chunk_size
+_data_testsprite2_sprite_bank_end:
 
 
 ; testsprite2_palette.bin
@@ -204,18 +204,18 @@ _data_untitled_splash_palette_length    equ ((_data_untitled_splash_palette_end-
 _data_untitled_splash_palette_end:
 
 
-; herotestpng_sprite_chunky.bin
+; herotestpng_sprite_bank.bin
 
 	cnop		0,_chunk_size
-_data_herotestpng_sprite_chunky:
+_data_herotestpng_sprite_bank:
 	ifd	is_mega_drive
-	incbin	"../src/incbin/herotestpng_sprite_chunky.bin"
+	incbin	"../src/incbin/herotestpng_sprite_bank.bin"
 	else
-	incbin	"../src/incbin/herotestpng_sprite_amiga_a_bob.bin"
+	incbin	"../src/incbin/herotestpng_sprite_bank_amiga_a_bob.bin"
 	endif
-_data_herotestpng_sprite_chunky_pos     equ _data_herotestpng_sprite_chunky/_chunk_size
-_data_herotestpng_sprite_chunky_length  equ ((_data_herotestpng_sprite_chunky_end-_data_herotestpng_sprite_chunky)+(_chunk_size-1))/_chunk_size
-_data_herotestpng_sprite_chunky_end:
+_data_herotestpng_sprite_bank_pos       equ _data_herotestpng_sprite_bank/_chunk_size
+_data_herotestpng_sprite_bank_length    equ ((_data_herotestpng_sprite_bank_end-_data_herotestpng_sprite_bank)+(_chunk_size-1))/_chunk_size
+_data_herotestpng_sprite_bank_end:
 
 
 ; herotestpng_palette.bin
