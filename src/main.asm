@@ -1,5 +1,9 @@
 screen_width				equ			320
+	ifd	_is_mega_drive
 screen_height				equ			224
+	else
+screen_height				equ			256
+	endif
 
 room_width					equ			512
 room_height					equ			512
