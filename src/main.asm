@@ -116,41 +116,51 @@ main:
 	jsr			gomSetPosition(pc)
 
 	;
-	;move.w		_potion_go_handle(a2),d0	; d0 is game object handle
-	;move.w		_potionanim_time(a2),d3
-	;lsl.w		#1,d3
-	;move.w		#30,d1						; d1 is world X position
-	;move.w		(a3,d3),d2					; d2 is world Y position, from sin table. Can be negative.
-	;asr.w		#3,d2
-	;add.w		#100,d2
-	;jsr			gomSetPosition(pc)
-;
-	;move.w		_potion2_go_handle(a2),d0	; d0 is game object handle
-	;add.w		#30,d3
-	;and.w		#$1ff,d3
-	;add.w		#8,d1						; d1 is world X position
-	;move.w		(a3,d3),d2					; d2 is world Y position, from sin table. Can be negative.
-	;asr.w		#3,d2
-	;add.w		#100,d2
-	;jsr			gomSetPosition(pc)
-;
-	;move.w		_potion3_go_handle(a2),d0	; d0 is game object handle
-	;add.w		#30,d3
-	;and.w		#$1ff,d3
-	;add.w		#8,d1						; d1 is world X position
-	;move.w		(a3,d3),d2					; d2 is world Y position, from sin table. Can be negative.
-	;asr.w		#3,d2
-	;add.w		#100,d2
-	;jsr			gomSetPosition(pc)
-;
-	;move.w		_potion4_go_handle(a2),d0	; d0 is game object handle
-	;add.w		#30,d3
-	;and.w		#$1ff,d3
-	;add.w		#8,d1						; d1 is world X position
-	;move.w		(a3,d3),d2					; d2 is world Y position, from sin table. Can be negative.
-	;asr.w		#3,d2
-	;add.w		#100,d2
-	;jsr			gomSetPosition(pc)
+	; Sinus movement for potions
+	;
+	move.w		_potion_go_handle(a2),d0	; d0 is game object handle
+	move.w		_potionanim_time(a2),d3
+	lsl.w		#1,d3
+	move.l		#30*$10000,d1				; d1 is world X position
+	move.w		(a3,d3),d2					; d2 is world Y position, from sin table. Can be negative.
+	asr.w		#3,d2
+	swap.w		d2
+	clr.w		d2
+	add.l		#100*$10000,d2
+	jsr			gomSetPosition(pc)
+
+	move.w		_potion2_go_handle(a2),d0	; d0 is game object handle
+	add.w		#30,d3
+	and.w		#$1ff,d3
+	add.l		#8*$10000,d1				; d1 is world X position
+	move.w		(a3,d3),d2					; d2 is world Y position, from sin table. Can be negative.
+	asr.w		#3,d2
+	swap.w		d2
+	clr.w		d2	
+	add.l		#100*$10000,d2
+	jsr			gomSetPosition(pc)
+
+	move.w		_potion3_go_handle(a2),d0	; d0 is game object handle
+	add.w		#30,d3
+	and.w		#$1ff,d3
+	add.l		#8*$10000,d1				; d1 is world X position
+	move.w		(a3,d3),d2					; d2 is world Y position, from sin table. Can be negative.
+	asr.w		#3,d2
+	swap.w		d2
+	clr.w		d2	
+	add.l		#100*$10000,d2
+	jsr			gomSetPosition(pc)
+
+	move.w		_potion4_go_handle(a2),d0	; d0 is game object handle
+	add.w		#30,d3
+	and.w		#$1ff,d3
+	add.l		#8*$10000,d1				; d1 is world X position
+	move.w		(a3,d3),d2					; d2 is world Y position, from sin table. Can be negative.
+	asr.w		#3,d2
+	swap.w		d2
+	clr.w		d2	
+	add.l		#100*$10000,d2
+	jsr			gomSetPosition(pc)
 
 
 
