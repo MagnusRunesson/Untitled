@@ -10,7 +10,10 @@
 ;	d0=file size
 ;
 ;==============================================================================
-fileLoad:
+
+fileLoad
+	pushm		d1-d7/a0-a6
+
 	lea			FileIDMap(pc),a1
 	asl.l		#2,d0
 	add.l		d0,a1
@@ -19,8 +22,13 @@ fileLoad:
 	moveq		#0,d1	
 	move.w		(a1),d1
 
-	move.l		d1,-(sp)
-	bsr			trackdiskLoadBlock
-	move.l		(sp)+,d0
+	push		d1			; file length in number of sectors
 
+	bsr			trackdiskLoadBlock
+
+	pop			d0
+
+	popm		d1-d7/a0-a6
 	rts
+
+
