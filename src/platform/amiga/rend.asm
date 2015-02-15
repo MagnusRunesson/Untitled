@@ -353,19 +353,16 @@ rendSetSpritePosition:
 	move.l		d5,d6		; d6=vstop (high bit)
 
 	lsr.w		#1,d1
-	and.w		#$00ff,d1	; <- remove?
 	lsl.w		#8,d2
-	and.w		#$ff00,d2	; <- remove?
 	or.w		d2,d1		; d1=sprxpos
 
 	lsl.w		#8,d5
-	and.w		#$ff00,d5	; <- remove?
 	and.w		#$0001,d3
 	or.w		d3,d5
-	lsl.w		#8-1,d6		; bit pos 8 -> pos 1
+	lsr.w		#8-1,d6		; bit pos 8 -> pos 1
 	and.w		#$0002,d6
 	or.w		d6,d5
-	lsl.w		#8-2,d4		; bit pos 8 -> pos 2
+	lsr.w		#8-2,d4		; bit pos 8 -> pos 2
 	and.w		#$0004,d4
 	or.w		d4,d5		;d5=sprxctl
 	
