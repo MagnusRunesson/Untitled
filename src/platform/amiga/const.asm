@@ -1,13 +1,19 @@
-;==============================================================================
-;
-; Amiga chunk size matches TD_SECTOR (size of sector on floppy)
-;
-;==============================================================================
-_chunk_size			equ		TD_SECTOR			
 
 ;==============================================================================
 ;
-; Amiga specific consts
+; Amiga platform constants
+;
+;==============================================================================
+
+; Amiga chunk size matches TD_SECTOR (size of sector on floppy)
+_chunk_size			equ		TD_SECTOR			
+
+; 487k is max alloc (at least on fs-uae a500)
+amiga_ram_alloc_size	equ (487*1024) 
+
+;==============================================================================
+;
+; Amiga hardware constants
 ;
 ;==============================================================================
 
