@@ -135,7 +135,7 @@ rendLoadTileBank:
 rendLoadTileMap:
 
 	; fileLoad accept the file ID as d0, so no need to do any tricks here
-	movem.l			a0-a6/d0-d7,-(sp)
+	pushm			a0-a6/d0-d7
 	
 	_get_workmem_ptr	TilemapMem,a0
 	bsr					fileLoad
@@ -175,7 +175,7 @@ rendLoadTileMap:
 	add.l			#(7*256)+192,a5
 	dbf				d7,.yloop
 
-	movem.l			(sp)+,a0-a6/d0-d7
+	popm			a0-a6/d0-d7
 	rts
 
 
@@ -218,7 +218,7 @@ rendLoadSprite:
 ;==============================================================================
 
 rendLoadPalette:
-	movem.l			a0-a6/d0-d7,-(sp)
+	pushm		a0-a6/d0-d7
 
 	move.l		d1,d3
 	
@@ -251,7 +251,7 @@ rendLoadPalette:
 	dbf			d0,.loop
 
 
-	movem.l			(sp)+,a0-a6/d0-d7
+	popm		a0-a6/d0-d7
 	rts
 
 ;==============================================================================
@@ -283,7 +283,7 @@ rendWaitVSync:
 ;==============================================================================
 
 rendSetScrollXY:
-	movem.l		d2-d3,-(sp)
+	pushm		d2-d3
 
 	; Update RendScreen structure
 	lea			_RendScreen(pc),a0
@@ -317,7 +317,7 @@ rendSetScrollXY:
 	or.w		d2,d0
 	move.w		d0,(a0)
 
-	movem.l		(sp)+,d2-d3
+	popm		d2-d3
 	rts
 
 
@@ -337,7 +337,7 @@ rendSetSpritePosition:
 
 	; temp hack to move player character (sprite ID=1)
 
-	movem.l		d2-d7/a2-a5,-(sp)
+	pushm		d2-d7/a2-a5
 	
 	cmp.w		#1,d0
 	bne.s		testBob
@@ -377,7 +377,7 @@ rendSetSpritePosition:
 	or.w		#$0080,d5	; attach
 	move.w		d5,(a1)
 
-	movem.l		(sp)+,d2-d7/a2-a5
+	popm		d2-d7/a2-a5
 	rts
 
 
@@ -425,15 +425,9 @@ testBob
 	move.w		d3,bltcon1(a6)
 	move.w		#$1002,bltsize(a6)
 
-	movem.l		(sp)+,d2-d7/a2-a5
+	popm		d2-d7/a2-a5
 	rts
 
-waitBlit
-	btst.b		#DMAB_BLTDONE-8,dmaconr(a6)
-.waitBlit
-	btst.b		#DMAB_BLTDONE-8,dmaconr(a6)
-	bne.s		.waitBlit
-	rts
 
 ;==============================================================================
 ;
