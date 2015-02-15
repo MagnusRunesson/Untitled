@@ -33,7 +33,7 @@ bootblockcodestart
 	move.l	a1,a3
 	
 	; allocate memory
-	move.l	#(487*1024),d0	; 487k is max alloc (at least on fs-uae a500)
+	move.l	#amiga_ram_alloc_size,d0	; 487k is max alloc (at least on fs-uae a500)
 	moveq	#MEMF_CHIP,d1
 	jsr		_LVOAllocMem(a6)
 	tst.l	d0
