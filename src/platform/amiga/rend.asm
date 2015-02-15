@@ -18,6 +18,21 @@ _RendScreenSizeof		rs.b	0
 
 ;==============================================================================
 ;
+; Macros
+;
+;==============================================================================
+
+_wait_blit	MACRO
+
+	btst.b		#DMAB_BLTDONE-8,dmaconr(a6)
+.waitBlit
+	btst.b		#DMAB_BLTDONE-8,dmaconr(a6)
+	bne.s		.waitBlit
+	
+	ENDM
+
+;==============================================================================
+;
 ; Init
 ;
 ;==============================================================================
@@ -389,7 +404,8 @@ testBob
 
 	lea			TestBobGfx(pc),a0
 	lea			16*16/8*4(a0),a1
-	bsr			waitBlit
+	
+	_wait_blit
 
 	move.l		a0,bltbpt(a6)
 	move.l		a1,bltapt(a6)
