@@ -5,7 +5,7 @@ public class testobject : MonoBehaviour
 {
 	Vector2 m_position;
 
-	const float refreshTimer = 0.2f;
+	const float refreshTimer = 0.05f;
 	const float width = 16.0f;
 	const float height = 16.0f;
 	const float padding = 2.0f;
@@ -47,7 +47,7 @@ public class testobject : MonoBehaviour
 		if( Input.GetKey( KeyCode.LeftArrow ))	direction += Vector2.right * -1.0f;
 		if( Input.GetKey( KeyCode.RightArrow ))	direction += Vector2.right;
 
-		direction = CheckCollision( direction );
+		direction = CheckCollisionAsm( direction );
 
 		m_position += direction;// * Time.deltaTime;
 
@@ -63,6 +63,68 @@ public class testobject : MonoBehaviour
 			Vector3 v3 = SwitchWorld( v );
 			Gizmos.DrawCube( pos + v3 + (Vector3.down+Vector3.right)*0.5f, Vector3.one );
 		}
+	}
+
+	Vector2 CheckCollisionAsm( Vector2 _direction )
+	{
+		int obj_pos_x = (int)m_position.x;
+		int obj_pos_y = (int)m_position.y;
+		int wanted_dir_x = (int)_direction.x;
+		int wanted_dir_y = (int)_direction.y;
+
+		int new_dir_x = wanted_dir_x;
+		int new_dir_y = wanted_dir_y;
+
+		int wanted_pos_x;
+		int wanted_pos_y;
+		int sensor_x;
+		int sensor_y;
+		int tile_x;
+		int tile_y;
+		int coll_tile_index;
+
+		int i_sensor = 0;
+
+	Loop_Sensors:
+		sensor_x = (int)m_sensors[ i_sensor ].x;
+		sensor_y = (int)m_sensors[ i_sensor ].y;
+		wanted_pos_x = obj_pos_x + sensor_x + wanted_dir_x;
+		wanted_pos_y = obj_pos_y + sensor_y + wanted_dir_y;
+
+		tile_x = wanted_pos_x>>3;
+		tile_y = wanted_pos_y>>3;
+		coll_tile_index = m_worldBuilder.GetTileAt( tile_x, tile_y );
+
+		tile_x = wanted_pos_x & 7;
+		tile_y = wanted_pos_y & 7;
+
+		if( coll_tile_index == 1 )
+			DoCollision_UpLeftAsm( ref new_dir_y );
+		else if( coll_tile_index == 2 )
+			DoCollision_DownRightAsm( ref new_dir_y );
+		else if( coll_tile_index == 3 )
+			DoCollision_UpLeftAsm( ref new_dir_x );
+		else if( coll_tile_index == 4 )
+			DoCollision_DownRightAsm( ref new_dir_x );
+		else if( coll_tile_index == 5 )
+			DoCollision_UpLeftAsm( tile_x, tile_y, ref new_dir_x, ref new_dir_y );
+		else if( coll_tile_index == 6 )
+			DoCollision_UpRightAsm( tile_x, tile_y, ref new_dir_x, ref new_dir_y );
+		else if( coll_tile_index == 7 )
+			DoCollision_DownLeftAsm( tile_x, tile_y, ref new_dir_x, ref new_dir_y );
+		else if( coll_tile_index == 8 )
+			DoCollision_DownRightAsm( tile_x, tile_y, ref new_dir_x, ref new_dir_y );
+		else if( coll_tile_index == 9 )
+		{
+			new_dir_x = 0;
+			new_dir_y = 0;
+		}
+
+		i_sensor++;
+		if( i_sensor < 4 )
+			goto Loop_Sensors;
+
+		return new Vector2( new_dir_x, new_dir_y );
 	}
 
 	Vector2 CheckCollision( Vector2 _direction )
@@ -123,13 +185,24 @@ public class testobject : MonoBehaviour
 		return _dir;
 	}
 
+	// Up
+	void DoCollision_UpLeftAsm( ref int _val )
+	{
+		if( _val > 0 ) _val = 0;
+	}
+	
+	void DoCollision_DownRightAsm( ref int _val )
+	{
+		if( _val < 0 ) _val = 0;
+	}
+	
 	// Left
 	Vector2 DoCollision_Left( Vector2 _pos, Vector2 _dir )
 	{
 		if( _dir.x > 0 ) _dir.x = 0;
 		return _dir;
 	}
-
+	
 	// Right
 	Vector2 DoCollision_Right( Vector2 _pos, Vector2 _dir )
 	{
@@ -172,7 +245,7 @@ public class testobject : MonoBehaviour
 		
 		return _dir;
 	}
-	
+
 	// Down / left
 	Vector2 DoCollision_DownLeft( Vector2 _pos, Vector2 _dir )
 	{
@@ -213,5 +286,69 @@ public class testobject : MonoBehaviour
 	Vector2 DoCollision_Full( Vector2 _pos, Vector2 _dir )
 	{
 		return Vector2.zero;
+	}
+	
+	void DoCollision_UpLeftAsm( int _in_tile_x, int _in_tile_y, ref int _dir_x, ref int _dir_y )
+	{
+		if( (7-_in_tile_x) > _in_tile_y )
+			return;
+		
+		if( _dir_x+_dir_y == 2 )
+		{
+			_dir_x = 0;
+			_dir_y = 0;
+			return;
+		}
+		
+		if( _dir_x > 0 ) _dir_y = -1;
+		if( _dir_y > 0 ) _dir_x = -1;
+	}
+	
+	void DoCollision_UpRightAsm( int _in_tile_x, int _in_tile_y, ref int _dir_x, ref int _dir_y )
+	{
+		if( _in_tile_x > _in_tile_y )
+			return;
+		
+		if( _dir_x-_dir_y == -2 )
+		{
+			_dir_x = 0;
+			_dir_y = 0;
+			return;
+		}
+		
+		if( _dir_x < 0 ) _dir_y = -1;
+		if( _dir_y > 0 ) _dir_x = 1;
+	}
+	
+	void DoCollision_DownLeftAsm( int _in_tile_x, int _in_tile_y, ref int _dir_x, ref int _dir_y )
+	{
+		if( _in_tile_x < _in_tile_y )
+			return;
+		
+		if( _dir_x-_dir_y == 2 )
+		{
+			_dir_x = 0;
+			_dir_y = 0;
+			return;
+		}
+		
+		if( _dir_y < 0 ) _dir_x = -1;
+		if( _dir_x > 0 ) _dir_y = 1;
+	}
+	
+	void DoCollision_DownRightAsm( int _in_tile_x, int _in_tile_y, ref int _dir_x, ref int _dir_y )
+	{
+		if( _in_tile_x > (7-_in_tile_y))
+			return;
+		
+		if( _dir_x+_dir_y == -2 )
+		{
+			_dir_x = 0;
+			_dir_y = 0;
+			return;
+		}
+		
+		if( _dir_y < 0 ) _dir_x = 1;
+		if( _dir_x < 0 ) _dir_y = 1;
 	}
 }
