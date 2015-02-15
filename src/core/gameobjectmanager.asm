@@ -22,8 +22,8 @@ _gom_max_objects	equ			40		; Maximum number of game objects in a room at any giv
 ; The properties of an individual game object
 ;
 	rsreset
-_go_world_pos_x		rs.w		1							; Game object world X position
-_go_world_pos_y		rs.w		1							; Game object world Y position
+_go_world_pos_x		rs.l		1							; Game object world X position
+_go_world_pos_y		rs.l		1							; Game object world Y position
 _go_sprite_handle	rs.w		1							; Hardware sprite handle for the associated sprite
 _go_anim_time		rs.w		1							; Current animation time
 _go_sort			rs.w		1							; Sort value for object compared to other objects. Haven't decided if lower sort means drawn before or after higher sort values
@@ -35,8 +35,8 @@ _go_size			rs.w		0
 	rsreset
 _gom_numobjects			rs.w		1							; How many objects we currently have loaded. This increments for each loaded game object.
 _gom_watermark			rs.w		1							; To unload game objects
-_gom_camera_x			rs.w		1							; Camera world X position, so we can do world to screen transform
-_gom_camera_y			rs.w		1							; Camera world Y position, same reason as above
+_gom_camera_x			rs.l		1							; Camera world X position, so we can do world to screen transform
+_gom_camera_y			rs.l		1							; Camera world Y position, same reason as above
 _gom_gameobjects		rs.b		_gom_max_objects*_go_size	; All game objects goes here
 _gom_draworder			rs.b		_gom_max_objects			; This table describe which game object to draw when. First entry should be drawn first (i.e. earlier entries should be displayed "behind" later entries in this list)
 _gom_debug_a			rs.b		1
@@ -128,8 +128,8 @@ gomLoadObject:
 
 	; Setup default values for our new game object
 	move.w				#0,_go_anim_time(a0)
-	move.w				#0,_go_world_pos_x(a0)
-	move.w				#0,_go_world_pos_y(a0)
+	move.l				#0,_go_world_pos_x(a0)
+	move.l				#0,_go_world_pos_y(a0)
 	move.w				#0,_go_sort(a0)
 
 	; We also need to add this object to the draw order array
@@ -174,16 +174,16 @@ gomSetPosition:
 	add.l			d0,a0
 	; a0 is now pointing to the game object instance
 
-	move.w			d1,_go_world_pos_x(a0)
-	move.w			d2,_go_world_pos_y(a0)
+	move.l			d1,_go_world_pos_x(a0)
+	move.l			d2,_go_world_pos_y(a0)
 
 	rts
 
 
 gomSetCameraPosition:
 	jsr				memGetGameObjectManagerBaseAddress(pc)
-	move			d0,_gom_camera_x(a0)
-	move			d1,_gom_camera_y(a0)
+	move.l			d0,_gom_camera_x(a0)
+	move.l			d1,_gom_camera_y(a0)
 	rts
 
 ;==============================================================================
@@ -207,14 +207,14 @@ gomRender:
 	; Now a2 is the address to the game object manager
 
 	; Fetch the camera position
-	move.w			_gom_camera_x(a2),d3
-	move.w			_gom_camera_y(a2),d4
+	move.l			_gom_camera_x(a2),d3
+	move.l			_gom_camera_y(a2),d4
 
 	; Update the background position
-	clr.l			d0
-	clr.l			d1
-	move.w			d3,d0
-	move.w			d4,d1
+	move.l			d3,d0
+	move.l			d4,d1
+	swap			d0
+	swap			d1
 	jsr				rendSetScrollXY(pc)			; d0=x position, d1=y position
 
 	; Fetch the number of game objects allocated.
@@ -244,10 +244,12 @@ gomRender:
 .loop:
 	move		_go_sprite_handle(a3),d0	; d0 = sprite handle
 
-	move		_go_world_pos_x(a3),d1		; d1 = game object world position X
-	move		_go_world_pos_y(a3),d2		; d2 = game object world position Y
-	sub			d3,d1						; World to camera space on X
-	sub			d4,d2						; World to camera space on Y
+	move.l		_go_world_pos_x(a3),d1		; d1 = game object world position X
+	move.l		_go_world_pos_y(a3),d2		; d2 = game object world position Y
+	sub.l		d3,d1						; World to camera space on X
+	sub.l		d4,d2						; World to camera space on Y
+	swap		d1							; Get the high word from the 16.16 fixed point and pass it to the render function
+	swap		d2							; Get the high word from the 16.16 fixed point and pass it to the render function
 	jsr			rendSetSpritePosition(pc)	; Refresh hardware sprite position
 
 	; Go to next game object (i.e. the game object that is

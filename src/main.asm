@@ -13,10 +13,10 @@ camera_padding_vertical		equ			64
 
 	rsreset
 _hero_go_handle				rs.l		1
-_hero_sprite_pos_x			rs.w		1
-_hero_sprite_pos_y			rs.w		1
-_camera_pos_x				rs.w		1
-_camera_pos_y				rs.w		1
+_hero_sprite_pos_x			rs.l		1
+_hero_sprite_pos_y			rs.l		1
+_camera_pos_x				rs.l		1
+_camera_pos_y				rs.l		1
 _potion_go_handle			rs.w		1
 _testanim_time				rs.w		1
 _potion2_go_handle			rs.w		1
@@ -36,10 +36,10 @@ main:
 	;
 	; Setup local variables
 	;
-	move		#0,_hero_sprite_pos_x(a2)
-	move		#0,_hero_sprite_pos_y(a2)
-	move		#0,_camera_pos_x(a2)
-	move		#0,_camera_pos_y(a2)
+	move.l		#0,_hero_sprite_pos_x(a2)
+	move.l		#0,_hero_sprite_pos_y(a2)
+	move.l		#0,_camera_pos_x(a2)
+	move.l		#0,_camera_pos_y(a2)
 
 	;
 	move		#0,_testanim_time(a2)
@@ -111,46 +111,46 @@ main:
 	; Update hero position with the game object manager
 	;
 	move.l		_hero_go_handle(a2),d0
-	move.w		_hero_sprite_pos_x(a2),d1
-	move.w		_hero_sprite_pos_y(a2),d2
+	move.l		_hero_sprite_pos_x(a2),d1
+	move.l		_hero_sprite_pos_y(a2),d2
 	jsr			gomSetPosition(pc)
 
 	;
-	move.w		_potion_go_handle(a2),d0	; d0 is game object handle
-	move.w		_potionanim_time(a2),d3
-	lsl.w		#1,d3
-	move.w		#30,d1						; d1 is world X position
-	move.w		(a3,d3),d2					; d2 is world Y position, from sin table. Can be negative.
-	asr.w		#3,d2
-	add.w		#100,d2
-	jsr			gomSetPosition(pc)
-
-	move.w		_potion2_go_handle(a2),d0	; d0 is game object handle
-	add.w		#30,d3
-	and.w		#$1ff,d3
-	add.w		#8,d1						; d1 is world X position
-	move.w		(a3,d3),d2					; d2 is world Y position, from sin table. Can be negative.
-	asr.w		#3,d2
-	add.w		#100,d2
-	jsr			gomSetPosition(pc)
-
-	move.w		_potion3_go_handle(a2),d0	; d0 is game object handle
-	add.w		#30,d3
-	and.w		#$1ff,d3
-	add.w		#8,d1						; d1 is world X position
-	move.w		(a3,d3),d2					; d2 is world Y position, from sin table. Can be negative.
-	asr.w		#3,d2
-	add.w		#100,d2
-	jsr			gomSetPosition(pc)
-
-	move.w		_potion4_go_handle(a2),d0	; d0 is game object handle
-	add.w		#30,d3
-	and.w		#$1ff,d3
-	add.w		#8,d1						; d1 is world X position
-	move.w		(a3,d3),d2					; d2 is world Y position, from sin table. Can be negative.
-	asr.w		#3,d2
-	add.w		#100,d2
-	jsr			gomSetPosition(pc)
+	;move.w		_potion_go_handle(a2),d0	; d0 is game object handle
+	;move.w		_potionanim_time(a2),d3
+	;lsl.w		#1,d3
+	;move.w		#30,d1						; d1 is world X position
+	;move.w		(a3,d3),d2					; d2 is world Y position, from sin table. Can be negative.
+	;asr.w		#3,d2
+	;add.w		#100,d2
+	;jsr			gomSetPosition(pc)
+;
+	;move.w		_potion2_go_handle(a2),d0	; d0 is game object handle
+	;add.w		#30,d3
+	;and.w		#$1ff,d3
+	;add.w		#8,d1						; d1 is world X position
+	;move.w		(a3,d3),d2					; d2 is world Y position, from sin table. Can be negative.
+	;asr.w		#3,d2
+	;add.w		#100,d2
+	;jsr			gomSetPosition(pc)
+;
+	;move.w		_potion3_go_handle(a2),d0	; d0 is game object handle
+	;add.w		#30,d3
+	;and.w		#$1ff,d3
+	;add.w		#8,d1						; d1 is world X position
+	;move.w		(a3,d3),d2					; d2 is world Y position, from sin table. Can be negative.
+	;asr.w		#3,d2
+	;add.w		#100,d2
+	;jsr			gomSetPosition(pc)
+;
+	;move.w		_potion4_go_handle(a2),d0	; d0 is game object handle
+	;add.w		#30,d3
+	;and.w		#$1ff,d3
+	;add.w		#8,d1						; d1 is world X position
+	;move.w		(a3,d3),d2					; d2 is world Y position, from sin table. Can be negative.
+	;asr.w		#3,d2
+	;add.w		#100,d2
+	;jsr			gomSetPosition(pc)
 
 
 
@@ -163,8 +163,8 @@ main:
 	;
 	; Update camera position with the game object manager
 	;
-	move		_camera_pos_x(a2),d0
-	move		_camera_pos_y(a2),d1
+	move.l		_camera_pos_x(a2),d0
+	move.l		_camera_pos_y(a2),d1
 	jsr			gomSetCameraPosition(pc)
 
 	perf_stop
@@ -235,11 +235,11 @@ _inputUpdate:
 	bra			.scroll_updown
 
 .scroll_left:
-	subq.w		#1,_hero_sprite_pos_x(a2)
+	sub.l		#$10000,_hero_sprite_pos_x(a2)
 	bra			.scroll_updown
 
 .scroll_right:
-	addq.w		#1,_hero_sprite_pos_x(a2)
+	add.l		#$10000,_hero_sprite_pos_x(a2)
 	bra			.scroll_updown
 
 .scroll_updown:
@@ -252,11 +252,11 @@ _inputUpdate:
 	bra			.done
 
 .scroll_up:
-	subq.w		#1,_hero_sprite_pos_y(a2)
+	sub.l		#$10000,_hero_sprite_pos_y(a2)
 	bra			.done
 
 .scroll_down:
-	addq.w		#1,_hero_sprite_pos_y(a2)
+	add.l		#$10000,_hero_sprite_pos_y(a2)
 	bra			.done
 
 .change_picture_0
@@ -282,28 +282,28 @@ _inputUpdate:
 ; player sprite around, but not go out of bounds
 ;
 _cameraUpdate:
-	move		_camera_pos_x(a2),d0
-	move		_hero_sprite_pos_x(a2),d1
+	move.l		_camera_pos_x(a2),d0
+	move.l		_hero_sprite_pos_x(a2),d1
 
 	;
 	; Check if player is too far left
 	;
-	sub			d0,d1								; d2 = CameraX - HeroSpriteX		(30-40=10 pixels to the left)
-	sub			#camera_padding_horizontal,d1		; delta -= padding					(10-32=-22)
-	cmp			#0,d1								;
+	sub.l		d0,d1									; d2 = CameraX - HeroSpriteX		(30-40=10 pixels to the left)
+	sub.l		#camera_padding_horizontal*$10000,d1	; delta -= padding					(10-32=-22)
+	cmp.l		#0,d1									;
 	bge			.no_adjust_left
-	add			d1,d0
+	add.l		d1,d0
 
 	; Now when we've adjust the camera to the left we need to make sure it isn't too far off to the left
-	cmp			#0,d0
+	cmp.l		#0,d0
 	bge			.left_ok
-	clr			d0
+	clr.l		d0
 .left_ok:
-	move		d0,_camera_pos_x(a2)		; If we need to adjust the camera then d2 will be a negative value, hence moving the camera to the left when we add d2 to the camera position
+	move.l		d0,_camera_pos_x(a2)		; If we need to adjust the camera then d2 will be a negative value, hence moving the camera to the left when we add d2 to the camera position
 	bra			.check_vertical_adjust
 
 .no_adjust_left:
-	move		_hero_sprite_pos_x(a2),d1
+	move.l		_hero_sprite_pos_x(a2),d1
 
 
 	;
@@ -320,46 +320,46 @@ _cameraUpdate:
 	;
 	;
 
-	sub			d0,d1													; d2 = CameraX - HeroSpriteX		(30-40=10 pixels to the left)
-	sub			#screen_width-camera_padding_horizontal-16,d1			; delta -= padding					(10-32=-22)
-	cmp			#0,d1													;
+	sub.l		d0,d1													; d2 = CameraX - HeroSpriteX		(30-40=10 pixels to the left)
+	sub.l		#(screen_width-camera_padding_horizontal-16)*$10000,d1			; delta -= padding					(10-32=-22)
+	cmp.l		#0,d1													;
 	ble			.no_adjust_right
-	add			d1,d0
+	add.l		d1,d0
 
 	; Now when we've adjust the camera to the left we need to make sure it isn't too far off to the left
-	cmp			#room_width-screen_width,d0
+	cmp.l		#(room_width-screen_width)*$10000,d0
 	ble			.right_ok
-	move		#room_width-screen_width,d0
+	move.l		#(room_width-screen_width)*$10000,d0
 .right_ok:
-	move		d0,_camera_pos_x(a2)		; If we need to adjust the camera then d2 will be a negative value, hence moving the camera to the left when we add d2 to the camera position
+	move.l		d0,_camera_pos_x(a2)		; If we need to adjust the camera then d2 will be a negative value, hence moving the camera to the left when we add d2 to the camera position
 .no_adjust_right:
 
 
 
 
 .check_vertical_adjust:
-	move		_camera_pos_y(a2),d0
-	move		_hero_sprite_pos_y(a2),d1
+	move.l		_camera_pos_y(a2),d0
+	move.l		_hero_sprite_pos_y(a2),d1
 
 	;
 	; Check if player is too far left
 	;
-	sub			d0,d1							; d2 = CameraX - HeroSpriteX		(30-40=10 pixels to the left)
-	sub			#camera_padding_vertical,d1		; delta -= padding					(10-32=-22)
-	cmp			#0,d1							;
+	sub.l		d0,d1							; d2 = CameraX - HeroSpriteX		(30-40=10 pixels to the left)
+	sub.l		#(camera_padding_vertical)*$10000,d1		; delta -= padding					(10-32=-22)
+	cmp.l		#0,d1							;
 	bge			.no_adjust_up
-	add			d1,d0
+	add.l		d1,d0
 
 	; Now when we've adjust the camera to the left we need to make sure it isn't too far off to the left
-	cmp			#0,d0
+	cmp.l		#0,d0
 	bge			.up_ok
-	clr			d0
+	clr.l		d0
 .up_ok:
-	move		d0,_camera_pos_y(a2)		; If we need to adjust the camera then d2 will be a negative value, hence moving the camera to the left when we add d2 to the camera position
+	move.l		d0,_camera_pos_y(a2)		; If we need to adjust the camera then d2 will be a negative value, hence moving the camera to the left when we add d2 to the camera position
 	bra			.done
 
 .no_adjust_up:
-	move		_hero_sprite_pos_y(a2),d1
+	move.l		_hero_sprite_pos_y(a2),d1
 
 
 	;
@@ -376,18 +376,18 @@ _cameraUpdate:
 	;
 	;
 
-	sub			d0,d1													; d2 = CameraX - HeroSpriteX		(30-40=10 pixels to the left)
-	sub			#screen_height-camera_padding_vertical-16,d1			; delta -= padding					(10-32=-22)
-	cmp			#0,d1													;
+	sub.l		d0,d1													; d2 = CameraX - HeroSpriteX		(30-40=10 pixels to the left)
+	sub.l		#(screen_height-camera_padding_vertical-16)*$10000,d1			; delta -= padding					(10-32=-22)
+	cmp.l		#0,d1													;
 	ble			.no_adjust_down
-	add			d1,d0
+	add.l		d1,d0
 
 	; Now when we've adjust the camera to the left we need to make sure it isn't too far off to the left
-	cmp			#room_height-screen_height,d0
+	cmp.l		#(room_height-screen_height)*$10000,d0
 	ble			.down_ok
-	move		#room_height-screen_height,d0
+	move.l		#(room_height-screen_height)*$10000,d0
 .down_ok:
-	move		d0,_camera_pos_y(a2)		; If we need to adjust the camera then d2 will be a negative value, hence moving the camera to the left when we add d2 to the camera position
+	move.l		d0,_camera_pos_y(a2)		; If we need to adjust the camera then d2 will be a negative value, hence moving the camera to the left when we add d2 to the camera position
 .no_adjust_down:
 
 
@@ -396,8 +396,8 @@ _cameraUpdate:
 
 
 _checkBorders:
-	move.w		_hero_sprite_pos_x(a2),d0
-	cmp.w		#0,d0
+	move.l		_hero_sprite_pos_x(a2),d0
+	cmp.l		#0,d0
 	bge			.no_left
 
 	;
@@ -410,13 +410,13 @@ _checkBorders:
 	;
 	; Warp hero to the right of the new map
 	;
-	move.w		#511-16,_hero_sprite_pos_x(a2)
+	move.l		#(511-16)*$10000,_hero_sprite_pos_x(a2)
 
 	; Done
 	bra			.done
 
 .no_left:
-	cmp.w		#511-16,d0
+	cmp.l		#(511-16)*$10000,d0
 	ble			.no_right
 
 	;
@@ -429,7 +429,7 @@ _checkBorders:
 	;
 	; Warp hero to the left of the new map
 	;
-	move.w		#0,_hero_sprite_pos_x(a2)
+	move.l		#0,_hero_sprite_pos_x(a2)
 
 .no_right:
 .done:
