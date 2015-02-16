@@ -91,10 +91,96 @@ unsigned long int crc32( unsigned long int crc, const unsigned char* buf, unsign
 	return crc ^ 0xffffffffL;
 }
 
+#define LINE_LENGTH (1024)
+
+unsigned char* inFileContent;
+unsigned char currentLine[ LINE_LENGTH ];
+int currentOffset;
+int currentFileSize;
+
+void openInFile( const char* _pszFileName )
+{
+	FILE* f = fopen( _pszFileName, "rt" );
+	fseek( f, 0, SEEK_END );
+	currentFileSize = (int)ftell( f );
+	fseek( f, 0, SEEK_SET );
+
+	inFileContent = new unsigned char[ currentFileSize ];
+	fread( inFileContent, 1, currentFileSize, f );
+
+	fclose( f );
+
+	currentOffset = 0;
+}
+
+bool iseol( char _c )
+{
+	if( _c == 0x0a )
+		return true;
+	
+	return false;
+}
+
+unsigned char* readLine()
+{
+	if( currentOffset >= currentFileSize )
+		return NULL;
+	
+	int lineOffset = 0;
+	memset( currentLine, 0, LINE_LENGTH );
+	do
+	{
+		char c = inFileContent[ currentOffset ];
+		if( iseol( c ))
+		{
+			currentLine[ lineOffset ] = 0;
+			currentOffset++;
+			break;
+		}
+		
+		if( currentOffset >= currentFileSize )
+		{
+			currentLine[ lineOffset ] = 0;
+			break;
+		}
+		
+		currentLine[ lineOffset ] = c;
+		lineOffset++;
+		currentOffset++;
+	}
+	while( true );
+	
+	return currentLine;
+}
 
 int main(int argc, const char * argv[])
 {
+	if( argc < 3 )
+	{
+		printf("FAIL! Not enough parameter. Usage:\n\tmakecmt <in: listing file> <out: comment file>\n");
+		return 0;
+	}
+	
+	char* pszInFile = (char*)argv[ 1 ];
+	char* pszOutFile = (char*)argv[ 2 ];
+	
+	printf("input file=%s\noutputfile=%s\n", pszInFile, pszOutFile );
+
+	//
+	openInFile( pszInFile );
+	
+	int iLine = 0;
+	unsigned char* pszLine;
+	while( (pszLine = readLine()) != NULL )
+	{
+		printf("line %i: %s\n", iLine, pszLine);
+		iLine++;
+	}
+	
 	unsigned char* buff = new unsigned char[ 20 ];
+	
+	
+	//printf("%s\n", fileContent );
 	
 	//buff[ 0 ] = 0x67;
 	//buff[ 1 ] = 0x0A;
@@ -112,18 +198,25 @@ int main(int argc, const char * argv[])
 	buff[ 9 ] = 0x00;
 	*/
 	
+	/*
 	buff[ 0 ] = 0x20;
 	buff[ 1 ] = 0x3C;
 	buff[ 2 ] = 0x46;
 	buff[ 3 ] = 0x45;
 	buff[ 4 ] = 0x53;
 	buff[ 5 ] = 0x54;
+	 */
+	
+	buff[ 0 ] = 0x22;
+	buff[ 1 ] = 0x3C;
+	buff[ 2 ] = 0x00;
+	buff[ 3 ] = 0x00;
+	buff[ 4 ] = 0x3F;
+	buff[ 5 ] = 0xFF;
 	
 	unsigned long int crc = crc32( 0, buff, 6 );
 
 	printf("0x%08x\n", (unsigned int)crc );
 	
-	// insert code here...
-	std::cout << "Hello, World!\n";
     return 0;
 }
