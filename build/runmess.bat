@@ -2,6 +2,6 @@
 
 cd mess
 
-c:\mess0157b\mess.exe genesis -cart ..\out\untitled_megadrive.bin -window -waitvsync -nofilter -skip_gameinfo
+c:\mess0158b\mess.exe genesis -cart ..\out\untitled_megadrive.bin -window -waitvsync -nofilter -skip_gameinfo -debug
 
 cd..
