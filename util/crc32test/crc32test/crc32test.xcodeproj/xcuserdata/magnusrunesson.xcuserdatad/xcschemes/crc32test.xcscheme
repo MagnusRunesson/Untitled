@@ -57,6 +57,16 @@
             ReferencedContainer = "container:crc32test.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
+      <CommandLineArguments>
+         <CommandLineArgument
+            argument = "/Users/magnusrunesson/Projects/md/Untitled/build/listfile"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "~/Projects/md/Untitled/build/mess/comments/megadriv.cmt"
+            isEnabled = "YES">
+         </CommandLineArgument>
+      </CommandLineArguments>
       <AdditionalOptions>
       </AdditionalOptions>
    </LaunchAction>
