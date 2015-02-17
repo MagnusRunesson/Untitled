@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "25BAD2B71A91D89D004009B5"
-               BuildableName = "crc32test"
+               BuildableName = "buildcomments"
                BlueprintName = "buildcomments"
                ReferencedContainer = "container:buildcomments.xcodeproj">
             </BuildableReference>
@@ -33,7 +33,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "25BAD2B71A91D89D004009B5"
-            BuildableName = "crc32test"
+            BuildableName = "buildcomments"
             BlueprintName = "buildcomments"
             ReferencedContainer = "container:buildcomments.xcodeproj">
          </BuildableReference>
@@ -52,7 +52,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "25BAD2B71A91D89D004009B5"
-            BuildableName = "crc32test"
+            BuildableName = "buildcomments"
             BlueprintName = "buildcomments"
             ReferencedContainer = "container:buildcomments.xcodeproj">
          </BuildableReference>
@@ -80,7 +80,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "25BAD2B71A91D89D004009B5"
-            BuildableName = "crc32test"
+            BuildableName = "buildcomments"
             BlueprintName = "buildcomments"
             ReferencedContainer = "container:buildcomments.xcodeproj">
          </BuildableReference>
