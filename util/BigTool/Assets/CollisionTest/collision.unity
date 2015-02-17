@@ -207,6 +207,7 @@ MonoBehaviour:
   - {fileID: 129808, guid: dccf993487fb8448e9ef4dddf19e2055, type: 2}
   - {fileID: 113444, guid: 80f64d8e316b04d5f83119a8b6d1baca, type: 2}
   - {fileID: 0}
+  m_smallObjectPrefab: {fileID: 141192, guid: 59929d59d77504f638595a22ecbc1edf, type: 2}
   m_width: 0
   m_height: 0
 --- !u!4 &589399947

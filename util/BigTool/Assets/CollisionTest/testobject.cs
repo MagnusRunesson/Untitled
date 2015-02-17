@@ -18,6 +18,8 @@ public class testobject : MonoBehaviour
 		Vector3.up*(height-padding-1) + Vector3.right*(width-padding-1),
 	};
 
+	Vector2 m_midSensor = Vector2.up*(height/2.0f) + Vector2.right*(width/2.0f);
+
 	float m_refreshTimeout;
 
 	Transform m_transform;
@@ -63,6 +65,10 @@ public class testobject : MonoBehaviour
 			Vector3 v3 = SwitchWorld( v );
 			Gizmos.DrawCube( pos + v3 + (Vector3.down+Vector3.right)*0.5f, Vector3.one );
 		}
+
+		Gizmos.color = Color.green;
+		Vector3 msv3 = SwitchWorld( m_midSensor );
+		Gizmos.DrawCube( pos + msv3 + (Vector3.down+Vector3.right)*0.5f, Vector3.one );
 	}
 
 	Vector2 CheckCollisionAsm( Vector2 _direction )

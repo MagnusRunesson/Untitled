@@ -4,6 +4,7 @@ using System.Collections;
 public class Worldbuilder : MonoBehaviour
 {
 	[SerializeField] GameObject[] m_debugPrefabs;
+	[SerializeField] GameObject m_smallObjectPrefab;
 
 	[HideInInspector] public int m_width;
 	[HideInInspector] public int m_height;
@@ -24,6 +25,11 @@ public class Worldbuilder : MonoBehaviour
 		{ 9, 9, 9, 9, 9, 1, 1, 1, 1, 1, 1, 9, 9, 9},
 	};
 
+	int[,] m_smallObjects = new int[1,2]
+	{
+		{ 55, 63 },
+	};
+
 	// Use this for initialization
 	void Start ()
 	{
@@ -41,6 +47,16 @@ public class Worldbuilder : MonoBehaviour
 				GameObject go = (GameObject)Instantiate( m_debugPrefabs[ iPrefab ]);
 				go.transform.position = new Vector3( x*8, (-y)*8, 0 );
 			}
+		}
+
+		int iObject;
+		for( iObject=0; iObject<m_smallObjects.GetLength( 0 ); iObject++ )
+		{
+			x = m_smallObjects[ iObject, 0 ];
+			y = m_smallObjects[ iObject, 1 ];
+
+			GameObject go = (GameObject)Instantiate( m_smallObjectPrefab );
+			go.transform.position = new Vector3( x, -y, 0 );
 		}
 	}
 	
