@@ -115,7 +115,7 @@ public class testobject : MonoBehaviour
 		}
 
 		i_sensor++;
-		if( i_sensor < 4 )
+		if( i_sensor < m_sensors.Length )
 			goto Loop_Sensors_A;
 
 
@@ -153,7 +153,7 @@ public class testobject : MonoBehaviour
 			DoCollision_Corner_DownRightAsm( tile_x, tile_y, ref new_dir_x, ref new_dir_y );
 
 		i_sensor++;
-		if( i_sensor < 4 )
+		if( i_sensor < m_sensors.Length )
 			goto Loop_Sensors_B;
 
 
