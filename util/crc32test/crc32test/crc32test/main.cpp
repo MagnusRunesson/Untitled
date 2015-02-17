@@ -241,7 +241,32 @@ unsigned int getAddress( unsigned char* _pszLine )
 	return address;
 }
 
+unsigned char pszOriginalCode[ LINE_LENGTH ];
+
+unsigned char* getOriginalCode( unsigned char* _pszLine )
+{
+	_pszLine += 15;
+	if( *_pszLine != '\t' )
+		return NULL;
+
+	_pszLine++;
+	
+	memset( pszOriginalCode, 0, LINE_LENGTH );
+	int i;
+	for( i=0; i<strlen( (char*)_pszLine ); i++ )
+	{
+		unsigned char c = _pszLine[ i ];
+		if((c == ';')
+		|| (c == ','))
+			c = ' ';
+		pszOriginalCode[ i ] = c;
+	}
+	
+	return pszOriginalCode;
+}
+
 unsigned char pszLastLabel[ LINE_LENGTH ];
+unsigned char pszLastLine[ LINE_LENGTH ];
 
 int main(int argc, const char * argv[])
 {
@@ -262,7 +287,6 @@ int main(int argc, const char * argv[])
 	
 	int iLine = 0;
 	unsigned char* pszLine = NULL;
-	unsigned char* pszLastLine = NULL;
 	bool haveLabel = false;
 	while( (pszLine = readLine()) != NULL )
 	{
@@ -274,7 +298,7 @@ int main(int argc, const char * argv[])
 			//printf("Line %i: %s\n", iLine, pszLastLabel);
 		}
 		
-		if((memcmp( pszLine, "               S", 16) == 0) && (haveLabel))
+		if( memcmp( pszLine, "               S", 16) == 0 )
 		{
 			//printf("line %i: %s\n", iLine, pszLine);
 			int opbufflen;
@@ -284,15 +308,34 @@ int main(int argc, const char * argv[])
 			
 			
 			printf("<comment address=\"%i\" color=\"16711680\" crc=\"%08x\">\n", address, (unsigned int)crc );
-			printf("%s\n", pszLastLabel);
+			if( haveLabel )
+			{
+				printf("%s\n", pszLastLabel);
+				haveLabel = false;
+			}
+			else
+			{
+				unsigned char* src = getOriginalCode( pszLastLine );
+				if( src != NULL )
+					printf("%s\n", src );
+			}
 			printf("</comment>\n");
-			
-			
-			//printf("address=0x%08x\n", address );
-			haveLabel = false;
+			/*
+			if( haveLabel )
+			{
+				printf("comadd %x,%s\n", address, pszLastLabel);
+				haveLabel = false;
+			}
+			else
+			{
+				unsigned char* src = getOriginalCode( pszLastLine );
+				if( src != NULL )
+					printf("comadd %x,%s\n", address, src );
+			}
+			 */
 		}
 		
-		pszLastLine = pszLine;
+		strcpy( (char*)pszLastLine, (const char*)pszLine);
 		//printf("Line %i: 0x%02x %s\n", iLine, pszLine[ 0 ], pszLine);
 		iLine++;
 	}
@@ -327,14 +370,20 @@ int main(int argc, const char * argv[])
 	buff[ 5 ] = 0x54;
 	 */
 	
+	/*
 	buff[ 0 ] = 0x22;
 	buff[ 1 ] = 0x3C;
 	buff[ 2 ] = 0x00;
 	buff[ 3 ] = 0x00;
 	buff[ 4 ] = 0x3F;
 	buff[ 5 ] = 0xFF;
+	 */
+	buff[ 0 ] = 0x4E;
+	buff[ 1 ] = 0xBA;
+	buff[ 2 ] = 0x02;
+	buff[ 3 ] = 0x76;
 	
-	unsigned long int crc = crc32( 0, buff, 6 );
+	unsigned long int crc = crc32( 0, buff, 4 );
 
 	printf("0x%08x\n", (unsigned int)crc );
 	
