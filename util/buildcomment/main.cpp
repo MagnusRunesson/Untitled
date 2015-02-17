@@ -6,6 +6,8 @@
 //  Copyright (c) 2015 Untitled. All rights reserved.
 //
 
+#define _CRT_SECURE_NO_WARNINGS
+
 #include <iostream>
 #include <stdio.h>
 
