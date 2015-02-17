@@ -256,10 +256,30 @@ unsigned char* getOriginalCode( unsigned char* _pszLine )
 	for( i=0; i<strlen( (char*)_pszLine ); i++ )
 	{
 		unsigned char c = _pszLine[ i ];
-		if((c == ';')
-		|| (c == ','))
-			c = ' ';
-		pszOriginalCode[ i ] = c;
+		if( c == '<' )
+		{
+			strcat( (char*)&pszOriginalCode[i], "&lt;");
+			i += 3;
+		}
+		else if( c == '>' )
+		{
+			strcat( (char*)&pszOriginalCode[i], "&gt;");
+			i += 3;
+		}
+		else if( c == '&' )
+		{
+			strcat( (char*)&pszOriginalCode[i], "&amp;");
+			i += 4;
+		}
+ 		else if( c == '\"' )
+		{
+			strcat( (char*)&pszOriginalCode[i], "&quot;");
+			i += 5;
+		}
+		else
+		{
+			pszOriginalCode[ i ] = c;
+		}
 	}
 	
 	return pszOriginalCode;
@@ -307,19 +327,23 @@ int main(int argc, const char * argv[])
 			unsigned int address = getAddress( pszLine );
 			
 			
-			printf("<comment address=\"%i\" color=\"16711680\" crc=\"%08x\">\n", address, (unsigned int)crc );
 			if( haveLabel )
 			{
+				printf("<comment address=\"%i\" color=\"16711680\" crc=\"%08x\">\n", address, (unsigned int)crc );
 				printf("%s\n", pszLastLabel);
 				haveLabel = false;
+				printf("</comment>\n");
 			}
 			else
 			{
 				unsigned char* src = getOriginalCode( pszLastLine );
 				if( src != NULL )
+				{
+					printf("<comment address=\"%i\" color=\"16711680\" crc=\"%08x\">\n", address, (unsigned int)crc );
 					printf("%s\n", src );
+					printf("</comment>\n");
+				}
 			}
-			printf("</comment>\n");
 			/*
 			if( haveLabel )
 			{
