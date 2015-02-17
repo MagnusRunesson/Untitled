@@ -95,6 +95,7 @@ unsigned long int crc32( unsigned long int crc, const unsigned char* buf, unsign
 
 unsigned char* inFileContent;
 unsigned char currentLine[ LINE_LENGTH ];
+unsigned char currentLabel[ LINE_LENGTH ];
 int currentOffset;
 int currentFileSize;
 
@@ -153,6 +154,95 @@ unsigned char* readLine()
 	return currentLine;
 }
 
+unsigned char tempLabel[ LINE_LENGTH ];
+
+unsigned char* getLabel( unsigned char* _pszLine )
+{
+	memset(tempLabel, 0, LINE_LENGTH);
+	
+	if( _pszLine[ 0 ] != 'F' )
+		return NULL;	// No label on this line
+	
+	int lineLength = (int)strlen( (char*)_pszLine );
+	int i = 15;
+	bool foundLabel = false;
+	while( i < lineLength )
+	{
+		unsigned char c = _pszLine[ i ];
+		if( c == ';' )
+			break;
+		
+		tempLabel[ i-15 ] = c;
+		if( c == ':' )
+		{
+			tempLabel[ i-15+1 ] = 0;
+			foundLabel = true;
+			break;
+		}
+		i++;
+	}
+	
+	if( foundLabel )
+		return tempLabel;
+	
+	// No label on this line
+	return NULL;
+}
+
+unsigned char opBuff[ 1024 ];
+
+unsigned char hextoint( unsigned char _c )
+{
+	if( _c >= 'a' )
+		return _c - 'a' + 10;
+	
+	if( _c >= 'A' )
+		return _c - 'A' + 10;
+	
+	return _c - '0';
+}
+
+unsigned char* getOpCodeBuffer( unsigned char* _pszLine, int* _outBuffLen )
+{
+	_pszLine += 30;
+	int numcodes = (int)(strlen( (char*)_pszLine )+1) / 3;
+
+	//printf("op codes: %s (%i)\n", _pszLine, *_outBuffLen );
+	//printf("op codes: ");
+	int icode;
+	for( icode=0; icode<numcodes; icode++ )
+	{
+		int code = hextoint(*_pszLine++)*0x10;
+		code += hextoint(*_pszLine++);
+		opBuff[ icode ] = code;
+		_pszLine++;		// Also skip the space character
+		//printf( "%02x ", opBuff[ icode ]);
+	}
+	//printf("\n");
+
+	*_outBuffLen = numcodes;
+	return opBuff;
+}
+
+unsigned int getAddress( unsigned char* _pszLine )
+{
+	int address = 0;
+	_pszLine += 19;
+	int i;
+	unsigned int mull = 0x10000000;
+	for( i=0; i<8; i++ )
+	{
+		unsigned char c = *_pszLine;
+		c = hextoint( c );
+		address += (c)*mull;
+		_pszLine++;
+		mull >>= 4;
+	}
+	return address;
+}
+
+unsigned char pszLastLabel[ LINE_LENGTH ];
+
 int main(int argc, const char * argv[])
 {
 	if( argc < 3 )
@@ -166,14 +256,44 @@ int main(int argc, const char * argv[])
 	
 	printf("input file=%s\noutputfile=%s\n", pszInFile, pszOutFile );
 
+	printf("\n\n");
 	//
 	openInFile( pszInFile );
 	
 	int iLine = 0;
-	unsigned char* pszLine;
+	unsigned char* pszLine = NULL;
+	unsigned char* pszLastLine = NULL;
+	bool haveLabel = false;
 	while( (pszLine = readLine()) != NULL )
 	{
-		printf("line %i: %s\n", iLine, pszLine);
+		unsigned char* label = getLabel( pszLine );
+		if( label != NULL)
+		{
+			strcpy( (char*)pszLastLabel, (const char*)label);
+			haveLabel = true;
+			//printf("Line %i: %s\n", iLine, pszLastLabel);
+		}
+		
+		if((memcmp( pszLine, "               S", 16) == 0) && (haveLabel))
+		{
+			//printf("line %i: %s\n", iLine, pszLine);
+			int opbufflen;
+			unsigned char* opcodes = getOpCodeBuffer( pszLine, &opbufflen );
+			unsigned long int crc = crc32( 0, opcodes, opbufflen );
+			unsigned int address = getAddress( pszLine );
+			
+			
+			printf("<comment address=\"%i\" color=\"16711680\" crc=\"%08x\">\n", address, (unsigned int)crc );
+			printf("%s\n", pszLastLabel);
+			printf("</comment>\n");
+			
+			
+			//printf("address=0x%08x\n", address );
+			haveLabel = false;
+		}
+		
+		pszLastLine = pszLine;
+		//printf("Line %i: 0x%02x %s\n", iLine, pszLine[ 0 ], pszLine);
 		iLine++;
 	}
 	
