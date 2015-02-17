@@ -16,8 +16,8 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "25BAD2B71A91D89D004009B5"
                BuildableName = "crc32test"
-               BlueprintName = "crc32test"
-               ReferencedContainer = "container:crc32test.xcodeproj">
+               BlueprintName = "buildcomments"
+               ReferencedContainer = "container:buildcomments.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -34,8 +34,8 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "25BAD2B71A91D89D004009B5"
             BuildableName = "crc32test"
-            BlueprintName = "crc32test"
-            ReferencedContainer = "container:crc32test.xcodeproj">
+            BlueprintName = "buildcomments"
+            ReferencedContainer = "container:buildcomments.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </TestAction>
@@ -53,8 +53,8 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "25BAD2B71A91D89D004009B5"
             BuildableName = "crc32test"
-            BlueprintName = "crc32test"
-            ReferencedContainer = "container:crc32test.xcodeproj">
+            BlueprintName = "buildcomments"
+            ReferencedContainer = "container:buildcomments.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <CommandLineArguments>
@@ -63,7 +63,7 @@
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "~/Projects/md/Untitled/build/mess/comments/megadriv.cmt"
+            argument = "/Users/magnusrunesson/Projects/md/Untitled/build/mess/comments/megadriv.cmt"
             isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>
@@ -81,8 +81,8 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "25BAD2B71A91D89D004009B5"
             BuildableName = "crc32test"
-            BlueprintName = "crc32test"
-            ReferencedContainer = "container:crc32test.xcodeproj">
+            BlueprintName = "buildcomments"
+            ReferencedContainer = "container:buildcomments.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

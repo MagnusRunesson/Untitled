@@ -2,6 +2,6 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "self:crc32test.xcodeproj">
+      location = "self:buildcomments.xcodeproj">
    </FileRef>
 </Workspace>
