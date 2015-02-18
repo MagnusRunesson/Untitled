@@ -9,7 +9,7 @@ echo
 echo "=======> Building Mega Drive"
 echo
 ../bin/osx/vasmm68k_mot -Fbin -o out/untitled_megadrive.bin megadrive.asm -Dis_mega_drive -m68000 -L megadrive_listfile.txt
-../bin/osx/buildcomments megadrive_listfile.txt mess/comments/megadriv.cmt
+../bin/osx/buildcomments megadrive_listfile.txt mess/comments/megadriv.cmt megadriv
 
 #
 # Build Amiga
