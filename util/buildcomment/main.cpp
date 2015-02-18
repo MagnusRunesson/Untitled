@@ -208,28 +208,32 @@ unsigned char* getLabel( unsigned char* _pszLine )
 	
 	if( _pszLine[ 0 ] != 'F' )
 		return NULL;	// No label on this line
+
+	_pszLine = skipNonWhiteSpaceCharacters(_pszLine);
 	
 	int lineLength = (int)strlen( (char*)_pszLine );
-	int i = 15;
-	bool foundLabel = false;
+
+	int i = 7;
+	int labelLen = 0;
 	while( i < lineLength )
 	{
 		unsigned char c = _pszLine[ i ];
-		if( c == ';' )
+		if (isWhiteSpaceCharacter(c))
 			break;
-		
-		tempLabel[ i-15 ] = c;
-		if( c == ':' )
-		{
-			tempLabel[ i-15+1 ] = 0;
-			foundLabel = true;
-			break;
-		}
+
+		tempLabel[ i-7 ] = c;
 		i++;
+		labelLen++;
 	}
 	
-	if( foundLabel )
-		return tempLabel;
+	if (labelLen > 0)
+	{
+		if (tempLabel[0] != ';' && tempLabel[0] != '*')
+		{
+			tempLabel[labelLen] = 0;
+			return tempLabel;
+		}
+	}
 	
 	// No label on this line
 	return NULL;
