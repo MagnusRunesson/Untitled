@@ -14,7 +14,7 @@ build/mess/roms
 util/BigTool/Temp
 projects/*.sublime-workspace
 src/platform/amiga/amiga_lib/not_fixed_yet
-megadrive_listfile.txt
+*_listfile.txt
 build/mess/comments
 buildcomments.xccheckout
 *.opensdf
