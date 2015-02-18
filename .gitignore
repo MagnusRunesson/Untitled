@@ -17,3 +17,4 @@ src/platform/amiga/amiga_lib/not_fixed_yet
 megadrive_listfile.txt
 build/mess/comments
 buildcomments.xccheckout
+*.opensdf
