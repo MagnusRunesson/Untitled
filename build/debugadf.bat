@@ -2,6 +2,6 @@
 
 cd mess
 
-c:\mess0158b\mess.exe a500 -flop ..\out\untitled.adf -window -waitvsync -nofilter -skip_gameinfo -keepaspect -debug -debugscript ..\debugadfscript
+c:\mess0158b\mess.exe a500 -flop ..\out\amigaadf.adf -window -waitvsync -nofilter -skip_gameinfo -keepaspect -debug -debugscript ..\debugadfscript
 
 cd..
