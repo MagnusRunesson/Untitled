@@ -131,6 +131,7 @@ bool isWhiteSpaceCharacter(char _c)
 
 	return false;
 }
+
 unsigned char* readLine()
 {
 	if( currentOffset >= currentFileSize )
@@ -161,6 +162,42 @@ unsigned char* readLine()
 	while( true );
 	
 	return currentLine;
+}
+
+unsigned char* skipWhiteSpaceCharacters(unsigned char* _pszLine)
+{
+	char c = _pszLine[0];
+
+	if (c == 0)
+		return _pszLine;
+
+	while (isWhiteSpaceCharacter(c))
+	{
+		_pszLine++;
+		c = _pszLine[0];
+		if (c == 0)
+			break;
+	}
+
+	return _pszLine;
+}
+
+unsigned char* skipNonWhiteSpaceCharacters(unsigned char* _pszLine)
+{
+	char c = _pszLine[0];
+
+	if (c == 0)
+		return _pszLine;
+
+	while (!isWhiteSpaceCharacter(c))
+	{
+		_pszLine++;
+		c = _pszLine[0];
+		if (c == 0)
+			break;
+	}
+
+	return _pszLine;
 }
 
 unsigned char tempLabel[ LINE_LENGTH ];
