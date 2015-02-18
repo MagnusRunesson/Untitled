@@ -295,15 +295,25 @@ unsigned char pszOriginalCode[ LINE_LENGTH ];
 
 unsigned char* getOriginalCode( unsigned char* _pszLine )
 {
-	_pszLine += 15;
-	if( *_pszLine != '\t' )
+	if (_pszLine[0] != 'F')
+		return NULL;	// No label on this line
+
+	_pszLine = skipNonWhiteSpaceCharacters(_pszLine);
+	_pszLine += 7;
+
+	// Skip labels (rows with non whitespace as first character)
+	char firstCharOfSourceCodeRow = _pszLine[0];
+	if (!isWhiteSpaceCharacter(firstCharOfSourceCodeRow))
 		return NULL;
 
-	_pszLine++;
-	
+	// Skip leading white spaces
+	_pszLine = skipWhiteSpaceCharacters(_pszLine);
+
+	int lineLength = (int)strlen((char*)_pszLine);
+
 	memset( pszOriginalCode, 0, LINE_LENGTH );
 	int i;
-	for( i=0; i<strlen( (char*)_pszLine ); i++ )
+	for (i = 0; i<lineLength; i++)
 	{
 		unsigned char c = _pszLine[ i ];
 		if( c == '<' )
