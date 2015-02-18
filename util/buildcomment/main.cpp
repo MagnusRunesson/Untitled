@@ -393,23 +393,24 @@ int main(int argc, const char * argv[])
 			unsigned long int crc = crc32( 0, opcodes, opbufflen );
 			unsigned int address = getAddress( pszLine );
 			
-			
+			unsigned char* src = getOriginalCode(pszLastLine);
+			if (src == NULL)
+			{
+				src = (unsigned char*)"";
+			}
+
 			if( haveLabel )
 			{
 				fprintf(outFile, "            <comment address=\"%i\" color=\"16711680\" crc=\"%08x\">\n", address, (unsigned int)crc );
-				fprintf(outFile, "                %s\n", pszLastLabel);
+				fprintf(outFile, "                %s %s\n", pszLastLabel, src);
 				haveLabel = false;
 				fprintf(outFile, "            </comment>\n");
 			}
 			else
 			{
-				unsigned char* src = getOriginalCode( pszLastLine );
-				if( src != NULL )
-				{
-					fprintf(outFile, "            <comment address=\"%i\" color=\"16711680\" crc=\"%08x\">\n", address, (unsigned int)crc );
-					fprintf(outFile, "                %s\n", src );
-					fprintf(outFile, "            </comment>\n");
-				}
+				fprintf(outFile, "            <comment address=\"%i\" color=\"16711680\" crc=\"%08x\">", address, (unsigned int)crc);
+				fprintf(outFile, "%s", src);
+				fprintf(outFile, "</comment>\n");
 			}
 		}
 		
