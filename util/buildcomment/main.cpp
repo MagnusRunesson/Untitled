@@ -124,6 +124,13 @@ bool iseol( char _c )
 	return false;
 }
 
+bool isWhiteSpaceCharacter(char _c)
+{
+	if (_c == 0x09 || _c == 0x0a || _c == 0x0d || _c == 0x20 )
+		return true;
+
+	return false;
+}
 unsigned char* readLine()
 {
 	if( currentOffset >= currentFileSize )
