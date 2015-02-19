@@ -132,6 +132,33 @@ bool isWhiteSpaceCharacter(char _c)
 	return false;
 }
 
+unsigned char hextoint(unsigned char _c)
+{
+	if (_c >= 'a')
+		return _c - 'a' + 10;
+
+	if (_c >= 'A')
+		return _c - 'A' + 10;
+
+	return _c - '0';
+}
+
+unsigned int parseHex8(unsigned char* _pszLine)
+{
+	int address = 0;
+	int i;
+	unsigned int mull = 0x10000000;
+	for (i = 0; i<8; i++)
+	{
+		unsigned char c = *_pszLine;
+		c = hextoint(c);
+		address += (c)*mull;
+		_pszLine++;
+		mull >>= 4;
+	}
+	return address;
+}
+
 bool isSourceCodeLine(unsigned char* _pszLine)
 {
 	if (_pszLine[0] != 'F')
@@ -252,18 +279,29 @@ unsigned char* extractLabel(unsigned char* _pszLine)
 	return NULL;
 }
 
-unsigned char opBuff[ 1024 ];
+bool isBuildCommentCommandLabel(unsigned char* _pszLine)
+{	
+	if (memcmp(_pszLine, "build_comment_", 14) == 0)
+		return true;
 
-unsigned char hextoint( unsigned char _c )
-{
-	if( _c >= 'a' )
-		return _c - 'a' + 10;
-	
-	if( _c >= 'A' )
-		return _c - 'A' + 10;
-	
-	return _c - '0';
+	return false;
 }
+
+unsigned bool triggerNewAddressOffset = false;
+unsigned int newAddressOffset = 0x00000000;
+
+void executeBuildCommentCommandLabel(unsigned char* _pszLine)
+{
+	if (memcmp(_pszLine, "build_comment_address_offset_", 29) == 0)
+	{
+		_pszLine += 29;
+		newAddressOffset = parseHex8(_pszLine);
+		triggerNewAddressOffset = true;
+		return;
+	}
+}
+
+unsigned char opBuff[ 1024 ];
 
 unsigned char* getOpCodeBuffer( unsigned char* _pszLine, int* _outBuffLen )
 {
@@ -287,20 +325,10 @@ unsigned char* getOpCodeBuffer( unsigned char* _pszLine, int* _outBuffLen )
 	return opBuff;
 }
 
-unsigned int getAddress( unsigned char* _pszLine )
+unsigned int getAddress(unsigned char* _pszLine)
 {
-	int address = 0;
 	_pszLine += 19;
-	int i;
-	unsigned int mull = 0x10000000;
-	for( i=0; i<8; i++ )
-	{
-		unsigned char c = *_pszLine;
-		c = hextoint( c );
-		address += (c)*mull;
-		_pszLine++;
-		mull >>= 4;
-	}
+	int address = parseHex8(_pszLine);
 	return address;
 }
 
@@ -388,15 +416,25 @@ int main(int argc, const char * argv[])
 	int iLine = 0;
 	unsigned char* pszLine = NULL;
 	bool haveUnusedLabel = false;
+	unsigned int currentAddressOffset = 0x00000000;
+
 	while( (pszLine = readLine()) != NULL )
 	{
 		if (isSourceCodeLine(pszLine))
 		{
+
 			unsigned char* label = extractLabel(pszLine);
 			if (label != NULL)
 			{
-				strcpy((char*)pszLastLabel, (const char*)label);
-				haveUnusedLabel = true;
+				if (isBuildCommentCommandLabel(label))
+				{
+					executeBuildCommentCommandLabel(label);
+				}
+				else
+				{
+					strcpy((char*)pszLastLabel, (const char*)label);
+					haveUnusedLabel = true;
+				}
 			}
 
 			unsigned char* sourceCode = extractNonLabeledSourceCode(pszLine);
@@ -404,6 +442,7 @@ int main(int argc, const char * argv[])
 				strcpy((char *)pszLastNonLabeledSourceCode, (const char*)sourceCode);
 			else
 				strcpy((char *)pszLastNonLabeledSourceCode, "");
+
 		}
 		
 		if (isBinaryLine(pszLine))
@@ -413,11 +452,12 @@ int main(int argc, const char * argv[])
 			unsigned long int crc = crc32( 0, opcodes, opbufflen );
 			unsigned int address = getAddress( pszLine );
 			
-			//unsigned char* src = getOriginalCode(pszLastLine);
-			//if (src == NULL)
-			//{
-			//	src = (unsigned char*)"";
-			//}
+			if (triggerNewAddressOffset)
+			{
+				currentAddressOffset = newAddressOffset - address;
+				triggerNewAddressOffset = false;
+			}
+			address += currentAddressOffset;
 
 			if( haveUnusedLabel )
 			{
@@ -428,9 +468,9 @@ int main(int argc, const char * argv[])
 			}
 			else
 			{
-				fprintf(outFile, "            <comment address=\"%i\" color=\"16711680\" crc=\"%08x\">", address, (unsigned int)crc);
-				fprintf(outFile, "%s", pszLastNonLabeledSourceCode);
-				fprintf(outFile, "</comment>\n");
+				fprintf(outFile, "            <comment address=\"%i\" color=\"16711680\" crc=\"%08x\">\n", address, (unsigned int)crc);
+				fprintf(outFile, "                %s\n", pszLastNonLabeledSourceCode);
+				fprintf(outFile, "            </comment>\n");
 			}
 		}
 		
