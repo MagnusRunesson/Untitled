@@ -19,10 +19,12 @@
 
 	
 bootblockbegin
+build_comment_address_offset_00005c40
 	include		"../src/platform/amiga/bootblock.asm"
 bootblockend
 
-mainbegin	
+mainbegin
+build_comment_address_offset_0000a498
 	include		"../src/structs.asm"
 	include		"../src/macros.asm"
 	include		"../src/platform/amiga/sys.asm"
