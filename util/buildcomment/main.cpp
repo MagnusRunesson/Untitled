@@ -93,11 +93,11 @@ unsigned long int crc32( unsigned long int crc, const unsigned char* buf, unsign
 	return crc ^ 0xffffffffL;
 }
 
-#define LINE_LENGTH (4096)
+#define MAX_LINE_LENGTH (4096)
 
 unsigned char* inFileContent;
-unsigned char currentLine[ LINE_LENGTH ];
-unsigned char currentLabel[ LINE_LENGTH ];
+unsigned char currentLine[ MAX_LINE_LENGTH ];
+unsigned char currentLabel[ MAX_LINE_LENGTH ];
 int currentOffset;
 int currentFileSize;
 
@@ -132,13 +132,29 @@ bool isWhiteSpaceCharacter(char _c)
 	return false;
 }
 
+bool isSourceCodeLine(unsigned char* _pszLine)
+{
+	if (_pszLine[0] != 'F')
+		return false;
+
+	return true;
+}
+
+bool isBinaryLine(unsigned char* _pszLine)
+{
+	if (memcmp(_pszLine, "               S", 16) == 0)
+		return true;
+
+	return false;
+}
+
 unsigned char* readLine()
 {
 	if( currentOffset >= currentFileSize )
 		return NULL;
 	
 	int lineOffset = 0;
-	memset( currentLine, 0, LINE_LENGTH );
+	memset( currentLine, 0, MAX_LINE_LENGTH );
 	do
 	{
 		char c = inFileContent[ currentOffset ];
@@ -200,15 +216,12 @@ unsigned char* skipNonWhiteSpaceCharacters(unsigned char* _pszLine)
 	return _pszLine;
 }
 
-unsigned char tempLabel[ LINE_LENGTH ];
+unsigned char tempLabel[ MAX_LINE_LENGTH ];
 
-unsigned char* getLabel( unsigned char* _pszLine )
+unsigned char* extractLabel(unsigned char* _pszLine)
 {
-	memset(tempLabel, 0, LINE_LENGTH);
+	memset(tempLabel, 0, MAX_LINE_LENGTH);
 	
-	if( _pszLine[ 0 ] != 'F' )
-		return NULL;	// No label on this line
-
 	_pszLine = skipNonWhiteSpaceCharacters(_pszLine);
 	
 	int lineLength = (int)strlen( (char*)_pszLine );
@@ -291,13 +304,10 @@ unsigned int getAddress( unsigned char* _pszLine )
 	return address;
 }
 
-unsigned char pszOriginalCode[ LINE_LENGTH ];
+unsigned char pszOriginalCode[ MAX_LINE_LENGTH ];
 
-unsigned char* getOriginalCode( unsigned char* _pszLine )
+unsigned char* extractNonLabeledSourceCode(unsigned char* _pszLine)
 {
-	if (_pszLine[0] != 'F')
-		return NULL;	// No label on this line
-
 	_pszLine = skipNonWhiteSpaceCharacters(_pszLine);
 	_pszLine += 7;
 
@@ -311,7 +321,7 @@ unsigned char* getOriginalCode( unsigned char* _pszLine )
 
 	int lineLength = (int)strlen((char*)_pszLine);
 
-	memset( pszOriginalCode, 0, LINE_LENGTH );
+	memset( pszOriginalCode, 0, MAX_LINE_LENGTH );
 	int i;
 	for (i = 0; i<lineLength; i++)
 	{
@@ -345,8 +355,9 @@ unsigned char* getOriginalCode( unsigned char* _pszLine )
 	return pszOriginalCode;
 }
 
-unsigned char pszLastLabel[ LINE_LENGTH ];
-unsigned char pszLastLine[ LINE_LENGTH ];
+unsigned char pszLastLabel[ MAX_LINE_LENGTH ];
+unsigned char pszLastLine[ MAX_LINE_LENGTH ];
+unsigned char pszLastNonLabeledSourceCode[ MAX_LINE_LENGTH ];
 
 int main(int argc, const char * argv[])
 {
@@ -376,40 +387,49 @@ int main(int argc, const char * argv[])
 	
 	int iLine = 0;
 	unsigned char* pszLine = NULL;
-	bool haveLabel = false;
+	bool haveUnusedLabel = false;
 	while( (pszLine = readLine()) != NULL )
 	{
-		unsigned char* label = getLabel( pszLine );
-		if( label != NULL)
+		if (isSourceCodeLine(pszLine))
 		{
-			strcpy( (char*)pszLastLabel, (const char*)label);
-			haveLabel = true;
+			unsigned char* label = extractLabel(pszLine);
+			if (label != NULL)
+			{
+				strcpy((char*)pszLastLabel, (const char*)label);
+				haveUnusedLabel = true;
+			}
+
+			unsigned char* sourceCode = extractNonLabeledSourceCode(pszLine);
+			if (sourceCode != NULL)
+				strcpy((char *)pszLastNonLabeledSourceCode, (const char*)sourceCode);
+			else
+				strcpy((char *)pszLastNonLabeledSourceCode, "");
 		}
 		
-		if( memcmp( pszLine, "               S", 16) == 0 )
-		{
+		if (isBinaryLine(pszLine))
+		{		
 			int opbufflen;
 			unsigned char* opcodes = getOpCodeBuffer( pszLine, &opbufflen );
 			unsigned long int crc = crc32( 0, opcodes, opbufflen );
 			unsigned int address = getAddress( pszLine );
 			
-			unsigned char* src = getOriginalCode(pszLastLine);
-			if (src == NULL)
-			{
-				src = (unsigned char*)"";
-			}
+			//unsigned char* src = getOriginalCode(pszLastLine);
+			//if (src == NULL)
+			//{
+			//	src = (unsigned char*)"";
+			//}
 
-			if( haveLabel )
+			if( haveUnusedLabel )
 			{
 				fprintf(outFile, "            <comment address=\"%i\" color=\"16711680\" crc=\"%08x\">\n", address, (unsigned int)crc );
-				fprintf(outFile, "                %s %s\n", pszLastLabel, src);
-				haveLabel = false;
+				fprintf(outFile, "                %s %s\n", pszLastLabel, pszLastNonLabeledSourceCode);
+				haveUnusedLabel = false;
 				fprintf(outFile, "            </comment>\n");
 			}
 			else
 			{
 				fprintf(outFile, "            <comment address=\"%i\" color=\"16711680\" crc=\"%08x\">", address, (unsigned int)crc);
-				fprintf(outFile, "%s", src);
+				fprintf(outFile, "%s", pszLastNonLabeledSourceCode);
 				fprintf(outFile, "</comment>\n");
 			}
 		}
