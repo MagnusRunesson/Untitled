@@ -17,7 +17,8 @@ sysEntryPoint
 	
 	bsr			rendInit
 	bsr			trackdiskInit
-
+	bsr			resourceInit
+	
 	; Main loop
 	jsr			main(pc)
 	
