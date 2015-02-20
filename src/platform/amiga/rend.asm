@@ -1,20 +1,19 @@
+
 ;==============================================================================
 ;
 ; Structures
 ;
 ;==============================================================================
 
+_RendVars						rsreset
+__RendScrollX					rs.l	1
+__RendScrollY					rs.l	1
+_RendVarsSizeof					rs.b	0
 
-
-_RendScreen	RSRESET
-__RendScreenScrollX		rs.l	1
-__RendScreenScrollY		rs.l	1
-_RendScreenSizeof		rs.b	0
-
-	dc.l	0	; __RendScreenScrollX
-	dc.l	0	; __RendScreenScrollX
+	dcb.b	_RendVarsSizeof
 
 	cnop	0,2
+	
 
 ;==============================================================================
 ;
@@ -76,12 +75,13 @@ rendInit:
 	move.l		a0,cop1lc(a2)
 	move.w		d0,copjmp1(a2)
 
-	; RendScreen defaults
-	lea			_RendScreen(pc),a0
-	move.l		#0,__RendScreenScrollX(a0)
-	move.l		#0,__RendScreenScrollY(a0)
+	; RendVars defaults
+	lea			_RendVars(pc),a0
+	move.l		#0,__RendScrollX(a0)
+	move.l		#0,__RendScrollY(a0)
 
 	rts
+
 
 ;==============================================================================
 ;
@@ -194,7 +194,6 @@ rendLoadTileMap:
 ;==============================================================================
 
 rendLoadSprite:
-
 	lea			.spriteCounterTemp(pc),a0
 	move.l		(a0),d0
 	move.l		d0,d1
@@ -285,10 +284,10 @@ rendWaitVSync:
 rendSetScrollXY:
 	pushm		d2-d3
 
-	; Update RendScreen structure
-	lea			_RendScreen(pc),a0
-	move.l		d0,__RendScreenScrollX(a0)
-	move.l		d1,__RendScreenScrollY(a0)
+	; Update RendVars
+	lea			_RendVars(pc),a0
+	move.l		d0,__RendScrollX(a0)
+	move.l		d1,__RendScrollY(a0)
 
 	subq.l		#2,a0					; make up for ddfstrt
 
@@ -379,9 +378,9 @@ rendSetSpritePosition:
 
 
 testBob
-	lea			_RendScreen(pc),a0
-	add.l		__RendScreenScrollX(a0),d1
-	add.l		__RendScreenScrollY(a0),d2
+	lea			_RendVars(pc),a0
+	add.l		__RendScrollX(a0),d1
+	add.l		__RendScrollY(a0),d2
 
 	lea			_custom,a6
 
