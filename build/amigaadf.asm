@@ -51,43 +51,42 @@ workmembegin
 TrackdiskMfmBuffer	
 	dcb.w		12800/2,$FBFF			; mFmBuFFer
 	;dc.b		'TrackdiskMfmBufferSafe'
-	;cnop		0,4
 	cnop		0,_chunk_size
 
 TrackdiskTrackBuffer
 	dcb.w		512*11/2,$ACBF			; trACkBuFfer
 	;dc.b		'TrackdiskTrackBufferSafe'
-	;cnop		0,4
 	cnop		0,_chunk_size
 
 BitplaneMem
 	dcb.w		64*64*8*8*4/8/2,$BAEE	; BitplAnEmEm
 	;dc.b		'BitplaneMemSafe'
-	;cnop		0,4
 	cnop		0,_chunk_size,1
 
 TilebankMem
 	dcb.w		1+256*32/2,$EBAE		; tilEBAnkmEm
 	;dc.b		'TilebankMemSafe'
-	;cnop		0,4
 	cnop		0,_chunk_size
 
 TilemapMem
 	dcb.w		2+(64*64),$0EAE			; tilEmApmEm
 	;dc.b		'TilemapMemSafe'
-	;cnop		0,4
 	cnop		0,_chunk_size
 
 PaletteMem
 	dcb.w		16,$AEEE				; pAlEttEmEm
 	;dc.b		'PaletteMemSafe'
-	;cnop		0,4
 	cnop		0,_chunk_size
+
+SpriteFileMem
+	dcb.w		100*1024/2,$EFEE		; spritEFilEmEm
+	;dc.b		'SpriteFileMem'
+	cnop		0,_chunk_size
+SpriteFileMemEnd
 
 SharedWorkMem
 	dcb.w		totalmem_size/2,$AEDE	;shArEDworkmEm
 	;dc.b		'SharedWorkMemSafe'
-	;cnop		0,4
 	cnop		0,_chunk_size
 
 workmemend
