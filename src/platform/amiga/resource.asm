@@ -109,8 +109,28 @@ resourceInit:
 * 	return slotIndex
 * }
 * 
+
+;==============================================================================
+;
+; Get pointer to resource by slot index
+; Input
+;   d0=slot index
+;   a0=pointer to slots
+; Output
+;   a0=pointer to resource
+;
+;==============================================================================
+
 * long resourceGetBySlotIndex(word slotIndex, resourceSlot[] slotList)
 * {
 * 	long ptr = slotList + slotIndex * sizeof(resourceSlot)
 * 	return ptr
 * }
+
+resourceGetBySlotIndex
+	mulu	#_ResSlotSizeof,d0
+	lea		(a0,d0.l),a0
+
+	rts
+
+
