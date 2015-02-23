@@ -76,4 +76,9 @@ public class Worldbuilder : MonoBehaviour
 
 		return m_world[ _y, _x ];
 	}
+
+	public int[,] GetSmallObjects()
+	{
+		return m_smallObjects;
+	}
 }

@@ -9,6 +9,52 @@ public class testobject : MonoBehaviour
 	const float width = 16.0f;
 	const float height = 16.0f;
 	const float padding = 2.0f;
+	const float smallObjectRadius = 8.0f;
+
+	Vector2 debugCollisionPoint;
+	Vector2 debugCollisionPoint2;
+	Vector2 debugCollisionPointRelative;
+
+	const int XXYY = 0;
+	const int XN1YY = 1;
+	const int X1YY = 2;
+	const int X0YY = 3;
+	const int XXYN1 = 4;
+	const int XN1YN1 = 5;
+	const int X1YN1 = 6;
+	const int X0YN1 = 7;
+	const int XXY1 = 8;
+	const int XN1Y1 = 9;
+	const int X1Y1 = 10;
+	const int X0Y1 = 11;
+	const int XXY0 = 12;
+	const int XN1Y0 = 13;
+	const int X1Y0 = 14;
+	const int X0Y0 = 15;
+
+	int[,] collisionActions = {
+		/*
+		{0,0,0,0,0,XN1Y1,XN1Y0,X0Y0,X0Y0,X1Y0,X1Y1,0,0,0,0,0},
+		{0,0,0,XN1Y1,XN1Y0,XN1Y0,XN1Y0,X0Y0,X0Y0,X1Y0,X1Y0,X1Y0,X1Y1,0,0,0},
+		{0,0,XN1Y1,XN1Y0,XN1Y0,XN1Y0,X0Y0,x0y0,X0Y0,X0Y0,X1Y0,X1Y0,X1Y0,X1Y1,0,0},
+		*/
+		{0,0,0,0,0,5,5,1,1,6,6,0,0,0,0,0},
+		{0,0,0,5,5,5,5,1,1,6,6,6,6,0,0,0},
+		{0,0,5,5,5,9,9,9,9,9,6,6,6,6,0,0},
+		{0,5,5,5,9,9,9,9,9,9,9,9,6,6,6,0},
+		{0,5,5,9,9,9,9,9,9,9,9,9,9,6,6,0},
+		{5,5,5,9,9,9,9,9,9,9,9,9,9,6,6,6},
+		{5,5,9,9,9,9,9,9,9,9,9,9,9,9,6,6},
+		{3,3,9,9,9,9,9,9,9,9,9,9,9,9,4,4},
+		{3,3,9,9,9,9,9,9,9,9,9,9,9,9,4,4},
+		{7,7,9,9,9,9,9,9,9,9,9,9,9,9,8,8},
+		{7,7,7,9,9,9,9,9,9,9,9,9,9,8,8,8},
+		{0,7,7,9,9,9,9,9,9,9,9,9,9,8,8,0},
+		{0,7,7,7,9,9,9,9,9,9,9,9,8,8,8,0},
+		{0,0,7,7,7,7,9,9,9,9,8,8,8,8,0,0},
+		{0,0,0,7,7,7,7,2,2,8,8,8,8,0,0,0},
+		{0,0,0,0,0,7,7,2,2,8,8,0,0,0,0,0},
+	};
 
 	Vector2[] m_sensors =
 	{
@@ -50,6 +96,7 @@ public class testobject : MonoBehaviour
 		if( Input.GetKey( KeyCode.RightArrow ))	direction += Vector2.right;
 
 		direction = CheckCollisionAsm( direction );
+		direction = CheckCollisionSmallObjectsAsm( direction );
 
 		m_position += direction;// * Time.deltaTime;
 
@@ -69,6 +116,141 @@ public class testobject : MonoBehaviour
 		Gizmos.color = Color.green;
 		Vector3 msv3 = SwitchWorld( m_midSensor );
 		Gizmos.DrawCube( pos + msv3 + (Vector3.down+Vector3.right)*0.5f, Vector3.one );
+
+		pos += SwitchWorld( new Vector2( width/2.0f, height/2.0f ));
+		smallobjectvisualiser.DrawCircleGizmo( pos, smallObjectRadius );
+
+		Vector3 collworld = SwitchWorld( debugCollisionPoint );
+		Gizmos.DrawCube( collworld + (Vector3.down+Vector3.right)*0.5f, Vector3.one );
+
+		collworld = SwitchWorld( debugCollisionPoint2 );
+		Gizmos.color = Color.white;
+		//Gizmos.DrawCube( collworld + (Vector3.down+Vector3.right)*0.5f, Vector3.one );
+		
+		collworld = transform.position + SwitchWorld( debugCollisionPointRelative );
+		Gizmos.color = Color.cyan;
+		Gizmos.DrawCube( collworld + (Vector3.down+Vector3.right)*0.5f, Vector3.one );
+	}
+
+	int GetIntDistance( int x, int y )
+	{
+		return Mathf.FloorToInt( (new Vector2( x, y )).magnitude );
+	}
+
+	void LerpHaxxor( int _x_no_fp, int _y_no_fp, int _delta_x_no_fp, int _delta_y_no_fp, int _i_fp1616, out int _x, out int _y )
+	{
+		_x_no_fp <<= 16;
+		_y_no_fp <<= 16;
+		_delta_x_no_fp <<= 16;
+		_delta_y_no_fp <<= 16;
+		_x = _x_no_fp + ((_delta_x_no_fp>>8) * (_i_fp1616>>8));
+		_y = _y_no_fp + ((_delta_y_no_fp>>8) * (_i_fp1616>>8));
+		_x >>= 16;
+		_y >>= 16;
+	}
+
+	Vector2 CheckCollisionSmallObjectsAsm( Vector2 _direction )
+	{
+		int wanted_dir_x = (int)_direction.x;
+		int wanted_dir_y = (int)_direction.y;
+
+		int my_pos_x = (int)m_position.x + 8 + wanted_dir_x;
+		int my_pos_y = (int)m_position.y + 8 + wanted_dir_y;
+
+		int new_dir_x = wanted_dir_x;
+		int new_dir_y = wanted_dir_y;
+
+		int[,] smallObjects = m_worldBuilder.GetSmallObjects();
+		int numObjects = smallObjects.GetLength( 0 );
+		int iObject;
+		for( iObject=0; iObject<numObjects; iObject++ )
+		{
+			int small_object_x = smallObjects[ iObject, 0 ] + 2;
+			int small_object_y = smallObjects[ iObject, 1 ] + 2;
+			int delta_x = small_object_x-my_pos_x;
+			int delta_y = small_object_y-my_pos_y;
+			int distance = GetIntDistance( delta_x, delta_y );
+			if( distance < 10 )
+			{
+				int coll_x, coll_y;
+				int i = (8 << 16) / (10);
+
+				LerpHaxxor( my_pos_x, my_pos_y, delta_x, delta_y, i, out coll_x, out coll_y );
+
+				debugCollisionPoint = new Vector2( coll_x, coll_y );
+
+				coll_x -= my_pos_x;
+				coll_y -= my_pos_y;
+				coll_x += 8;
+				coll_y += 8;
+
+				debugCollisionPointRelative = new Vector2( coll_x, coll_y );
+
+				int routine = collisionActions[ coll_y, coll_x ];
+
+				if( routine == 1 )
+					DoCollision_DownRightAsm( ref new_dir_y );
+				else if( routine == 2 )
+					DoCollision_UpLeftAsm( ref new_dir_y );
+				else if( routine == 3 )
+					DoCollision_DownRightAsm( ref new_dir_x );
+				else if( routine == 4 )
+					DoCollision_UpLeftAsm( ref new_dir_x );
+				else if( routine == 5 )
+					DoCollision_Slide_DownRightAsm( ref new_dir_x, ref new_dir_y );
+				else if( routine == 6 )
+					DoCollision_Slide_DownLeftAsm( ref new_dir_x, ref new_dir_y );
+				else if( routine == 7 )
+					DoCollision_Slide_UpRightAsm( ref new_dir_x, ref new_dir_y );
+				else if( routine == 8 )
+					DoCollision_Slide_UpLeftAsm( ref new_dir_x, ref new_dir_y );
+				else if( routine == 9 )
+				{
+					new_dir_x = 0;
+					new_dir_y = 0;
+				}
+
+				Debug.Log ("routine=" + routine + ", new dir x=" + new_dir_x + ", new dir y=" + new_dir_y );
+			}
+		}
+
+		return new Vector2( new_dir_x, new_dir_y );
+	}
+
+	Vector2 CheckCollisionSmallObjects( Vector2 _direction )
+	{
+		Vector2 mypos = SwitchWorld( m_transform.position );
+		mypos += _direction;
+		mypos.x += width/2.0f;
+		mypos.y += height/2.0f;
+
+		int[,] smallObjects = m_worldBuilder.GetSmallObjects();
+		int numObjects = smallObjects.GetLength( 0 );
+		int iObject;
+		for( iObject=0; iObject<numObjects; iObject++ )
+		{
+			int sox = smallObjects[ iObject, 0 ] + 2;
+			int soy = smallObjects[ iObject, 1 ] + 2;
+			Vector2 sop = new Vector2( sox, soy );
+
+			float distance = (mypos-sop).magnitude;
+			if( distance < 10.0f )
+			{
+				debugCollisionPoint = Vector2.Lerp( mypos, sop, 8.0f / 11.0f );
+				Vector2 argh = SwitchWorld( m_transform.position );
+				debugCollisionPointRelative = debugCollisionPoint-argh;
+				debugCollisionPointRelative.x = Mathf.Floor( debugCollisionPointRelative.x );
+				debugCollisionPointRelative.y = Mathf.Floor( debugCollisionPointRelative.y );
+				//float atan2 = Mathf.Atan2( mypos.y-sop.y, mypos.x-sop.x );
+				//Debug.Log ( "Distance=" + distance + "Atan2=" + atan2 );
+				_direction = Vector2.zero;
+				//_direction.x = -(int)(Mathf.Sin( atan2 ) * 1.47f);
+				//_direction.y = (int)(Mathf.Cos( atan2 ) * 1.47f);
+				//Debug.Log ("new direction=" + _direction );
+			}
+		}
+
+		return _direction;
 	}
 
 	Vector2 CheckCollisionAsm( Vector2 _direction )
@@ -199,7 +381,7 @@ public class testobject : MonoBehaviour
 		return newDir;
 	}
 
-	Vector3 SwitchWorld( Vector2 _coolPos )
+	static public Vector3 SwitchWorld( Vector2 _coolPos )
 	{
 		return new Vector3( _coolPos.x, -_coolPos.y, 0.0f );
 	}
@@ -326,12 +508,9 @@ public class testobject : MonoBehaviour
 	{
 		return Vector2.zero;
 	}
-	
-	void DoCollision_Slope_UpLeftAsm( int _in_tile_x, int _in_tile_y, ref int _dir_x, ref int _dir_y )
+
+	void DoCollision_Slide_UpLeftAsm( ref int _dir_x, ref int _dir_y )
 	{
-		if( (7-_in_tile_x) > _in_tile_y )
-			return;
-		
 		if( _dir_x+_dir_y == 2 )
 		{
 			_dir_x = 0;
@@ -356,49 +535,59 @@ public class testobject : MonoBehaviour
 		if( _dir_x > 0 ) _dir_y = -1;
 		if( _dir_y > 0 ) _dir_x = -1;
 	}
-	
-	void DoCollision_Slope_UpRightAsm( int _in_tile_x, int _in_tile_y, ref int _dir_x, ref int _dir_y )
+
+	void DoCollision_Slope_UpLeftAsm( int _in_tile_x, int _in_tile_y, ref int _dir_x, ref int _dir_y )
 	{
-		if( _in_tile_x > _in_tile_y )
+		if( (7-_in_tile_x) > _in_tile_y )
 			return;
-		
+
+		DoCollision_Slide_UpLeftAsm( ref _dir_x, ref _dir_y );
+	}
+
+	void DoCollision_Slide_UpRightAsm( ref int _dir_x, ref int _dir_y )
+	{
 		if( _dir_x-_dir_y == -2 )
 		{
 			_dir_x = 0;
 			_dir_y = 0;
 			return;
 		}
-
+		
 		if((_dir_x<0) && (_dir_y<0))
 		{
 			_dir_x = 0;
 			_dir_y = -1;
 			return;
 		}
-
+		
 		if((_dir_x>0) && (_dir_y>0))
 		{
 			_dir_x = 1;
 			_dir_y = 0;
 			return;
 		}
-
+		
 		if( _dir_x < 0 ) _dir_y = -1;
 		if( _dir_y > 0 ) _dir_x = 1;
 	}
-	
-	void DoCollision_Slope_DownLeftAsm( int _in_tile_x, int _in_tile_y, ref int _dir_x, ref int _dir_y )
+
+	void DoCollision_Slope_UpRightAsm( int _in_tile_x, int _in_tile_y, ref int _dir_x, ref int _dir_y )
 	{
-		if( _in_tile_x < _in_tile_y )
+		if( _in_tile_x > _in_tile_y )
 			return;
-		
+
+		DoCollision_Slide_UpRightAsm( ref _dir_x, ref _dir_y );
+	}
+
+	void DoCollision_Slide_DownLeftAsm( ref int _dir_x, ref int _dir_y )
+	{
 		if( _dir_x-_dir_y == 2 )
 		{
 			_dir_x = 0;
 			_dir_y = 0;
 			return;
 		}
-
+		
 		if((_dir_x>0) && (_dir_y>0))
 		{
 			_dir_x = 0;
@@ -416,12 +605,17 @@ public class testobject : MonoBehaviour
 		if( _dir_y < 0 ) _dir_x = -1;
 		if( _dir_x > 0 ) _dir_y = 1;
 	}
-	
-	void DoCollision_Slope_DownRightAsm( int _in_tile_x, int _in_tile_y, ref int _dir_x, ref int _dir_y )
+
+	void DoCollision_Slope_DownLeftAsm( int _in_tile_x, int _in_tile_y, ref int _dir_x, ref int _dir_y )
 	{
-		if( _in_tile_x > (7-_in_tile_y))
+		if( _in_tile_x < _in_tile_y )
 			return;
-		
+
+		DoCollision_Slide_DownLeftAsm( ref _dir_x, ref _dir_y );
+	}
+
+	void DoCollision_Slide_DownRightAsm( ref int _dir_x, ref int _dir_y )
+	{
 		if( _dir_x+_dir_y == -2 )
 		{
 			_dir_x = 0;
@@ -445,6 +639,14 @@ public class testobject : MonoBehaviour
 		
 		if( _dir_y < 0 ) _dir_x = 1;
 		if( _dir_x < 0 ) _dir_y = 1;
+	}
+
+	void DoCollision_Slope_DownRightAsm( int _in_tile_x, int _in_tile_y, ref int _dir_x, ref int _dir_y )
+	{
+		if( _in_tile_x > (7-_in_tile_y))
+			return;
+
+		DoCollision_Slide_DownRightAsm( ref _dir_x, ref _dir_y );
 	}
 
 	void DoCollision_Corner_UpLeftAsm( int _in_tile_x, int _in_tile_y, ref int _dir_x, ref int _dir_y )

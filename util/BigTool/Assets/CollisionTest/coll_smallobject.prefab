@@ -24,6 +24,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 441192}
+  - 114: {fileID: 11484540}
   m_Layer: 0
   m_Name: coll_smallobject
   m_TagString: Untagged
@@ -56,6 +57,17 @@ Transform:
   - {fileID: 441190}
   m_Father: {fileID: 0}
   m_RootOrder: 0
+--- !u!114 &11484540
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 141192}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cc311ee64d7b74c0db1c09ad264c29e1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!212 &21241190
 SpriteRenderer:
   m_ObjectHideFlags: 1
