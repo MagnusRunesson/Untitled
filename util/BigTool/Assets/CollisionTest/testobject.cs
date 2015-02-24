@@ -375,29 +375,37 @@ public class testobject : MonoBehaviour
 		
 		d2 = d4 & 7;
 		d3 = d5 & 7;
-		
+
+		// Check both up and down at once
 		if( d6 != 1 )
-			goto l2;
-		DoCollision_UpLeftAsm( ref d1 );
+			if( d6 != 2 )
+				goto l3;
+		d1 = 0;
 		goto Next_Sensor;
 
+		/*
 	l2:
 		if( d6 != 2 )
 			goto l3;
-		DoCollision_DownRightAsm( ref d1 );
+		d1 = 0;
 		goto Next_Sensor;
+		*/
 
 	l3:
+		// Check both left and right at once
 		if( d6 != 3 )
-			goto l4;
-		DoCollision_UpLeftAsm( ref d0 );
+				if( d6 != 4 )
+			goto l5;
+		d0 = 0;
 		goto Next_Sensor;
 
+		/*
 	l4:
 		if( d6 != 4 )
 			goto l5;
-		DoCollision_DownRightAsm( ref d0 );
+		d0 = 0;
 		goto Next_Sensor;
+		*/
 
 	l5:
 		if( d6 != 5 )
