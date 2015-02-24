@@ -356,35 +356,7 @@ public class testobject : MonoBehaviour
 			DoCollision_UpLeftAsm( ref new_dir_x );
 		else if( coll_tile_index == 4 )
 			DoCollision_DownRightAsm( ref new_dir_x );
-		else if( coll_tile_index == 9 )
-		{
-			new_dir_x = 0;
-			new_dir_y = 0;
-		}
-
-		i_sensor_list++;
-		if( i_sensor_list < sensor_list.Length )
-			goto Loop_Sensors_A;
-
-
-
-		i_sensor_list = 0;
-		
-	Loop_Sensors_B:
-		i_sensor = sensor_list[ i_sensor_list ];
-		sensor_x = (int)m_sensors[ i_sensor ].x;
-		sensor_y = (int)m_sensors[ i_sensor ].y;
-		wanted_pos_x = obj_pos_x + sensor_x + new_dir_x;
-		wanted_pos_y = obj_pos_y + sensor_y + new_dir_y;
-		
-		tile_x = wanted_pos_x>>3;
-		tile_y = wanted_pos_y>>3;
-		coll_tile_index = m_worldBuilder.GetTileAt( tile_x, tile_y );
-		
-		tile_x = wanted_pos_x & 7;
-		tile_y = wanted_pos_y & 7;
-		
-		if( coll_tile_index == 5 )
+		else if( coll_tile_index == 5 )
 			DoCollision_Slope_UpLeftAsm( tile_x, tile_y, ref new_dir_x, ref new_dir_y );
 		else if( coll_tile_index == 6 )
 			DoCollision_Slope_UpRightAsm( tile_x, tile_y, ref new_dir_x, ref new_dir_y );
@@ -400,10 +372,15 @@ public class testobject : MonoBehaviour
 			DoCollision_Corner_DownLeftAsm( tile_x, tile_y, ref new_dir_x, ref new_dir_y );
 		else if( coll_tile_index == 13 )
 			DoCollision_Corner_DownRightAsm( tile_x, tile_y, ref new_dir_x, ref new_dir_y );
+		else if( coll_tile_index == 9 )
+		{
+			new_dir_x = 0;
+			new_dir_y = 0;
+		}
 
 		i_sensor_list++;
 		if( i_sensor_list < sensor_list.Length )
-			goto Loop_Sensors_B;
+			goto Loop_Sensors_A;
 
 	done:
 
