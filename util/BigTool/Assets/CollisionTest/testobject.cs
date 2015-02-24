@@ -68,6 +68,20 @@ public class testobject : MonoBehaviour
 		new int[]{1, 2, 6, 7, 3}, // {3, 7, 6, 2, 1},
 	};
 
+	int[] m_sensorOrdersFlat = new int[]
+	{
+		5, 2,1,5,4,0, 	-1,-1,	 		// new int[]{2, 1, 5, 4, 0},
+		3, 1,0,4,     	-1,-1,-1,-1,	// new int[]{1, 0, 4},
+		5, 3,0,6,4,1, 	-1,-1,			// new int[]{3, 0, 6, 4, 1},
+		3, 2,0,5,		-1,-1,-1,-1,	// new int[]{2, 0, 5},
+		0, -1,-1,-1,-1,-1,-1,-1,		// null,
+		3, 3,1,6,		-1,-1,-1,-1,	// new int[]{3, 1, 6},
+		5, 0,3,5,7,2,	-1,-1,			// new int[]{0, 3, 5, 7, 2},
+		3, 3,2,7,		-1,-1,-1,-1,	// new int[]{3, 2, 7},
+		5, 1,2,6,7,3,	-1,-1			// new int[]{1, 2, 6, 7, 3},
+	};
+	
+
 	Vector2[] a1_m_sensors =
 	{
 		/* 0=top left     */ Vector3.up*padding + Vector3.right*padding,
@@ -79,6 +93,18 @@ public class testobject : MonoBehaviour
 		/* 5=mid left     */ Vector3.up*(height/2) + Vector3.right*padding,
 		/* 6=mid right    */ Vector3.up*(height/2) + Vector3.right*(width-padding-1),
 		/* 7=down mid     */ Vector3.up*(height-padding-1) + Vector3.right*(width/2),
+	};
+
+	int[] a1_m_sensors_flat =
+	{
+		2,2,
+		13,2,
+		2,13,
+		13,13,
+		8,2,
+		2,8,
+		13,8,
+		8,13,
 	};
 
 	Vector2 m_midSensor = Vector2.up*(height/2.0f) + Vector2.right*(width/2.0f);
@@ -327,14 +353,19 @@ public class testobject : MonoBehaviour
 		
 		m_lastMovementDir = sensor_list_index;
 		
-		int[] a2_sensor_list = m_sensorOrders[ sensor_list_index ];
+		int[] a2 = m_sensorOrdersFlat;
+		int a2_offset = sensor_list_index*8;	// In assembler I will do something like a2 += sensor_list_index*8
 		
-		d7 = a2_sensor_list.Length-1;
+		d7 = a2[ a2_offset ];
+		d7--;		// Compensate for dbra
+		a2_offset++;
 
 	Loop_Sensors:
-		d6 = a2_sensor_list[ d7 ];
-		d2 = (int)a1_m_sensors[ d6 ].x;
-		d3 = (int)a1_m_sensors[ d6 ].y;
+		d6 = a2[ a2_offset + d7 ];
+		d6 <<= 1;
+		d2 = a1_m_sensors_flat[ d6 ];
+		d6++;
+		d3 = a1_m_sensors_flat[ d6 ];
 		d4 = obj_pos_x + d2 + d0;
 		d5 = obj_pos_y + d3 + d1;
 		
