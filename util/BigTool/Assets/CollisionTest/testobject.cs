@@ -309,6 +309,89 @@ public class testobject : MonoBehaviour
 		int obj_pos_y = (int)m_position.y;
 		int wanted_dir_x = (int)_direction.x;
 		int wanted_dir_y = (int)_direction.y;
+		
+		int d0 = wanted_dir_x;
+		int d1 = wanted_dir_y;
+		int d2;
+		int d3;
+		int d4;
+		int d5;
+		int d6;
+		int d7;
+		
+		int mdx = wanted_dir_x+1;
+		int mdy = wanted_dir_y+1;
+		int sensor_list_index = (mdy*3)+mdx;
+		if( sensor_list_index == 4 )
+			goto done;
+		
+		m_lastMovementDir = sensor_list_index;
+		
+		int[] a2_sensor_list = m_sensorOrders[ sensor_list_index ];
+		
+		d7 = a2_sensor_list.Length-1;
+
+	Loop_Sensors:
+		d6 = a2_sensor_list[ d7 ];
+		d2 = (int)a1_m_sensors[ d6 ].x;
+		d3 = (int)a1_m_sensors[ d6 ].y;
+		d4 = obj_pos_x + d2 + d0;
+		d5 = obj_pos_y + d3 + d1;
+		
+		d2 = d4>>3;
+		d3 = d5>>3;
+		
+		d6 = (d3<<8) + d2;
+		d6 = a0_m_worldBuilder.GetTile( d6 );
+		
+		d2 = d4 & 7;
+		d3 = d5 & 7;
+		
+		if( d6 == 1 )
+			DoCollision_UpLeftAsm( ref d1 );
+		else if( d6 == 2 )
+			DoCollision_DownRightAsm( ref d1 );
+		else if( d6 == 3 )
+			DoCollision_UpLeftAsm( ref d0 );
+		else if( d6 == 4 )
+			DoCollision_DownRightAsm( ref d0 );
+		else if( d6 == 5 )
+			DoCollision_Slope_UpLeftAsm( d2, d3, ref d0, ref d1 );
+		else if( d6 == 6 )
+			DoCollision_Slope_UpRightAsm( d2, d3, ref d0, ref d1 );
+		else if( d6 == 7 )
+			DoCollision_Slope_DownLeftAsm( d2, d3, ref d0, ref d1 );
+		else if( d6 == 8 )
+			DoCollision_Slope_DownRightAsm( d2, d3, ref d0, ref d1 );
+		else if( d6 == 10 )
+			DoCollision_Corner_UpLeftAsm( d2, d3, ref d0, ref d1 );
+		else if( d6 == 11 )
+			DoCollision_Corner_UpRightAsm( d2, d3, ref d0, ref d1 );
+		else if( d6 == 12 )
+			DoCollision_Corner_DownLeftAsm( d2, d3, ref d0, ref d1 );
+		else if( d6 == 13 )
+			DoCollision_Corner_DownRightAsm( d2, d3, ref d0, ref d1 );
+		else if( d6 == 9 )
+		{
+			d0 = 0;
+			d1 = 0;
+		}
+
+		d7--;
+		if( d7 >= 0 )
+			goto Loop_Sensors;
+		
+	done:
+			
+		return new Vector2( d0, d1 );
+	}
+
+	Vector2 CheckCollisionAsmRegisterReference( Vector2 _direction )
+	{
+		int obj_pos_x = (int)m_position.x;
+		int obj_pos_y = (int)m_position.y;
+		int wanted_dir_x = (int)_direction.x;
+		int wanted_dir_y = (int)_direction.y;
 
 		int d0_new_dir_x = wanted_dir_x;
 		int d1_new_dir_y = wanted_dir_y;
