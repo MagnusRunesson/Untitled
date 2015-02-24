@@ -458,7 +458,6 @@ public class testobject : MonoBehaviour
 	l14:
 		if( d6 != 9 )
 			goto Next_Sensor;
-		Debug.Log ("l14 say hello! d6=" + d6 );
 		d0 = 0;
 		d1 = 0;
 
