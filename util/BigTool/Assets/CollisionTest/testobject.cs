@@ -285,8 +285,6 @@ public class testobject : MonoBehaviour
 					new_dir_x = 0;
 					new_dir_y = 0;
 				}
-
-				Debug.Log ("routine=" + routine + ", new dir x=" + new_dir_x + ", new dir y=" + new_dir_y );
 			}
 		}
 
@@ -398,7 +396,6 @@ public class testobject : MonoBehaviour
 	l4:
 		if( d6 != 4 )
 			goto l5;
-
 		DoCollision_DownRightAsm( ref d0 );
 		goto Next_Sensor;
 
