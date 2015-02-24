@@ -90,7 +90,22 @@ public class TileBank
 
 		return false;
 	}
-	
+
+	public bool GetUnoptimizedIndexFromInstance( TileInstance _instance, out int _index )
+	{
+		foreach( var kvp in m_allTileInstances )
+		{
+			if( kvp.Value.Equals( _instance ))
+			{
+				_index = kvp.Key;
+				return true;
+			}
+		}
+
+		_index = -1;
+		return false;
+	}
+
 	public TileInstance GetTileInstance( Tile _tile )
 	{
 		int i;

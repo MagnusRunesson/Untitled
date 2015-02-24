@@ -37,37 +37,52 @@ public class testobject : MonoBehaviour
 
 	int m_lastMovementDir;
 
+	// The order in here is reversed since we use dbra to iterate over the list
 	int[][] m_sensorOrders = new int[][]
 	{
 		// 4=up left
-		new int[]{0, 4, 5, 1, 2},
+		new int[]{2, 1, 5, 4, 0}, // { 0, 4, 5, 1, 2},
 
 		// 0=up
-		new int[]{4, 0, 1},
+		new int[]{1, 0, 4}, // {4, 0, 1},
 		
 		// 5=up right
-		new int[]{1, 4, 6, 0, 3},
+		new int[]{3, 0, 6, 4, 1}, // {1, 4, 6, 0, 3},
 
 		// 2=left
-		new int[]{5, 0, 2},
+		new int[]{2, 0, 5}, // {5, 0, 2},
 
 		// No movement
 		null,
 
 		// 3=right
-		new int[]{6, 1, 3},
+		new int[]{3, 1, 6}, // {6, 1, 3},
 		
 		// 6=down left
-		new int[]{2, 7, 5, 3, 0},
+		new int[]{0, 3, 5, 7, 2}, // {2, 7, 5, 3, 0},
 
 		// 1=down
-		new int[]{7, 2, 3},
+		new int[]{3, 2, 7}, // {7, 2, 3},
 
 		// 7=down right
-		new int[]{3, 7, 6, 2, 1},
+		new int[]{1, 2, 6, 7, 3}, // {3, 7, 6, 2, 1},
 	};
 
-	Vector2[] m_sensors =
+	int[] m_sensorOrdersFlat = new int[]
+	{
+		5, 2,1,5,4,0, 	-1,-1,	 		// new int[]{2, 1, 5, 4, 0},
+		3, 1,0,4,     	-1,-1,-1,-1,	// new int[]{1, 0, 4},
+		5, 3,0,6,4,1, 	-1,-1,			// new int[]{3, 0, 6, 4, 1},
+		3, 2,0,5,		-1,-1,-1,-1,	// new int[]{2, 0, 5},
+		0, -1,-1,-1,-1,-1,-1,-1,		// null,
+		3, 3,1,6,		-1,-1,-1,-1,	// new int[]{3, 1, 6},
+		5, 0,3,5,7,2,	-1,-1,			// new int[]{0, 3, 5, 7, 2},
+		3, 3,2,7,		-1,-1,-1,-1,	// new int[]{3, 2, 7},
+		5, 1,2,6,7,3,	-1,-1			// new int[]{1, 2, 6, 7, 3},
+	};
+	
+
+	Vector2[] a1_m_sensors =
 	{
 		/* 0=top left     */ Vector3.up*padding + Vector3.right*padding,
 		/* 1=top right    */ Vector3.up*padding + Vector3.right*(width-padding-1),
@@ -80,19 +95,31 @@ public class testobject : MonoBehaviour
 		/* 7=down mid     */ Vector3.up*(height-padding-1) + Vector3.right*(width/2),
 	};
 
+	int[] a1_m_sensors_flat =
+	{
+		2,2,
+		13,2,
+		2,13,
+		13,13,
+		8,2,
+		2,8,
+		13,8,
+		8,13,
+	};
+
 	Vector2 m_midSensor = Vector2.up*(height/2.0f) + Vector2.right*(width/2.0f);
 
 	float m_refreshTimeout;
 
 	Transform m_transform;
-	Worldbuilder m_worldBuilder;
+	Worldbuilder a0_m_worldBuilder;
 
 	// Use this for initialization
 	void Start ()
 	{
 		m_transform = transform;
 		m_position = SwitchWorld( m_transform.position );
-		m_worldBuilder = FindObjectOfType<Worldbuilder>();
+		a0_m_worldBuilder = FindObjectOfType<Worldbuilder>();
 
 		m_refreshTimeout = refreshTimer;
 		m_lastMovementDir = 4;
@@ -170,7 +197,7 @@ public class testobject : MonoBehaviour
 			Gizmos.color = Color.black;
 			foreach( int iv in sensors )
 			{
-				Vector2 v = m_sensors[ iv ];
+				Vector2 v = a1_m_sensors[ iv ];
 				Vector3 v3 = SwitchWorld( v );
 				Gizmos.DrawCube( pos + v3 + (Vector3.down+Vector3.right)*0.5f + Vector3.back, Vector3.one );
 			}
@@ -207,7 +234,7 @@ public class testobject : MonoBehaviour
 		int new_dir_x = wanted_dir_x;
 		int new_dir_y = wanted_dir_y;
 
-		int[,] smallObjects = m_worldBuilder.GetSmallObjects();
+		int[,] smallObjects = a0_m_worldBuilder.GetSmallObjects();
 		int numObjects = smallObjects.GetLength( 0 );
 		int iObject;
 		for( iObject=0; iObject<numObjects; iObject++ )
@@ -258,8 +285,6 @@ public class testobject : MonoBehaviour
 					new_dir_x = 0;
 					new_dir_y = 0;
 				}
-
-				Debug.Log ("routine=" + routine + ", new dir x=" + new_dir_x + ", new dir y=" + new_dir_y );
 			}
 		}
 
@@ -273,7 +298,7 @@ public class testobject : MonoBehaviour
 		mypos.x += width/2.0f;
 		mypos.y += height/2.0f;
 
-		int[,] smallObjects = m_worldBuilder.GetSmallObjects();
+		int[,] smallObjects = a0_m_worldBuilder.GetSmallObjects();
 		int numObjects = smallObjects.GetLength( 0 );
 		int iObject;
 		for( iObject=0; iObject<numObjects; iObject++ )
@@ -308,17 +333,164 @@ public class testobject : MonoBehaviour
 		int obj_pos_y = (int)m_position.y;
 		int wanted_dir_x = (int)_direction.x;
 		int wanted_dir_y = (int)_direction.y;
+		
+		int d0 = wanted_dir_x;
+		int d1 = wanted_dir_y;
+		int d2;
+		int d3;
+		int d4;
+		int d5;
+		int d6;
+		int d7;
+		
+		int mdx = wanted_dir_x+1;
+		int mdy = wanted_dir_y+1;
+		int sensor_list_index = (mdy*3)+mdx;
+		if( sensor_list_index == 4 )
+			goto done;
+		
+		m_lastMovementDir = sensor_list_index;
+		
+		int[] a2 = m_sensorOrdersFlat;
+		int a2_offset = sensor_list_index*8;	// In assembler I will do something like a2 += sensor_list_index*8
+		
+		d7 = a2[ a2_offset ];
+		d7--;		// Compensate for dbra
+		a2_offset++;
 
-		int new_dir_x = wanted_dir_x;
-		int new_dir_y = wanted_dir_y;
+	Loop_Sensors:
+		d6 = a2[ a2_offset + d7 ];
+		d6 <<= 1;
+		d2 = a1_m_sensors_flat[ d6 ];
+		d6++;
+		d3 = a1_m_sensors_flat[ d6 ];
+		d4 = obj_pos_x + d2 + d0;
+		d5 = obj_pos_y + d3 + d1;
+		
+		d2 = d4>>3;
+		d3 = d5>>3;
+		
+		d6 = (d3<<8) + d2;
+		d6 = a0_m_worldBuilder.GetTile( d6 );
+		
+		d2 = d4 & 7;
+		d3 = d5 & 7;
 
-		int wanted_pos_x;
-		int wanted_pos_y;
-		int sensor_x;
-		int sensor_y;
-		int tile_x;
-		int tile_y;
-		int coll_tile_index;
+		// Check both up and down at once
+		if( d6 != 1 )
+			if( d6 != 2 )
+				goto l3;
+		d1 = 0;
+		goto Next_Sensor;
+
+		/*
+	l2:
+		if( d6 != 2 )
+			goto l3;
+		d1 = 0;
+		goto Next_Sensor;
+		*/
+
+	l3:
+		// Check both left and right at once
+		if( d6 != 3 )
+				if( d6 != 4 )
+			goto l5;
+		d0 = 0;
+		goto Next_Sensor;
+
+		/*
+	l4:
+		if( d6 != 4 )
+			goto l5;
+		d0 = 0;
+		goto Next_Sensor;
+		*/
+
+	l5:
+		if( d6 != 5 )
+			goto l6;
+		DoCollision_Slope_UpLeftAsm( d2, d3, ref d0, ref d1 );
+		goto Next_Sensor;
+
+	l6:
+		if( d6 != 6 )
+			goto l8;
+		DoCollision_Slope_UpRightAsm( d2, d3, ref d0, ref d1 );
+		goto Next_Sensor;
+
+	l8:
+		if( d6 != 7 )
+			goto l9;
+		DoCollision_Slope_DownLeftAsm( d2, d3, ref d0, ref d1 );
+		goto Next_Sensor;
+
+	l9:
+		if( d6 != 8 )
+			goto l10;
+		DoCollision_Slope_DownRightAsm( d2, d3, ref d0, ref d1 );
+		goto Next_Sensor;
+
+	l10:
+		if( d6 != 10 )
+			goto l11;
+		DoCollision_Corner_UpLeftAsm( d2, d3, ref d0, ref d1 );
+		goto Next_Sensor;
+
+	l11:
+		if( d6 != 11 )
+			goto l12;
+		DoCollision_Corner_UpRightAsm( d2, d3, ref d0, ref d1 );
+		goto Next_Sensor;
+
+	l12:
+		if( d6 != 12 )
+			goto l13;
+		DoCollision_Corner_DownLeftAsm( d2, d3, ref d0, ref d1 );
+		goto Next_Sensor;
+
+	l13:
+		if( d6 != 13 )
+			goto l14;
+		DoCollision_Corner_DownRightAsm( d2, d3, ref d0, ref d1 );
+		goto Next_Sensor;
+
+	l14:
+		if( d6 != 9 )
+			goto Next_Sensor;
+		d0 = 0;
+		d1 = 0;
+
+	Next_Sensor:
+
+		d7--;
+		if( d7 >= 0 )
+			goto Loop_Sensors;
+		
+	done:
+			
+		return new Vector2( d0, d1 );
+	}
+
+	Vector2 CheckCollisionAsmRegisterReference( Vector2 _direction )
+	{
+		int obj_pos_x = (int)m_position.x;
+		int obj_pos_y = (int)m_position.y;
+		int wanted_dir_x = (int)_direction.x;
+		int wanted_dir_y = (int)_direction.y;
+
+		int d0_new_dir_x = wanted_dir_x;
+		int d1_new_dir_y = wanted_dir_y;
+		int d2_shared_sensor_x;
+		int d3_shared_sensor_y;
+		int d2_shared_tile_x;
+		int d3_shared_tile_y;
+		int d4_wanted_pos_x;
+		int d5_wanted_pos_y;
+		int d6_shared_coll_tile_index;
+		int d6_shared_i_sensor;
+		int d6_shared_worldindex;
+		int d7_i_sensor_list;
 
 		int mdx = wanted_dir_x+1;
 		int mdy = wanted_dir_y+1;
@@ -328,26 +500,112 @@ public class testobject : MonoBehaviour
 
 		m_lastMovementDir = sensor_list_index;
 
+		int[] a2_sensor_list = m_sensorOrders[ sensor_list_index ];
+
+		d7_i_sensor_list = a2_sensor_list.Length-1;
+
+	Loop_Sensors_A:
+		d6_shared_i_sensor = a2_sensor_list[ d7_i_sensor_list ];
+		d2_shared_sensor_x = (int)a1_m_sensors[ d6_shared_i_sensor ].x;
+		d3_shared_sensor_y = (int)a1_m_sensors[ d6_shared_i_sensor ].y;
+		d4_wanted_pos_x = obj_pos_x + d2_shared_sensor_x + d0_new_dir_x;
+		d5_wanted_pos_y = obj_pos_y + d3_shared_sensor_y + d1_new_dir_y;
+
+		d2_shared_tile_x = d4_wanted_pos_x>>3;
+		d3_shared_tile_y = d5_wanted_pos_y>>3;
+
+		d6_shared_worldindex = (d3_shared_tile_y<<8) + d2_shared_tile_x;
+		d6_shared_coll_tile_index = a0_m_worldBuilder.GetTile( d6_shared_worldindex );
+
+		d2_shared_tile_x = d4_wanted_pos_x & 7;
+		d3_shared_tile_y = d5_wanted_pos_y & 7;
+
+		if( d6_shared_coll_tile_index == 1 )
+			DoCollision_UpLeftAsm( ref d1_new_dir_y );
+		else if( d6_shared_coll_tile_index == 2 )
+			DoCollision_DownRightAsm( ref d1_new_dir_y );
+		else if( d6_shared_coll_tile_index == 3 )
+			DoCollision_UpLeftAsm( ref d0_new_dir_x );
+		else if( d6_shared_coll_tile_index == 4 )
+			DoCollision_DownRightAsm( ref d0_new_dir_x );
+		else if( d6_shared_coll_tile_index == 5 )
+			DoCollision_Slope_UpLeftAsm( d2_shared_tile_x, d3_shared_tile_y, ref d0_new_dir_x, ref d1_new_dir_y );
+		else if( d6_shared_coll_tile_index == 6 )
+			DoCollision_Slope_UpRightAsm( d2_shared_tile_x, d3_shared_tile_y, ref d0_new_dir_x, ref d1_new_dir_y );
+		else if( d6_shared_coll_tile_index == 7 )
+			DoCollision_Slope_DownLeftAsm( d2_shared_tile_x, d3_shared_tile_y, ref d0_new_dir_x, ref d1_new_dir_y );
+		else if( d6_shared_coll_tile_index == 8 )
+			DoCollision_Slope_DownRightAsm( d2_shared_tile_x, d3_shared_tile_y, ref d0_new_dir_x, ref d1_new_dir_y );
+		else if( d6_shared_coll_tile_index == 10 )
+			DoCollision_Corner_UpLeftAsm( d2_shared_tile_x, d3_shared_tile_y, ref d0_new_dir_x, ref d1_new_dir_y );
+		else if( d6_shared_coll_tile_index == 11 )
+			DoCollision_Corner_UpRightAsm( d2_shared_tile_x, d3_shared_tile_y, ref d0_new_dir_x, ref d1_new_dir_y );
+		else if( d6_shared_coll_tile_index == 12 )
+			DoCollision_Corner_DownLeftAsm( d2_shared_tile_x, d3_shared_tile_y, ref d0_new_dir_x, ref d1_new_dir_y );
+		else if( d6_shared_coll_tile_index == 13 )
+			DoCollision_Corner_DownRightAsm( d2_shared_tile_x, d3_shared_tile_y, ref d0_new_dir_x, ref d1_new_dir_y );
+		else if( d6_shared_coll_tile_index == 9 )
+		{
+			d0_new_dir_x = 0;
+			d1_new_dir_y = 0;
+		}
+
+		d7_i_sensor_list--;
+		if( d7_i_sensor_list >= 0 )
+			goto Loop_Sensors_A;
+
+	done:
+
+		return new Vector2( d0_new_dir_x, d1_new_dir_y );
+	}
+
+	Vector2 CheckCollisionAsmVariableReference( Vector2 _direction )
+	{
+		int obj_pos_x = (int)m_position.x;
+		int obj_pos_y = (int)m_position.y;
+		int wanted_dir_x = (int)_direction.x;
+		int wanted_dir_y = (int)_direction.y;
+		
+		int new_dir_x = wanted_dir_x;
+		int new_dir_y = wanted_dir_y;
+		
+		int wanted_pos_x;
+		int wanted_pos_y;
+		int sensor_x;
+		int sensor_y;
+		int tile_x;
+		int tile_y;
+		int coll_tile_index;
+		
+		int mdx = wanted_dir_x+1;
+		int mdy = wanted_dir_y+1;
+		int sensor_list_index = (mdy*3)+mdx;
+		if( sensor_list_index == 4 )
+			goto done;
+		
+		m_lastMovementDir = sensor_list_index;
+		
 		int[] sensor_list = m_sensorOrders[ sensor_list_index ];
 		int i_sensor_list;
 		int i_sensor;
-
+		
 		i_sensor_list = 0;
-
+		
 	Loop_Sensors_A:
 		i_sensor = sensor_list[ i_sensor_list ];
-		sensor_x = (int)m_sensors[ i_sensor ].x;
-		sensor_y = (int)m_sensors[ i_sensor ].y;
+		Debug.Log ("i=" + i_sensor_list + ", sensor=" + i_sensor );
+		sensor_x = (int)a1_m_sensors[ i_sensor ].x;
+		sensor_y = (int)a1_m_sensors[ i_sensor ].y;
 		wanted_pos_x = obj_pos_x + sensor_x + new_dir_x;
 		wanted_pos_y = obj_pos_y + sensor_y + new_dir_y;
-
+		
 		tile_x = wanted_pos_x>>3;
 		tile_y = wanted_pos_y>>3;
-		coll_tile_index = m_worldBuilder.GetTileAt( tile_x, tile_y );
-
+		coll_tile_index = a0_m_worldBuilder.GetTileAt( tile_x, tile_y );
+		
 		tile_x = wanted_pos_x & 7;
 		tile_y = wanted_pos_y & 7;
-
+		
 		if( coll_tile_index == 1 )
 			DoCollision_UpLeftAsm( ref new_dir_y );
 		else if( coll_tile_index == 2 )
@@ -356,35 +614,7 @@ public class testobject : MonoBehaviour
 			DoCollision_UpLeftAsm( ref new_dir_x );
 		else if( coll_tile_index == 4 )
 			DoCollision_DownRightAsm( ref new_dir_x );
-		else if( coll_tile_index == 9 )
-		{
-			new_dir_x = 0;
-			new_dir_y = 0;
-		}
-
-		i_sensor_list++;
-		if( i_sensor_list < sensor_list.Length )
-			goto Loop_Sensors_A;
-
-
-
-		i_sensor_list = 0;
-		
-	Loop_Sensors_B:
-		i_sensor = sensor_list[ i_sensor_list ];
-		sensor_x = (int)m_sensors[ i_sensor ].x;
-		sensor_y = (int)m_sensors[ i_sensor ].y;
-		wanted_pos_x = obj_pos_x + sensor_x + new_dir_x;
-		wanted_pos_y = obj_pos_y + sensor_y + new_dir_y;
-		
-		tile_x = wanted_pos_x>>3;
-		tile_y = wanted_pos_y>>3;
-		coll_tile_index = m_worldBuilder.GetTileAt( tile_x, tile_y );
-		
-		tile_x = wanted_pos_x & 7;
-		tile_y = wanted_pos_y & 7;
-		
-		if( coll_tile_index == 5 )
+		else if( coll_tile_index == 5 )
 			DoCollision_Slope_UpLeftAsm( tile_x, tile_y, ref new_dir_x, ref new_dir_y );
 		else if( coll_tile_index == 6 )
 			DoCollision_Slope_UpRightAsm( tile_x, tile_y, ref new_dir_x, ref new_dir_y );
@@ -400,27 +630,32 @@ public class testobject : MonoBehaviour
 			DoCollision_Corner_DownLeftAsm( tile_x, tile_y, ref new_dir_x, ref new_dir_y );
 		else if( coll_tile_index == 13 )
 			DoCollision_Corner_DownRightAsm( tile_x, tile_y, ref new_dir_x, ref new_dir_y );
-
+		else if( coll_tile_index == 9 )
+		{
+			new_dir_x = 0;
+			new_dir_y = 0;
+		}
+		
 		i_sensor_list++;
 		if( i_sensor_list < sensor_list.Length )
-			goto Loop_Sensors_B;
-
+			goto Loop_Sensors_A;
+		
 	done:
-
-		return new Vector2( new_dir_x, new_dir_y );
+			
+			return new Vector2( new_dir_x, new_dir_y );
 	}
-
+	
 	Vector2 CheckCollision( Vector2 _direction )
 	{
 		Vector2 newDir = _direction;
 
-		foreach( Vector2 v in m_sensors )
+		foreach( Vector2 v in a1_m_sensors )
 		{
 			Vector2 t0 = m_position + v;
 			Vector2 t1 = t0 + _direction;
 			int tileX = ((int)t1.x)>>3;
 			int tileY = ((int)t1.y)>>3;
-			int collTileIndex = m_worldBuilder.GetTileAt( tileX, tileY );
+			int collTileIndex = a0_m_worldBuilder.GetTileAt( tileX, tileY );
 
 			Vector2 inTile = new Vector2( t1.x - (tileX*8), t1.y - (tileY*8));
 

@@ -114,6 +114,11 @@ public class TileMap
 		m_tiles = new TileInstance[ m_width, m_height ];
 	}
 
+	public TileInstance GetTile( int _x, int _y )
+	{
+		return m_tiles[ _x, _y ];
+	}
+
 	void SetTile( int _x, int _y, TileInstance _tile )
 	{
 		m_tiles[ _x, _y ] = _tile;
@@ -157,6 +162,16 @@ public class TileMap
 		}
 
 		System.IO.File.WriteAllBytes( _outfilename, outBytes );
+	}
+
+	public int GetWidth()
+	{
+		return m_width;
+	}
+
+	public int GetHeight()
+	{
+		return m_height;
 	}
 
 	TileBank m_tileBank;

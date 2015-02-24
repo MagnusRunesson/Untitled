@@ -18,6 +18,7 @@ public class bmp2tile : EditorWindow
 	string m_lastExportDirectory;
 	Texture2D m_imageTexture;
 	Texture2D m_mapTexture;
+	Texture2D m_collisionTexture;
 
 	string m_openImageName;
 	string m_openMapName;
@@ -27,6 +28,7 @@ public class bmp2tile : EditorWindow
 	TileBank m_tileBank;
 	TileMap m_tileMap;
 	TilePalette m_tilePalette;
+	CollisionMap m_collisionMap;
 //	PlanarImage m_planarImage;
 
 	Rect m_tileBankWindowRect;
@@ -41,6 +43,7 @@ public class bmp2tile : EditorWindow
 	const float m_projectWindowWidth = 250.0f;
 
 	int m_exportedFileListIndex;
+	float m_collisionAlpha;
 
 	[MenuItem("Untitled/bmp2tile %e")]
 	static public void OpenWindow()
@@ -72,6 +75,8 @@ public class bmp2tile : EditorWindow
 		m_currentImageData = null;
 		m_tileBank = null;
 		m_tileMap = null;
+
+		m_collisionAlpha = 0.5f;
 	}
 
 	void OnGUI()
@@ -201,17 +206,18 @@ public class bmp2tile : EditorWindow
 
 	void OnDrawMapWindow( int _id )
 	{
+		float left = 5.0f;
+		float top = 20.0f;
+		
+		float draw_scale = 1.0f;
+		float src_w = m_mapTexture.width;
+		float src_h = m_mapTexture.height;
+		float draw_w = src_w * draw_scale;
+		float draw_h = src_h * draw_scale;
+		Rect r = new Rect( left, top, draw_w, draw_h );
+
 		if( m_mapTexture != null )
 		{
-			float left = 5.0f;
-			float top = 20.0f;
-			
-			float draw_scale = 1.0f;
-			float src_w = m_mapTexture.width;
-			float src_h = m_mapTexture.height;
-			float draw_w = src_w * draw_scale;
-			float draw_h = src_h * draw_scale;
-			Rect r = new Rect( left, top, draw_w, draw_h );
 			GUI.DrawTexture( r, m_mapTexture );
 
 			/*
@@ -235,7 +241,17 @@ public class bmp2tile : EditorWindow
 			}
 			*/
 		}
-		
+
+		if( m_collisionTexture != null )
+		{
+			GUI.color = new Color( 1.0f, 1.0f, 1.0f, m_collisionAlpha );
+			GUI.DrawTexture( r, m_collisionTexture );
+		}
+
+		GUI.color = Color.white;
+		r.y += r.height;
+		r.height = 25.0f;
+		m_collisionAlpha = EditorGUI.Slider( r, "Collision alpha", m_collisionAlpha, 0.0f, 1.0f );
 		GUI.DragWindow();
 	}
 	
@@ -455,7 +471,7 @@ public class bmp2tile : EditorWindow
 			m_tileBank = new TileBank( m_currentImageData, OptimizedTilebank );
 			m_tileMap = new TileMap( m_tileBank, m_currentImageData );
 			m_tilePalette = new TilePalette( m_currentImageData );
-			
+
 			//
 			int w, h;
 			w = m_currentImageData.m_width;
@@ -513,12 +529,17 @@ public class bmp2tile : EditorWindow
 		int map_pixels_h = map_tiles_h * 8;
 		m_mapTexture = new Texture2D( map_pixels_w, map_pixels_h, TextureFormat.ARGB32, false );
 		m_mapTexture.filterMode = FilterMode.Point;
-		m_mapWindowRect = new Rect( m_tileBankWindowRect.x, m_tileBankWindowRect.y, 10+map_pixels_w, 25+map_pixels_h );
+		m_collisionTexture = new Texture2D( map_pixels_w, map_pixels_h, TextureFormat.ARGB32, false );
+		m_collisionTexture.filterMode = FilterMode.Point;
+		m_mapWindowRect = new Rect( m_tileBankWindowRect.x, m_tileBankWindowRect.y, 10+map_pixels_w, 25+map_pixels_h+25 );
 		float add = m_mapWindowRect.x + m_mapWindowRect.width - m_projectWindowWidth - m_windowPadding;
 		m_tileBankWindowRect.x += add;
 		m_paletteRemapRect.x += add;
 		m_imageSettingsRect.x += add;
 		//m_projectWindowRect.x += add;
+
+		Texture2D collTiles = AssetDatabase.LoadAssetAtPath( "assets/collisiontiles.psd", typeof( Texture2D )) as Texture2D;
+		Debug.Log ("colltiles = " + collTiles );
 
 		// Find each layer
 		List<object> layersJson = (List<object>)json[ "layers" ];
@@ -536,6 +557,13 @@ public class bmp2tile : EditorWindow
 
 				int tile_pixel_x;
 				int tile_pixel_y;
+
+				int collTileId = CollisionMap.GetCollisionTileIndexFromVisualIndex( tile_id );
+				int coll_tile_y = (collTileId >> 3) & 0x07;
+				int coll_tile_x = (collTileId) & 0x07;
+				coll_tile_x <<= 3;
+				coll_tile_y <<= 3;
+
 				for( tile_pixel_y=0; tile_pixel_y<8; tile_pixel_y++ )
 				{
 					for( tile_pixel_x=0; tile_pixel_x<8; tile_pixel_x++ )
@@ -546,14 +574,20 @@ public class bmp2tile : EditorWindow
 
 						int dst_x = (tile_x*8) + tile_pixel_x;
 						int dst_y = (tile_y*8) + tile_pixel_y;
-
 						m_mapTexture.SetPixel( dst_x, map_pixels_h - 1 - dst_y, col );
+
+						int src_coll_x = coll_tile_x+tile_pixel_x;
+						int src_coll_y = coll_tile_y+tile_pixel_y;
+						Color collCol = collTiles.GetPixel( src_coll_x, collTiles.height - 1 - src_coll_y );
+						m_collisionTexture.SetPixel( dst_x, map_pixels_h - 1 - dst_y, collCol );
 					}
 				}
 			}
 		}
 
 		m_mapTexture.Apply();
+		m_collisionTexture.Apply();
+
 
 
 		/*
