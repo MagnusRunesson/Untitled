@@ -15,53 +15,69 @@ public class testobject : MonoBehaviour
 	Vector2 debugCollisionPoint2;
 	Vector2 debugCollisionPointRelative;
 
-	const int XXYY = 0;
-	const int XN1YY = 1;
-	const int X1YY = 2;
-	const int X0YY = 3;
-	const int XXYN1 = 4;
-	const int XN1YN1 = 5;
-	const int X1YN1 = 6;
-	const int X0YN1 = 7;
-	const int XXY1 = 8;
-	const int XN1Y1 = 9;
-	const int X1Y1 = 10;
-	const int X0Y1 = 11;
-	const int XXY0 = 12;
-	const int XN1Y0 = 13;
-	const int X1Y0 = 14;
-	const int X0Y0 = 15;
-
-	int[,] collisionActions = {
-		/*
-		{0,0,0,0,0,XN1Y1,XN1Y0,X0Y0,X0Y0,X1Y0,X1Y1,0,0,0,0,0},
-		{0,0,0,XN1Y1,XN1Y0,XN1Y0,XN1Y0,X0Y0,X0Y0,X1Y0,X1Y0,X1Y0,X1Y1,0,0,0},
-		{0,0,XN1Y1,XN1Y0,XN1Y0,XN1Y0,X0Y0,x0y0,X0Y0,X0Y0,X1Y0,X1Y0,X1Y0,X1Y1,0,0},
-		*/
+	int[,] collisionActions =
+	{
 		{0,0,0,0,0,5,5,1,1,6,6,0,0,0,0,0},
 		{0,0,0,5,5,5,5,1,1,6,6,6,6,0,0,0},
-		{0,0,5,5,5,9,9,9,9,9,6,6,6,6,0,0},
-		{0,5,5,5,9,9,9,9,9,9,9,9,6,6,6,0},
-		{0,5,5,9,9,9,9,9,9,9,9,9,9,6,6,0},
-		{5,5,5,9,9,9,9,9,9,9,9,9,9,6,6,6},
-		{5,5,9,9,9,9,9,9,9,9,9,9,9,9,6,6},
+		{0,0,5,5,5,5,5,9,9,6,6,6,6,6,0,0},
+		{0,5,5,5,5,5,5,9,9,6,6,6,6,6,6,0},
+		{0,5,5,5,5,5,5,9,9,6,6,6,6,6,6,0},
+		{5,5,5,5,5,5,5,9,9,6,6,6,6,6,6,6},
+		{5,5,5,5,5,5,5,9,9,6,6,6,6,6,6,6},
 		{3,3,9,9,9,9,9,9,9,9,9,9,9,9,4,4},
 		{3,3,9,9,9,9,9,9,9,9,9,9,9,9,4,4},
-		{7,7,9,9,9,9,9,9,9,9,9,9,9,9,8,8},
-		{7,7,7,9,9,9,9,9,9,9,9,9,9,8,8,8},
-		{0,7,7,9,9,9,9,9,9,9,9,9,9,8,8,0},
-		{0,7,7,7,9,9,9,9,9,9,9,9,8,8,8,0},
-		{0,0,7,7,7,7,9,9,9,9,8,8,8,8,0,0},
+		{7,7,7,7,7,7,7,9,9,8,8,8,8,8,8,8},
+		{7,7,7,7,7,7,7,9,9,8,8,8,8,8,8,8},
+		{0,7,7,7,7,7,7,9,9,8,8,8,8,8,8,0},
+		{0,7,7,7,7,7,7,9,9,8,8,8,8,8,8,0},
+		{0,0,7,7,7,7,7,9,9,8,8,8,8,8,0,0},
 		{0,0,0,7,7,7,7,2,2,8,8,8,8,0,0,0},
 		{0,0,0,0,0,7,7,2,2,8,8,0,0,0,0,0},
 	};
 
+	int m_lastMovementDir;
+
+	int[][] m_sensorOrders = new int[][]
+	{
+		// 4=up left
+		new int[]{0, 4, 5, 1, 2},
+
+		// 0=up
+		new int[]{4, 0, 1},
+		
+		// 5=up right
+		new int[]{1, 4, 6, 0, 3},
+
+		// 2=left
+		new int[]{5, 0, 2},
+
+		// No movement
+		null,
+
+		// 3=right
+		new int[]{6, 1, 3},
+		
+		// 6=down left
+		new int[]{2, 7, 5, 3, 0},
+
+		// 1=down
+		new int[]{7, 2, 3},
+
+		// 7=down right
+		new int[]{3, 7, 6, 2, 1},
+	};
+
 	Vector2[] m_sensors =
 	{
-		Vector3.up*padding + Vector3.right*padding,
-		Vector3.up*padding + Vector3.right*(width-padding-1),
-		Vector3.up*(height-padding-1) + Vector3.right*padding,
-		Vector3.up*(height-padding-1) + Vector3.right*(width-padding-1),
+		/* 0=top left     */ Vector3.up*padding + Vector3.right*padding,
+		/* 1=top right    */ Vector3.up*padding + Vector3.right*(width-padding-1),
+		/* 2=bottom left  */ Vector3.up*(height-padding-1) + Vector3.right*padding,
+		/* 3=bottom right */ Vector3.up*(height-padding-1) + Vector3.right*(width-padding-1),
+
+		/* 4=up mid       */ Vector3.up*padding + Vector3.right*(width/2),
+		/* 5=mid left     */ Vector3.up*(height/2) + Vector3.right*padding,
+		/* 6=mid right    */ Vector3.up*(height/2) + Vector3.right*(width-padding-1),
+		/* 7=down mid     */ Vector3.up*(height-padding-1) + Vector3.right*(width/2),
 	};
 
 	Vector2 m_midSensor = Vector2.up*(height/2.0f) + Vector2.right*(width/2.0f);
@@ -79,6 +95,7 @@ public class testobject : MonoBehaviour
 		m_worldBuilder = FindObjectOfType<Worldbuilder>();
 
 		m_refreshTimeout = refreshTimer;
+		m_lastMovementDir = 4;
 	}
 	
 	// Update is called once per frame
@@ -105,13 +122,7 @@ public class testobject : MonoBehaviour
 
 	void OnDrawGizmos()
 	{
-		Gizmos.color = Color.red;
 		Vector3 pos = transform.position;
-		foreach( Vector2 v in m_sensors )
-		{
-			Vector3 v3 = SwitchWorld( v );
-			Gizmos.DrawCube( pos + v3 + (Vector3.down+Vector3.right)*0.5f, Vector3.one );
-		}
 
 		Gizmos.color = Color.green;
 		Vector3 msv3 = SwitchWorld( m_midSensor );
@@ -127,15 +138,51 @@ public class testobject : MonoBehaviour
 		Gizmos.color = Color.white;
 		//Gizmos.DrawCube( collworld + (Vector3.down+Vector3.right)*0.5f, Vector3.one );
 		
+		int x, y;
+		int w = collisionActions.GetLength( 0 );
+		int h = collisionActions.GetLength( 1 );
+		for( y=0; y<h; y++ )
+		{
+			for( x=0; x<w; x++ )
+			{
+				int i = collisionActions[ y, x ];
+				if( i == 0 ) continue;
+
+				Color c = Color.gray;
+				if( i == 5 ) c = Color.green;
+				else if( i == 6 ) c = Color.red;
+				else if( i == 7 ) c = Color.yellow;
+				else if( i == 8 ) c = Color.white;
+				Gizmos.color = c;
+				Vector3 v = SwitchWorld( new Vector2( m_position.x + x, m_position.y + y ));
+				Gizmos.DrawCube( v + (Vector3.down+Vector3.right)*0.5f, Vector3.one );
+			}
+		}
+
 		collworld = transform.position + SwitchWorld( debugCollisionPointRelative );
 		Gizmos.color = Color.cyan;
-		Gizmos.DrawCube( collworld + (Vector3.down+Vector3.right)*0.5f, Vector3.one );
+		Gizmos.DrawCube( collworld + (Vector3.down+Vector3.right)*0.5f + Vector3.back, Vector3.one*1.1f );
+
+		if( m_lastMovementDir != 4 )
+		{
+			int[] sensors = m_sensorOrders[ m_lastMovementDir ];
+			pos = transform.position;
+			Gizmos.color = Color.black;
+			foreach( int iv in sensors )
+			{
+				Vector2 v = m_sensors[ iv ];
+				Vector3 v3 = SwitchWorld( v );
+				Gizmos.DrawCube( pos + v3 + (Vector3.down+Vector3.right)*0.5f + Vector3.back, Vector3.one );
+			}
+		}
 	}
 
+	/*
 	int GetIntDistance( int x, int y )
 	{
 		return Mathf.FloorToInt( (new Vector2( x, y )).magnitude );
 	}
+	*/
 
 	void LerpHaxxor( int _x_no_fp, int _y_no_fp, int _delta_x_no_fp, int _delta_y_no_fp, int _i_fp1616, out int _x, out int _y )
 	{
@@ -169,8 +216,10 @@ public class testobject : MonoBehaviour
 			int small_object_y = smallObjects[ iObject, 1 ] + 2;
 			int delta_x = small_object_x-my_pos_x;
 			int delta_y = small_object_y-my_pos_y;
-			int distance = GetIntDistance( delta_x, delta_y );
-			if( distance < 10 )
+			//int distance = GetIntDistance( delta_x, delta_y );
+			//if( distance < 10 )
+			int distanceSqr = (delta_x*delta_x)+(delta_y*delta_y);
+			if( distanceSqr < 10*10 )
 			{
 				int coll_x, coll_y;
 				int i = (8 << 16) / (10);
@@ -271,11 +320,22 @@ public class testobject : MonoBehaviour
 		int tile_y;
 		int coll_tile_index;
 
+		int mdx = wanted_dir_x+1;
+		int mdy = wanted_dir_y+1;
+		int sensor_list_index = (mdy*3)+mdx;
+		if( sensor_list_index == 4 )
+			goto done;
+
+		m_lastMovementDir = sensor_list_index;
+
+		int[] sensor_list = m_sensorOrders[ sensor_list_index ];
+		int i_sensor_list;
 		int i_sensor;
 
-		i_sensor = 0;
+		i_sensor_list = 0;
 
 	Loop_Sensors_A:
+		i_sensor = sensor_list[ i_sensor_list ];
 		sensor_x = (int)m_sensors[ i_sensor ].x;
 		sensor_y = (int)m_sensors[ i_sensor ].y;
 		wanted_pos_x = obj_pos_x + sensor_x + new_dir_x;
@@ -302,15 +362,16 @@ public class testobject : MonoBehaviour
 			new_dir_y = 0;
 		}
 
-		i_sensor++;
-		if( i_sensor < m_sensors.Length )
+		i_sensor_list++;
+		if( i_sensor_list < sensor_list.Length )
 			goto Loop_Sensors_A;
 
 
 
-		i_sensor = 0;
+		i_sensor_list = 0;
 		
 	Loop_Sensors_B:
+		i_sensor = sensor_list[ i_sensor_list ];
 		sensor_x = (int)m_sensors[ i_sensor ].x;
 		sensor_y = (int)m_sensors[ i_sensor ].y;
 		wanted_pos_x = obj_pos_x + sensor_x + new_dir_x;
@@ -340,10 +401,11 @@ public class testobject : MonoBehaviour
 		else if( coll_tile_index == 13 )
 			DoCollision_Corner_DownRightAsm( tile_x, tile_y, ref new_dir_x, ref new_dir_y );
 
-		i_sensor++;
-		if( i_sensor < m_sensors.Length )
+		i_sensor_list++;
+		if( i_sensor_list < sensor_list.Length )
 			goto Loop_Sensors_B;
 
+	done:
 
 		return new Vector2( new_dir_x, new_dir_y );
 	}
