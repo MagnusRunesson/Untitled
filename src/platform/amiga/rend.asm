@@ -194,6 +194,14 @@ rendLoadTileMap:
 ;==============================================================================
 
 rendLoadSprite:
+	move.l		d1,d2					; store file id of sprite file in d2
+	bsr			resourceLoadSpriteBank
+	;d0=index for this sprite bank
+
+	move.l		d2,d0					; file id back into d0
+	bsr			resourceLoadSprite
+	;d0=index for this sprite
+	
 	lea			.spriteCounterTemp(pc),a0
 	move.l		(a0),d0
 	move.l		d0,d1
