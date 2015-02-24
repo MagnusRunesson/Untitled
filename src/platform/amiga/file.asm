@@ -12,23 +12,24 @@
 ;==============================================================================
 
 fileLoad
-	pushm		d1-d7/a0-a6
+	push.l		d2
 
 	lea			FileIDMap(pc),a1
 	asl.l		#2,d0
 	add.l		d0,a1
 	moveq		#0,d0
-	move.w		(a1)+,d0
+	move.w		(a1)+,d0		; file position (sector index)
 	moveq		#0,d1	
-	move.w		(a1),d1
-
-	push		d1			; file length in number of sectors
+	move.w		(a1),d1			; file length in number of sectors
+		
+	move.l		d1,d2			; file length in bytes
+	mulu.w		#_chunk_size,d2 
 
 	bsr			trackdiskLoadBlock
 
-	pop			d0
+	move.l		d2,d0			; file length in bytes
 
-	popm		d1-d7/a0-a6
+	pop.l		d2
 	rts
 
 
