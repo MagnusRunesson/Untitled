@@ -378,35 +378,86 @@ public class testobject : MonoBehaviour
 		d2 = d4 & 7;
 		d3 = d5 & 7;
 		
-		if( d6 == 1 )
-			DoCollision_UpLeftAsm( ref d1 );
-		else if( d6 == 2 )
-			DoCollision_DownRightAsm( ref d1 );
-		else if( d6 == 3 )
-			DoCollision_UpLeftAsm( ref d0 );
-		else if( d6 == 4 )
-			DoCollision_DownRightAsm( ref d0 );
-		else if( d6 == 5 )
-			DoCollision_Slope_UpLeftAsm( d2, d3, ref d0, ref d1 );
-		else if( d6 == 6 )
-			DoCollision_Slope_UpRightAsm( d2, d3, ref d0, ref d1 );
-		else if( d6 == 7 )
-			DoCollision_Slope_DownLeftAsm( d2, d3, ref d0, ref d1 );
-		else if( d6 == 8 )
-			DoCollision_Slope_DownRightAsm( d2, d3, ref d0, ref d1 );
-		else if( d6 == 10 )
-			DoCollision_Corner_UpLeftAsm( d2, d3, ref d0, ref d1 );
-		else if( d6 == 11 )
-			DoCollision_Corner_UpRightAsm( d2, d3, ref d0, ref d1 );
-		else if( d6 == 12 )
-			DoCollision_Corner_DownLeftAsm( d2, d3, ref d0, ref d1 );
-		else if( d6 == 13 )
-			DoCollision_Corner_DownRightAsm( d2, d3, ref d0, ref d1 );
-		else if( d6 == 9 )
-		{
-			d0 = 0;
-			d1 = 0;
-		}
+		if( d6 != 1 )
+			goto l2;
+		DoCollision_UpLeftAsm( ref d1 );
+		goto Next_Sensor;
+
+	l2:
+		if( d6 != 2 )
+			goto l3;
+		DoCollision_DownRightAsm( ref d1 );
+		goto Next_Sensor;
+
+	l3:
+		if( d6 != 3 )
+			goto l4;
+		DoCollision_UpLeftAsm( ref d0 );
+		goto Next_Sensor;
+
+	l4:
+		if( d6 != 4 )
+			goto l5;
+
+		DoCollision_DownRightAsm( ref d0 );
+		goto Next_Sensor;
+
+	l5:
+		if( d6 != 5 )
+			goto l6;
+		DoCollision_Slope_UpLeftAsm( d2, d3, ref d0, ref d1 );
+		goto Next_Sensor;
+
+	l6:
+		if( d6 != 6 )
+			goto l8;
+		DoCollision_Slope_UpRightAsm( d2, d3, ref d0, ref d1 );
+		goto Next_Sensor;
+
+	l8:
+		if( d6 != 7 )
+			goto l9;
+		DoCollision_Slope_DownLeftAsm( d2, d3, ref d0, ref d1 );
+		goto Next_Sensor;
+
+	l9:
+		if( d6 != 8 )
+			goto l10;
+		DoCollision_Slope_DownRightAsm( d2, d3, ref d0, ref d1 );
+		goto Next_Sensor;
+
+	l10:
+		if( d6 != 10 )
+			goto l11;
+		DoCollision_Corner_UpLeftAsm( d2, d3, ref d0, ref d1 );
+		goto Next_Sensor;
+
+	l11:
+		if( d6 != 11 )
+			goto l12;
+		DoCollision_Corner_UpRightAsm( d2, d3, ref d0, ref d1 );
+		goto Next_Sensor;
+
+	l12:
+		if( d6 != 12 )
+			goto l13;
+		DoCollision_Corner_DownLeftAsm( d2, d3, ref d0, ref d1 );
+		goto Next_Sensor;
+
+	l13:
+		if( d6 != 13 )
+			goto l14;
+		DoCollision_Corner_DownRightAsm( d2, d3, ref d0, ref d1 );
+		goto Next_Sensor;
+
+	l14:
+		if( d6 != 9 )
+			goto Next_Sensor;
+		Debug.Log ("l14 say hello! d6=" + d6 );
+		d0 = 0;
+		d1 = 0;
+
+	Next_Sensor:
 
 		d7--;
 		if( d7 >= 0 )
