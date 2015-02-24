@@ -77,6 +77,13 @@ public class Worldbuilder : MonoBehaviour
 		return m_world[ _y, _x ];
 	}
 
+	public int GetTile( int _index )
+	{
+		int y = (_index >> 8) & 0xff;
+		int x = _index & 0xff;
+		return GetTileAt( x, y );
+	}
+
 	public int[,] GetSmallObjects()
 	{
 		return m_smallObjects;
