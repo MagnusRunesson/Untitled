@@ -23,13 +23,14 @@ _trackdisk_direction_center		equ		(1)
 ;
 ;==============================================================================
 
-_TrackdiskVars	RSRESET
+							rsreset
 __TrackdiskCurrentCylinder	rs.w	1
 __TrackdiskCurrentDirection	rs.w	1	; [1=center, -1=outward]
 __TrackdiskCurrentSide		rs.b	1	; [0=lower head, 1=upper head]
 							rs.b	1	; pad
 _TrackdiskVarsSizeof		rs.b	0
 
+_TrackdiskVars
 	dc.w	-1	; __TrackdiskCurrentCylinder
 	dc.w	0	; __TrackdiskCurrentDirection
 	dc.b	-1	; __TrackdiskCurrentSide
