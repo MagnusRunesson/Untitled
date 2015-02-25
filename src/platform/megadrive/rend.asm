@@ -143,7 +143,7 @@ rendWaitVSync:
 rendSetScrollXY:
 	and			#511,d0
 	and			#511,d1
-	muls		#-1,d0
+	neg			d0
 	add			#512,d0
 
 	; Setup CPU registers and VDP auto increment register
