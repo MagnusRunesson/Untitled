@@ -238,10 +238,12 @@ resourceGetBySlotIndex
 ;==============================================================================
 
 resourceLoadSpriteBank
+	push		a2
 	lea			_ResSpriteBankConfig(pc),a0
 	lea			_ResSpriteBankSlots(pc),a1
 	lea			_ResSpriteMemPool(pc),a2
 	bsr			resourceLoadFile
+	pop			a2
 	rts
 
 resourceGetSpriteBank
