@@ -37,13 +37,35 @@ _wait_blit	MACRO
 ;==============================================================================
 
 rendInit:
+	pushm		d2-d7/a2-a6
+
 	lea			_custom,a2
 
 	_get_workmem_ptr BitplaneMem,a0
 	subq.l		#2,a0
 	bsr			_setupBitplanePointers
 	
-	lea 		SpriteExportTest(pc),a0
+	
+	
+	lea			Copper(pc),a0
+	move.l		a0,cop1lc(a2)
+	move.w		d0,copjmp1(a2)
+
+	; RendVars defaults
+	lea			_RendVars(pc),a0
+	move.l		#0,__RendScrollX(a0)
+	move.l		#0,__RendScrollY(a0)
+
+	popm		d2-d7/a2-a6
+	rts
+
+_rendSetupSpritePointers
+	pushm		d0-d7/a2-a6
+
+	lea 		_ResSpriteMemPool(pc),a3
+	move.l		__ResMemPoolBottomOfMem(a3),a0
+	add.l		#512*2,a0
+
 	lea 		Copper_sprpt+2(pc),a1
 	move.l		a0,d0
 	swap.w		d0
@@ -51,7 +73,7 @@ rendInit:
 	swap.w		d0
 	move.w		d0,4(a1)
 	
-	lea 		SpriteExportTest+72(pc),a0
+	lea			72(a0),a0
 	addq		#8,a1
 	move.l		a0,d0
 	swap.w		d0
@@ -70,16 +92,8 @@ rendInit:
 	move.w		d0,4(a1)
 	addq		#8,a1
 	dbf			d1,.spriteLoop
-	
-	lea			Copper(pc),a0
-	move.l		a0,cop1lc(a2)
-	move.w		d0,copjmp1(a2)
 
-	; RendVars defaults
-	lea			_RendVars(pc),a0
-	move.l		#0,__RendScrollX(a0)
-	move.l		#0,__RendScrollY(a0)
-
+	popm		d0-d7/a2-a6
 	rts
 
 
@@ -349,6 +363,8 @@ rendSetSpritePosition:
 	cmp.w		#1,d0
 	bne.s		testBob
 
+	bsr			_rendSetupSpritePointers
+
 	add.w		#$81,d1		; d1=hstart (high bits)
 	move.l		d1,d3		; d3=hstart (low bit)
 	
@@ -373,8 +389,11 @@ rendSetSpritePosition:
 	and.w		#$0004,d4
 	or.w		d4,d5		;d5=sprxctl
 	
-	lea			SpriteExportTest(pc),a0
-	lea			SpriteExportTest+72(pc),a1
+	lea 		_ResSpriteMemPool(pc),a3
+	move.l		__ResMemPoolBottomOfMem(a3),a0
+	add.l		#512*2,a0
+	lea			72(a0),a1
+
 	move.w		d1,(a0)+
 	move.w		d1,(a1)+
 	move.w		d5,(a0)
@@ -406,7 +425,9 @@ testBob
 	add.l		d1,a2
 	add.l		d2,a2
 
-	lea			TestBobGfx(pc),a0
+	lea 		_ResSpriteMemPool(pc),a3
+	move.l		__ResMemPoolBottomOfMem(a3),a0
+
 	lea			16*16/8*4(a0),a1
 	
 	_wait_blit
@@ -469,17 +490,11 @@ rendSetSpriteDrawOrder:
 ;
 ;==============================================================================
 	cnop	0,4
-	
-SpriteExportTest
-	incbin	"../src/incbin/herotest_sprite_bank_amiga_b_hw.bin"
+
 
 SpriteBlank
 	dc.w	$0000,$0000
 	dc.w	$0000,$0000
-
-TestBobGfx
-	incbin	"../src/incbin/testsprite2_sprite_bank_amiga_a_bob.bin"
-
 
 ;==============================================================================
 ;
