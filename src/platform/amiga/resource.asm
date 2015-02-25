@@ -184,10 +184,10 @@ resourceLoadFile
 	add.l		d0,d2	; next memory pointer for file load
 	;add.l		#1024*300,d2
 
-	move.l		__ResMemPoolBottomOfMem(a2),d3	; memory pointer for file load
+	move.l		__ResMemPoolTopOfMem(a2),d3	; memory pointer for file load
 
-	cmp.l		d2,d3
-	bgt			.outOfMemory	; <<< error !!!
+	cmp.l		d3,d2
+	bgt			.outOfMemory
 
 	move.l		d2,__ResMemPoolFirstAvailableMem(a2)
 
