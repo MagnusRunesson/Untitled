@@ -1,16 +1,38 @@
 
 ;==============================================================================
 ;
+; Consts
+;
+;==============================================================================
+
+_rend_sprite_flag_isspriteb_bit_	equ		(0)
+_rend_sprite_flag_isspriteb_mask_	equ		(1<<0)
+
+;==============================================================================
+;
 ; Structures
 ;
 ;==============================================================================
 
-_RendVars						rsreset
-__RendScrollX					rs.l	1
-__RendScrollY					rs.l	1
-_RendVarsSizeof					rs.b	0
+							rsreset
+__RendSpritePosX			rs.w	1
+__RendSpritePosY			rs.w	1
+__RendSpriteResourceId		rs.w	1
+__RendSpriteBankResourceId	rs.w	1
+__RendSpriteFlags			rs.w	1
+_RendSpriteSizeof			rs.b	0
 
+							rsreset
+__RendScrollX				rs.l	1
+__RendScrollY				rs.l	1
+__RendNextSprite			rs.b	1
+_RendVarsSizeof				rs.b	0
+
+_RendVars
 	dcb.b	_RendVarsSizeof
+
+_RendSprites
+	dcb.b	_RendSpriteSizeof
 
 	cnop	0,2
 	
