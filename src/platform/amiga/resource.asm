@@ -260,10 +260,12 @@ resourceGetSpriteBank
 ;==============================================================================
 
 resourceLoadSprite
+	push		a2
 	lea			_ResSpriteConfig(pc),a0
 	lea			_ResSpriteSlots(pc),a1
 	lea			_ResSpriteMemPool(pc),a2
 	bsr			resourceLoadFile
+	pop			a2
 	rts
 
 resourceGetSprite
