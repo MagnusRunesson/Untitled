@@ -105,6 +105,20 @@ main:
 	; Read player input and update player world positions
 	;
 	bsr			_inputUpdate
+
+	;
+	; Check collision here!
+	;
+
+	;
+	; Apply new delta
+	;
+	add.l		d0,_hero_sprite_pos_x(a2)
+	add.l		d1,_hero_sprite_pos_y(a2)
+
+	;
+	; Update camera
+	;
 	bsr			_checkBorders
 
 	;
@@ -225,48 +239,62 @@ main:
 
 
 ;
-; Ask hardware for the input and act on it
+; Ask hardware for the input and put the result in registers
+;
+; Input:
+;	none
+;
+; Output:
+;	d0=delta on X, in 16.16 fixed point
+;	d1=delta on Y, in 16.16 fixed point
 ;
 _inputUpdate:
 	jsr			inpUpdate(pc)				; Return the currently pressed buttons in d0
 
-	btst		#INPUT_ACTION,d0
+	move.l		d0,d2
+
+	btst		#INPUT_ACTION,d2
 	beq			.change_picture_0
 
-	btst		#INPUT_ACTION2,d0
+	btst		#INPUT_ACTION2,d2
 	beq			.change_picture_1
 
-	btst		#INPUT_LEFT,d0
+	btst		#INPUT_LEFT,d2
 	beq			.scroll_left
 
-	btst		#INPUT_RIGHT,d0
+	btst		#INPUT_RIGHT,d2
 	beq			.scroll_right
 
+	; No movement on X
+	clr.l		d0
 	bra			.scroll_updown
 
 .scroll_left:
-	sub.l		#$10000,_hero_sprite_pos_x(a2)
+	move.l		#-$10000,d0
 	bra			.scroll_updown
 
 .scroll_right:
-	add.l		#$10000,_hero_sprite_pos_x(a2)
+	move.l		#$10000,d0
 	bra			.scroll_updown
 
 .scroll_updown:
-	btst		#INPUT_UP,d0
+	btst		#INPUT_UP,d2
 	beq			.scroll_up
 
-	btst		#INPUT_DOWN,d0
+	btst		#INPUT_DOWN,d2
 	beq			.scroll_down
+
+	; No movement on Y
+	clr.l		d1
 
 	bra			.done
 
 .scroll_up:
-	sub.l		#$10000,_hero_sprite_pos_y(a2)
+	move.l		#-$10000,d1
 	bra			.done
 
 .scroll_down:
-	add.l		#$10000,_hero_sprite_pos_y(a2)
+	move.l		#$10000,d1
 	bra			.done
 
 .change_picture_0
