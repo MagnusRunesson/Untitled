@@ -488,19 +488,49 @@ _checkBorders:
 _checkCollision:
 	pushm.l		d0-d7/a0-a6
 
-	; Fetch the current player position
-	move.l		_hero_sprite_pos_x(a2),d0
-	move.l		_hero_sprite_pos_y(a2),d1
-	lsr.l		#8,d0
-	lsr.l		#8,d0
-	lsr.l		#8,d1
-	lsr.l		#8,d1
-	move.l		d0,a3
-	move.l		d1,a4
+	;
+	; First convert from 16.16 fixed point to 32.0 regular thingie
+	;
+	swap		d0
+	and.l		#$0000ffff,d0
+	swap		d1
+	and.l		#$0000ffff,d1
+
+	;
+	; Find out which way we're going so we know which sensors to use for collision detection
+	;
+	; 		int mdx = wanted_dir_x+1;
+	;		int mdy = wanted_dir_y+1;
+	;		int sensor_list_index = (mdy*3)+mdx;
+	;		if( sensor_list_index == 4 )
+	;			goto done;
+	;
+	move.w		d1,d2		; wanted dir Y to d2
+	add.w		#1,d2		; Since direction is -1 to 1 we need to move it to 0 to 2
+	mulu.w		#3,d2		; Multiply from row to index of a 3x3 matrix of stuff. Should this be 4x4 to avoid the mul?
+	add.w		d0,d2		; Add wanted dir x
+	add.w		#1,d2		; And again, convert from -1..1 direction to 0..2
+
+	; Now d2 is an index into our list of sensors for the direction the object is going
+	; If that index is #4 that means we're not moving
+	cmp.w		#4,d2
+	beq			.all_done
+
+
+	; Fetch the current player position, convert from 16.16 fixed point to 32.0 and store result in a3 and a4
+	move.l		_hero_sprite_pos_x(a2),d2
+	swap		d2
+	and.l		#$0000ffff,d2
+	move.l		d2,a3
+	move.l		_hero_sprite_pos_x(a2),d2
+	swap		d2
+	and.l		#$0000ffff,d2
+	move.l		d2,a4
 	; a3=player position X, in 32.0 format
 	; a4=player position Y, in 32.0 format
 
 
+.all_done:
 	popm.l		d0-d7/a0-a6
 	rts
 
