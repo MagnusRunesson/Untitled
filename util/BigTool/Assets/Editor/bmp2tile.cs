@@ -746,10 +746,14 @@ public class bmp2tile : EditorWindow
 			
 			//
 			TileMap tileMap = TileMap.LoadJson( mapFile );
+			CollisionMap collisionmap = new CollisionMap( tileMap );
+
 			tileMap.Export( outBaseName + "_map.bin" );
+			collisionmap.Export( outBaseName  + "_collisionmap.bin" );
 
 			//
 			AddFile( ref asmData, ref asmFileList, ref asmFileMap, outFileNameNoExt + "_map.bin" );
+			AddFile( ref asmData, ref asmFileList, ref asmFileMap, outFileNameNoExt + "_collisionmap.bin" );
 		}
 
 		System.IO.File.WriteAllText( m_lastExportDirectory + System.IO.Path.DirectorySeparatorChar + "data.asm", asmData );
