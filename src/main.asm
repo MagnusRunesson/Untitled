@@ -630,7 +630,36 @@ _checkCollision:
 	bra			.next_sensor
 
 .l5:
+	cmp.b		#5,d6
+	bne			.l6
 
+	; if( (7-_in_tile_x) > _in_tile_y )
+	;	return;
+	move.b		#7,d4		; 
+	sub.b		d2,d4		; 7-_in_tile_x
+	cmp.b		d4,d3		; d4=(7-_in_tile_x) and d3=_in_tile_y
+	blt			.l6
+
+	; if( _dir_x+_dir_y == 2 )
+	; {
+	; 	_dir_x = 0;
+	; 	_dir_y = 0;
+	; 	return;
+	; }
+
+	move.b		d0,d4
+	add.b		d1,d4
+	cmp.b		#2,d4
+	bne			.l5_a
+
+	clr			d0
+	clr			d1
+	bra			.next_sensor
+
+.l5_a:
+
+
+.l6:
 
 .next_sensor:
 	dbra		d7,.loop_sensors
