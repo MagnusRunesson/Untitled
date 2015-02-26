@@ -19,6 +19,7 @@ public class TileMap
 
 		//
 		m_tiles = new TileInstance[ m_width, m_height ];
+		m_rawTiles = null;
 
 		//
 		int x, y;
@@ -100,6 +101,7 @@ public class TileMap
 				TileInstance tileInstance = tileBank.m_allTileInstances[ tile_id ];
 				
 				//
+				ret.SetRawTile( tile_x, tile_y, tile_id );
 				ret.SetTile( tile_x, tile_y, tileInstance );
 			}
 		}
@@ -112,6 +114,7 @@ public class TileMap
 		m_width = _width;
 		m_height = _height;
 		m_tiles = new TileInstance[ m_width, m_height ];
+		m_rawTiles = new int[ m_width, m_height ];
 	}
 
 	public TileInstance GetTile( int _x, int _y )
@@ -122,6 +125,23 @@ public class TileMap
 	void SetTile( int _x, int _y, TileInstance _tile )
 	{
 		m_tiles[ _x, _y ] = _tile;
+	}
+
+	public bool GetRawTile( int _x, int _y, out int _tileID )
+	{
+		if( m_rawTiles == null )
+		{
+			_tileID = 0;
+			return false;
+		}
+
+		_tileID = m_rawTiles[ _x, _y ];
+		return true;
+	}
+
+	void SetRawTile( int _x, int _y, int _tileID )
+	{
+		m_rawTiles[ _x, _y ] = _tileID;
 	}
 
 	public void Export( string _outfilename )
@@ -174,6 +194,7 @@ public class TileMap
 		return m_height;
 	}
 
+	int[,] m_rawTiles;
 	TileBank m_tileBank;
 	TileInstance[,] m_tiles;
 
