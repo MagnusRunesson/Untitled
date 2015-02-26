@@ -33,7 +33,7 @@ public class CollisionMap
 	int m_width;
 	int m_height;
 
-	int[] m_tiles;
+	int[,] m_tiles;
 
 	static int[][] m_collisionToVisual = new int[][]
 	{
@@ -57,23 +57,22 @@ public class CollisionMap
 	{
 		m_width = _sourceMap.GetWidth();
 		m_height = _sourceMap.GetHeight();
-		m_tiles = new int[ m_width * m_height ];
+		m_tiles = new int[ m_width, m_height ];
 
 		int x, y;
 		for( y=0; y<m_height; y++ )
 		{
 			for( x=0; x<m_width; x++ )
 			{
-				TileInstance tileInstance = _sourceMap.GetTile( x, y );
-				int unoptimizedIndex;
-				if( tileInstance.m_tileBank.GetUnoptimizedIndexFromInstance( tileInstance, out unoptimizedIndex ))
+				int visualTileID;
+				if( _sourceMap.GetRawTile( x, y, out visualTileID ) == false )
 				{
-					int collisionTileIndex = GetCollisionTileIndexFromVisualIndex( unoptimizedIndex );
+					Debug.LogException( new UnityException( "Couldn't find raw tile, boo!" ));
+					continue;
 				}
-				else
-				{
-					Debug.LogException( new UnityException( "Couldn't find unoptimized index for tile instance." ));
-				}
+
+				int collisionTileID = GetCollisionTileIndexFromVisualIndex( visualTileID );
+				m_tiles[ x, y ] = collisionTileID;
 			}
 		}
 	}
@@ -93,5 +92,31 @@ public class CollisionMap
 		}
 
 		return 0;
+	}
+
+	public void Export( string _outfilename )
+	{
+		Debug.Log ("Exporting collision map to " + _outfilename );
+		
+		int headersize = 2;
+		
+		// Export size = width * height * 2 (each tile in the map is 2 bytes)
+		int outsize = m_width*m_height*2;
+		byte[] outBytes = new byte[ headersize+outsize ];
+		
+		outBytes[ 0 ] = (byte)m_width;
+		outBytes[ 1 ] = (byte)m_height;
+		
+		int x, y;
+		for( y=0; y<m_height; y++ )
+		{
+			for( x=0; x<m_width; x++ )
+			{
+				int wrOfs = headersize + ((y*m_width)+x);
+				outBytes[ wrOfs ] = (byte)m_tiles[ x, y ];
+			}
+		}
+		
+		System.IO.File.WriteAllBytes( _outfilename, outBytes );
 	}
 }
