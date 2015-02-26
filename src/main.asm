@@ -109,6 +109,7 @@ main:
 	;
 	; Check collision here!
 	;
+	bsr			_checkCollision
 
 	;
 	; Apply new delta
@@ -472,3 +473,54 @@ _checkBorders:
 .no_right:
 .done:
 	rts
+
+
+
+;
+; Input
+;	d0=movement X, in 16.16 fixed point
+;	d1=movement Y, in 16.16 fixed point
+;
+; Output:
+;	d0=movement X, in 16.16 fixed point
+;	d1=movement Y, in 16.16 fixed point
+;
+_checkCollision:
+	pushm.l		d0-d7/a0-a6
+
+	; Fetch the current player position
+	move.l		_hero_sprite_pos_x(a2),d0
+	move.l		_hero_sprite_pos_y(a2),d1
+	lsr.l		#8,d0
+	lsr.l		#8,d0
+	lsr.l		#8,d1
+	lsr.l		#8,d1
+	move.l		d0,a3
+	move.l		d1,a4
+	; a3=player position X, in 32.0 format
+	; a4=player position Y, in 32.0 format
+
+
+	popm.l		d0-d7/a0-a6
+	rts
+
+.player_sensors_orders:
+	dc.b		5,2,1,5,4,0,-1,-1	 		; new int[]{2, 1, 5, 4, 0},
+	dc.b		3,1,0,4,-1,-1,-1,-1			; new int[]{1, 0, 4},
+	dc.b		5,3,0,6,4,1,-1,-1			; new int[]{3, 0, 6, 4, 1},
+	dc.b		3,2,0,5,-1,-1,-1,-1			; new int[]{2, 0, 5},
+	dc.b		0,-1,-1,-1,-1,-1,-1,-1		; null,
+	dc.b		3,3,1,6,-1,-1,-1,-1			; new int[]{3, 1, 6},
+	dc.b		5,0,3,5,7,2,-1,-1			; new int[]{0, 3, 5, 7, 2},
+	dc.b		3,3,2,7,-1,-1,-1,-13		; new int[]{3, 2, 7},
+	dc.b		5,1,2,6,7,3,-1,-1			; new int[]{1, 2, 6, 7, 3},
+
+.player_sensor_offsets:
+	dc.b		2,2
+	dc.b		13,2
+	dc.b		2,13
+	dc.b		13,13
+	dc.b		8,2
+	dc.b		2,8
+	dc.b		13,8
+	dc.b		8,13
