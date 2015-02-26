@@ -512,22 +512,90 @@ _checkCollision:
 	add.w		#1,d2		; And again, convert from -1..1 direction to 0..2
 
 	; Now d2 is an index into our list of sensors for the direction the object is going
-	; If that index is #4 that means we're not moving
+	; If that index is #4 that means we're not moving, so we can skip this whole thing
 	cmp.w		#4,d2
 	beq			.all_done
 
+	; Before we lose a2 we should fetch the current player position, convert from 16.16 fixed point to 32.0 and store result in a3 and a4
+	move.l		_hero_sprite_pos_x(a2),d3
+	swap		d3
+	and.l		#$0000ffff,d3
+	move.l		d3,a3
+	move.l		_hero_sprite_pos_x(a2),d3
+	swap		d3
+	and.l		#$0000ffff,d3
+	move.l		d3,a4
+	; a3 is now player position X, in 32.0 format
+	; a4 is now player position Y, in 32.0 format
 
-	; Fetch the current player position, convert from 16.16 fixed point to 32.0 and store result in a3 and a4
-	move.l		_hero_sprite_pos_x(a2),d2
-	swap		d2
-	and.l		#$0000ffff,d2
-	move.l		d2,a3
-	move.l		_hero_sprite_pos_x(a2),d2
-	swap		d2
-	and.l		#$0000ffff,d2
-	move.l		d2,a4
-	; a3=player position X, in 32.0 format
-	; a4=player position Y, in 32.0 format
+	; The sensor order list contain 8 entries for list, so we need to convert from index into byte offset
+	lsl.w		#3,d2
+
+	; a2 should be the pointer to our sensors
+	lea			.player_sensors_orders(pc),a2
+	add.w		d2,a2		; d2 is the byte offset from the start of the address to the current list of sensors, so add that offset
+
+	; Now a2 point to somewhere in the .player_sensor_order
+	clr			d7
+	move.b		(a2)+,d7	; First byte in the list is the number of sensors in that list (the length of the list)
+	sub.b		#1,d7		; Compensate for dbra
+
+	; Fetch the sensor offset list
+	lea			.player_sensor_offsets(pc),a1
+
+	; Fetch the list of collision tiles
+	lea			_data_testmap_collisionmap,a0
+
+
+	; d7 is the number of sensors, so we will use that to control the number of loops
+	; a0 now point to the collision tile map
+	; a1 now point to the list of sensor offsets
+	; a2 now point to the list of sensor order for this direction
+	; a3 is the current player X position, 32.0 format
+	; a4 is the current player Y position, 32.0 format
+	;
+	; d0-d6 are unused
+	; a5-a6 are unused
+.loop_sensors:
+	clr			d6				; Not sure if this needs to be cleared, but it will be used as an address offset, so I assume so
+	move.b		(a2,d7),d6	; Read sensor index from sensor order list
+	lsl.b		#1,d6
+
+	
+	clr			d2 ; Read the sensor pixel offset from the table of sensor offsets
+	clr			d3
+	move.b		(a1,d6),d2
+	add.b		#1,d6
+	move.b		(a1,d6),d3
+
+	
+	move.l		a3,d4 ; Find the wanted X position based on player position (a3), the sensor offset (d2), and the wanted direction (d0)
+	add.b		d2,d4
+	add.b		d0,d4
+
+	
+	move.l		a4,d5 ; Also find the wanted Y position based on player position (a4), the sensor offset (d3), and the wanted direction (d1)
+	add.b		d3,d5
+	add.b		d1,d5
+
+	; Calculate the tile position from a pixel position
+
+	
+	move.w		d4,d2 ; Tile X from world X
+	lsr.w		#3,d2
+	
+	
+	move.w		d5,d3 ; Tile Y from world Y
+	lsr.w		#3,d3
+
+	; Calculate index into collision map based on tile X and Y
+	move.w		d3,d6		; d6=y
+	lsl.w		#6,d6		; y*=64
+	add.w		d2,d6		; d6+=x
+
+	; Read the collision tile ID from the map
+	move.b		(a0,d6),d6	;
+
 
 
 .all_done:
