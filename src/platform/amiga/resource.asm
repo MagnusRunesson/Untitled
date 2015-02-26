@@ -182,7 +182,6 @@ resourceLoadFile
 	move.l		d7,d2	; memory pointer for file load
 
 	add.l		d0,d2	; next memory pointer for file load
-	;add.l		#1024*300,d2
 
 	move.l		__ResMemPoolTopOfMem(a2),d3	; memory pointer for file load
 
@@ -192,7 +191,6 @@ resourceLoadFile
 	move.l		d2,__ResMemPoolFirstAvailableMem(a2)
 
 	move.l		d6,d0
-
 	bra			.exit
 
 .foundExistingResource
