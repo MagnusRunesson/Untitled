@@ -316,6 +316,16 @@ _data_testmap_map_length                equ ((_data_testmap_map_end-_data_testma
 _data_testmap_map_end:
 
 
+; testmap_collisionmap.bin
+
+	cnop		0,_chunk_size
+_data_testmap_collisionmap:
+	incbin	"../src/incbin/testmap_collisionmap.bin"
+_data_testmap_collisionmap_pos          equ _data_testmap_collisionmap/_chunk_size
+_data_testmap_collisionmap_length       equ ((_data_testmap_collisionmap_end-_data_testmap_collisionmap)+(_chunk_size-1))/_chunk_size
+_data_testmap_collisionmap_end:
+
+
 ; testmap2_map.bin
 
 	cnop		0,_chunk_size
@@ -324,3 +334,13 @@ _data_testmap2_map:
 _data_testmap2_map_pos                  equ _data_testmap2_map/_chunk_size
 _data_testmap2_map_length               equ ((_data_testmap2_map_end-_data_testmap2_map)+(_chunk_size-1))/_chunk_size
 _data_testmap2_map_end:
+
+
+; testmap2_collisionmap.bin
+
+	cnop		0,_chunk_size
+_data_testmap2_collisionmap:
+	incbin	"../src/incbin/testmap2_collisionmap.bin"
+_data_testmap2_collisionmap_pos         equ _data_testmap2_collisionmap/_chunk_size
+_data_testmap2_collisionmap_length      equ ((_data_testmap2_collisionmap_end-_data_testmap2_collisionmap)+(_chunk_size-1))/_chunk_size
+_data_testmap2_collisionmap_end:

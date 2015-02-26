@@ -26,7 +26,9 @@ fileid_signpost_bank                    equ 24
 fileid_signpost_map                     equ 25
 fileid_signpost_palette                 equ 26
 fileid_testmap_map                      equ 27
-fileid_testmap2_map                     equ 28
+fileid_testmap_collisionmap             equ 28
+fileid_testmap2_map                     equ 29
+fileid_testmap2_collisionmap            equ 30
 
 FileIDMap:
 	dc.w	_data_herotest_sprite_bank_pos,_data_herotest_sprite_bank_length
@@ -57,4 +59,6 @@ FileIDMap:
 	dc.w	_data_signpost_map_pos,_data_signpost_map_length
 	dc.w	_data_signpost_palette_pos,_data_signpost_palette_length
 	dc.w	_data_testmap_map_pos,_data_testmap_map_length
+	dc.w	_data_testmap_collisionmap_pos,_data_testmap_collisionmap_length
 	dc.w	_data_testmap2_map_pos,_data_testmap2_map_length
+	dc.w	_data_testmap2_collisionmap_pos,_data_testmap2_collisionmap_length
