@@ -486,7 +486,7 @@ _checkBorders:
 ;	d1=movement Y, in 16.16 fixed point
 ;
 _checkCollision:
-	pushm.l		d0-d7/a0-a6
+	pushm.l		d2-d7/a0-a6
 
 	;
 	; First convert from 16.16 fixed point to 32.0 regular thingie
@@ -521,7 +521,7 @@ _checkCollision:
 	swap		d3
 	and.l		#$0000ffff,d3
 	move.l		d3,a3
-	move.l		_hero_sprite_pos_x(a2),d3
+	move.l		_hero_sprite_pos_y(a2),d3
 	swap		d3
 	and.l		#$0000ffff,d3
 	move.l		d3,a4
@@ -545,6 +545,7 @@ _checkCollision:
 
 	; Fetch the list of collision tiles
 	lea			_data_testmap_collisionmap,a0
+	add.l		#2,a0
 
 
 	; d7 is the number of sensors, so we will use that to control the number of loops
@@ -557,35 +558,34 @@ _checkCollision:
 	; d0-d6 are unused
 	; a5-a6 are unused
 .loop_sensors:
-	clr			d6				; Not sure if this needs to be cleared, but it will be used as an address offset, so I assume so
+	clr			d6			; Not sure if this needs to be cleared, but it will be used as an address offset, so I assume so
 	move.b		(a2,d7),d6	; Read sensor index from sensor order list
 	lsl.b		#1,d6
 
-	
-	clr			d2 ; Read the sensor pixel offset from the table of sensor offsets
+	; Read the sensor pixel offset from the table of sensor offsets
+	clr			d2
 	clr			d3
 	move.b		(a1,d6),d2
 	add.b		#1,d6
 	move.b		(a1,d6),d3
 
-	
-	move.l		a3,d4 ; Find the wanted X position based on player position (a3), the sensor offset (d2), and the wanted direction (d0)
-	add.b		d2,d4
-	add.b		d0,d4
+	; Find the wanted X position based on player position (a3), the sensor offset (d2), and the wanted direction (d0)
+	move.l		a3,d4	; a3=player world position X
+	add.b		d2,d4	; d2=sensor X offset
+	add.b		d0,d4	; d0=wanted X direction
 
-	
-	move.l		a4,d5 ; Also find the wanted Y position based on player position (a4), the sensor offset (d3), and the wanted direction (d1)
-	add.b		d3,d5
-	add.b		d1,d5
+	; Also find the wanted Y position based on player position (a4), the sensor offset (d3), and the wanted direction (d1)
+	move.l		a4,d5	; a4=player world position Y
+	add.b		d3,d5	; d3=sensor Y offset
+	add.b		d1,d5	; d1=wanted Y direction
 
 	; Calculate the tile position from a pixel position
-
-	
-	move.w		d4,d2 ; Tile X from world X
+	; Tile X from world X
+	move.w		d4,d2 	; d4=new world X position for this sensor
 	lsr.w		#3,d2
 	
-	
-	move.w		d5,d3 ; Tile Y from world Y
+	; Tile Y from world Y
+	move.w		d5,d3	; d5=new world Y position for this sensor
 	lsr.w		#3,d3
 
 	; Calculate index into collision map based on tile X and Y
@@ -596,10 +596,56 @@ _checkCollision:
 	; Read the collision tile ID from the map
 	move.b		(a0,d6),d6	;
 
+	;
+	cmp.b		#0,d6			; Collision tile #0 means no collision
+	beq			.next_sensor	
+
+	; Get the pixel offset into this tile
+	move.w		d4,d2		; d4=new world X position for this sensor
+	and.w		#7,d2
+	move.w		d5,d3		; d5=new world Y position for this sensor
+	and.w		#7,d3
+
+	;
+	cmp.b		#1,d6		; Check for collision tile 1
+	beq			.clear_y
+	cmp.b		#2,d6		; Check for collision tile 2
+	beq			.clear_y
+	bra			.l3			; Neither collision tile 1 nor 2, check for another
+
+.clear_y:
+	clr			d1
+	bra			.next_sensor
+
+.l3:
+	;
+	cmp.b		#3,d6		; Check for collision tile 3
+	beq			.clear_x
+	cmp.b		#4,d6		; Check for collision tile 4
+	beq			.clear_x
+	bra			.l5			; Neither collision tile 3 nor 4, check for another
+
+.clear_x:
+	clr			d0
+	bra			.next_sensor
+
+.l5:
+
+
+.next_sensor:
+	dbra		d7,.loop_sensors
+
+
+	;clr.l		d0
+	;clr.l		d1
 
 
 .all_done:
-	popm.l		d0-d7/a0-a6
+	; Convert from 32.0 fixed point to 16.16
+	swap		d0
+	swap		d1
+
+	popm.l		d2-d7/a0-a6
 	rts
 
 .player_sensors_orders:
