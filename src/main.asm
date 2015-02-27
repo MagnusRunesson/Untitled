@@ -640,6 +640,8 @@ _checkCollision:
 	cmp.b		d4,d3		; d4=(7-_in_tile_x) and d3=_in_tile_y
 	blt			.l6
 
+
+
 	; if( _dir_x+_dir_y == 2 )
 	; {
 	; 	_dir_x = 0;
@@ -657,6 +659,52 @@ _checkCollision:
 	bra			.next_sensor
 
 .l5_a:
+	; if((_dir_x>0) && (_dir_y<0))
+	; {
+	;	_dir_x = 0;
+	;	_dir_y = -1;
+	; 	return;
+	; }
+	cmp.w		#0,d0
+	ble			.l5_b
+	cmp.w		#0,d1
+	bge			.l5_b
+
+	move.w		#0,d0
+	move.w		#-1,d1
+	bra			.next_sensor
+
+.l5_b:
+	; if((_dir_x<0) && (_dir_y>0))
+	; {
+	; 	_dir_x = -1;
+	; 	_dir_y = 0;
+	; 	return;
+	; }
+	cmp.w		#0,d0
+	bge			.l5_c
+	cmp.w		#0,d1
+	ble			.l5_c
+
+	move.w		#-1,d0
+	move.w		#0,d1
+	bra			.next_sensor
+
+.l5_c:
+	; if( _dir_x > 0 )
+	; 	_dir_y = -1;
+	cmp.w		#0,d0
+	ble			.l5_d
+	move.w		#-1,d1
+
+.l5_d:
+	; if( _dir_y > 0 )
+	; 	_dir_x = -1;
+	cmp.w		#0,d1
+	ble			.l5_e
+	move.w		#-1,d0
+
+.l5_e:
 
 
 .l6:
