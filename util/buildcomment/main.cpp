@@ -462,14 +462,14 @@ int main(int argc, const char * argv[])
 			if( haveUnusedLabel )
 			{
 				fprintf(outFile, "            <comment address=\"%i\" color=\"16711680\" crc=\"%08x\">\n", address, (unsigned int)crc );
-				fprintf(outFile, "                %s %s\n", pszLastLabel, pszLastNonLabeledSourceCode);
+				fprintf(outFile, "                |%s  %s\n", pszLastLabel, pszLastNonLabeledSourceCode);
 				haveUnusedLabel = false;
 				fprintf(outFile, "            </comment>\n");
 			}
 			else
 			{
 				fprintf(outFile, "            <comment address=\"%i\" color=\"16711680\" crc=\"%08x\">\n", address, (unsigned int)crc);
-				fprintf(outFile, "                %s\n", pszLastNonLabeledSourceCode);
+				fprintf(outFile, "                |     %s\n", pszLastNonLabeledSourceCode);
 				fprintf(outFile, "            </comment>\n");
 			}
 		}
