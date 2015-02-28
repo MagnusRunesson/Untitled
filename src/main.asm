@@ -821,11 +821,11 @@ _checkCollision:
 	dc.b		5,1,2,6,7,3,-1,-1			; new int[]{1, 2, 6, 7, 3},
 
 .player_sensor_offsets:
-	dc.b		2,2
-	dc.b		13,2
-	dc.b		2,13
-	dc.b		13,13
-	dc.b		8,2
-	dc.b		2,8
-	dc.b		13,8
-	dc.b		8,13
+	dc.b		2,2							; 0 - Top left
+	dc.b		13,2						; 1 - Top right
+	dc.b		2,13						; 2 - Bottom left
+	dc.b		13,13						; 3 - Bottom right
+	dc.b		8,2							; 4 - Top center
+	dc.b		2,8							; 5 - Mid left
+	dc.b		13,8						; 6 - Mid right
+	dc.b		8,13						; 7 - Bottom center
