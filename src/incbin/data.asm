@@ -1,5 +1,73 @@
 
 
+; collisionsprite_bank.bin
+
+	cnop		0,_chunk_size
+_data_collisionsprite_bank:
+	ifd	is_mega_drive
+	incbin	"../src/incbin/collisionsprite_bank.bin"
+	else
+	incbin	"../src/incbin/collisionsprite_bank_amiga.bin"
+	endif
+_data_collisionsprite_bank_pos          equ _data_collisionsprite_bank/_chunk_size
+_data_collisionsprite_bank_length       equ ((_data_collisionsprite_bank_end-_data_collisionsprite_bank)+(_chunk_size-1))/_chunk_size
+_data_collisionsprite_bank_end:
+
+
+; collisionsprite_map.bin
+
+	cnop		0,_chunk_size
+_data_collisionsprite_map:
+	incbin	"../src/incbin/collisionsprite_map.bin"
+_data_collisionsprite_map_pos           equ _data_collisionsprite_map/_chunk_size
+_data_collisionsprite_map_length        equ ((_data_collisionsprite_map_end-_data_collisionsprite_map)+(_chunk_size-1))/_chunk_size
+_data_collisionsprite_map_end:
+
+
+; collisionsprite_palette.bin
+
+	cnop		0,_chunk_size
+_data_collisionsprite_palette:
+	incbin	"../src/incbin/collisionsprite_palette.bin"
+_data_collisionsprite_palette_pos       equ _data_collisionsprite_palette/_chunk_size
+_data_collisionsprite_palette_length    equ ((_data_collisionsprite_palette_end-_data_collisionsprite_palette)+(_chunk_size-1))/_chunk_size
+_data_collisionsprite_palette_end:
+
+
+; collisiontiles_bank.bin
+
+	cnop		0,_chunk_size
+_data_collisiontiles_bank:
+	ifd	is_mega_drive
+	incbin	"../src/incbin/collisiontiles_bank.bin"
+	else
+	incbin	"../src/incbin/collisiontiles_bank_amiga.bin"
+	endif
+_data_collisiontiles_bank_pos           equ _data_collisiontiles_bank/_chunk_size
+_data_collisiontiles_bank_length        equ ((_data_collisiontiles_bank_end-_data_collisiontiles_bank)+(_chunk_size-1))/_chunk_size
+_data_collisiontiles_bank_end:
+
+
+; collisiontiles_map.bin
+
+	cnop		0,_chunk_size
+_data_collisiontiles_map:
+	incbin	"../src/incbin/collisiontiles_map.bin"
+_data_collisiontiles_map_pos            equ _data_collisiontiles_map/_chunk_size
+_data_collisiontiles_map_length         equ ((_data_collisiontiles_map_end-_data_collisiontiles_map)+(_chunk_size-1))/_chunk_size
+_data_collisiontiles_map_end:
+
+
+; collisiontiles_palette.bin
+
+	cnop		0,_chunk_size
+_data_collisiontiles_palette:
+	incbin	"../src/incbin/collisiontiles_palette.bin"
+_data_collisiontiles_palette_pos        equ _data_collisiontiles_palette/_chunk_size
+_data_collisiontiles_palette_length     equ ((_data_collisiontiles_palette_end-_data_collisiontiles_palette)+(_chunk_size-1))/_chunk_size
+_data_collisiontiles_palette_end:
+
+
 ; herotest_sprite_bank.bin
 
 	cnop		0,_chunk_size
