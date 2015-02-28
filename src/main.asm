@@ -608,30 +608,29 @@ _checkCollision:
 
 	;
 	cmp.b		#1,d6		; Check for collision tile 1
-	beq			.clear_y
+	beq			.l1
 	cmp.b		#2,d6		; Check for collision tile 2
-	beq			.clear_y
-	bra			.l3			; Neither collision tile 1 nor 2, check for another
+	beq			.l2
+	cmp.b		#3,d6		; Check for collision tile 3
+	beq			.l3
+	cmp.b		#4,d6		; Check for collision tile 4
+	beq			.l4
+	cmp.b		#5,d6
+	beq			.l5
 
-.clear_y:
+	bra			.next_sensor
+
+.l1:
+.l2:
 	clr			d1
 	bra			.next_sensor
 
 .l3:
-	;
-	cmp.b		#3,d6		; Check for collision tile 3
-	beq			.clear_x
-	cmp.b		#4,d6		; Check for collision tile 4
-	beq			.clear_x
-	bra			.l5			; Neither collision tile 3 nor 4, check for another
-
-.clear_x:
+.l4:
 	clr			d0
 	bra			.next_sensor
 
 .l5:
-	cmp.b		#5,d6
-	bne			.l6
 
 	; if( (7-_in_tile_x) > _in_tile_y )
 	;	return;
@@ -640,15 +639,12 @@ _checkCollision:
 	cmp.b		d4,d3		; d4=(7-_in_tile_x) and d3=_in_tile_y
 	blt			.l6
 
-
-
 	; if( _dir_x+_dir_y == 2 )
 	; {
 	; 	_dir_x = 0;
 	; 	_dir_y = 0;
 	; 	return;
 	; }
-
 	move.b		d0,d4
 	add.b		d1,d4
 	cmp.b		#2,d4
@@ -705,6 +701,7 @@ _checkCollision:
 	move.w		#-1,d0
 
 .l5_e:
+	bra			.next_sensor
 
 
 .l6:
