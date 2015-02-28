@@ -615,8 +615,12 @@ _checkCollision:
 	beq			.l3
 	cmp.b		#4,d6		; Check for collision tile 4
 	beq			.l4
-	cmp.b		#5,d6
+	cmp.b		#5,d6		; Check for collision tile 5
 	beq			.l5
+	cmp.b		#6,d6		; Check for collision tile 6
+	beq			.l6_slope_upright
+	cmp.b		#9,d6
+	beq			.l9_full_stop
 
 	bra			.next_sensor
 
@@ -637,7 +641,7 @@ _checkCollision:
 	move.b		#7,d4		; 
 	sub.b		d2,d4		; 7-_in_tile_x
 	cmp.b		d4,d3		; d4=(7-_in_tile_x) and d3=_in_tile_y
-	blt			.l6
+	blt			.next_sensor
 
 	; if( _dir_x+_dir_y == 2 )
 	; {
@@ -703,8 +707,91 @@ _checkCollision:
 .l5_e:
 	bra			.next_sensor
 
+;
+; Slope, up right
+;
+.l6_slope_upright:
+	; if( _in_tile_x > _in_tile_y )
+	;	return;
+	cmp.b		d2,d3
+	blt			.next_sensor
 
-.l6:
+	; if( _dir_x-_dir_y == -2 )
+	; {
+	; 	_dir_x = 0;
+	; 	_dir_y = 0;
+	; 	return;
+	; }
+	move.b		d0,d4
+	sub.b		d1,d4
+	cmp.b		#-2,d4
+	bne			.l6_a
+
+	clr			d0
+	clr			d1
+	bra			.next_sensor
+
+.l6_a:
+	; if((_dir_x<0) && (_dir_y<0))
+	; {
+	; 	_dir_x = 0;
+	; 	_dir_y = -1;
+	; 	return;
+	; }
+	cmp.w		#0,d0
+	bge			.l6_b
+	cmp.w		#0,d1
+	bge			.l6_b
+
+	move.w		#0,d0
+	move.w		#-1,d1
+	bra			.next_sensor
+
+.l6_b:
+	; if((_dir_x>0) && (_dir_y>0))
+	; {
+	; 	_dir_x = 1;
+	; 	_dir_y = 0;
+	; 	return;
+	; }
+	cmp.w		#0,d0
+	ble			.l6_c
+	cmp.w		#0,d1
+	ble			.l6_c
+
+	move.w		#1,d0
+	move.w		#0,d1
+	bra			.next_sensor
+
+.l6_c:
+	; if( _dir_x < 0 )
+	; 	_dir_y = -1;
+	cmp.w		#0,d0
+	bge			.l6_d
+	move.w		#-1,d1
+
+.l6_d:
+	; if( _dir_y > 0 )
+	; 	_dir_x = 1;
+	cmp.w		#0,d1
+	ble			.l6_e
+	move.w		#1,d0
+
+.l6_e:
+	bra			.next_sensor
+
+
+
+
+;
+;
+;
+.l9_full_stop:
+	move.w		#0,d0
+	move.w		#0,d1
+	bra			.next_sensor
+
+
 
 .next_sensor:
 	dbra		d7,.loop_sensors
