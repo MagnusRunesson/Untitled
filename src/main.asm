@@ -619,6 +619,10 @@ _checkCollision:
 	beq			.l5_slope_upleft
 	cmp.b		#6,d6		; Check for collision tile 6
 	beq			.l6_slope_upright
+	cmp.b		#7,d6		; Check for collision tile 7
+	beq			.l7_slope_downleft
+	cmp.b		#8,d6		; Check for collision tile 8
+	beq			.l8_slope_downright
 	cmp.b		#9,d6
 	beq			.l9_full_stop
 
@@ -779,6 +783,154 @@ _checkCollision:
 
 .l6_e:
 	bra			.next_sensor
+
+
+.l7_slope_downleft:
+
+	; if( _in_tile_x < _in_tile_y )
+	;	return;
+	cmp.b		d2,d3
+	bgt			.next_sensor
+
+	; if( _dir_x-_dir_y == 2 )
+	; {
+	; 	_dir_x = 0;
+	; 	_dir_y = 0;
+	; 	return;
+	; }
+	move.b		d0,d4
+	sub.b		d1,d4
+	cmp.b		#2,d4
+	bne			.l7_a
+
+	clr			d0
+	clr			d1
+	bra			.next_sensor
+
+.l7_a:
+	; if((_dir_x>0) && (_dir_y>0))
+	; {
+	; 	_dir_x = 0;
+	; 	_dir_y = 1;
+	; 	return;
+	; }
+	cmp.w		#0,d0
+	ble			.l7_b
+	cmp.w		#0,d1
+	ble			.l7_b
+
+	move.w		#0,d0
+	move.w		#1,d1
+	bra			.next_sensor
+
+.l7_b:
+	; if((_dir_x<0) && (_dir_y<0))
+	; {
+	; 	_dir_x = -1;
+	; 	_dir_y = 0;
+	; 	return;
+	; }
+	cmp.w		#0,d0
+	bge			.l7_c
+	cmp.w		#0,d1
+	bge			.l7_c
+
+	move.w		#-1,d0
+	move.w		#0,d1
+	bra			.next_sensor
+
+.l7_c:
+	; if( _dir_y < 0 )
+	; 	_dir_x = -1;
+	cmp.w		#0,d1
+	bge			.l7_d
+	move.w		#-1,d0
+
+.l7_d:
+	; if( _dir_x > 0 )
+	; 	_dir_y = 1;
+	cmp.w		#0,d0
+	ble			.l7_e
+	move.w		#1,d1
+
+.l7_e:
+	bra			.next_sensor
+
+
+
+.l8_slope_downright:
+
+	; if( _in_tile_x > (7-_in_tile_y))
+	;	return;
+	move.b		#7,d4
+	sub.b		d3,d4
+	cmp.b		d2,d4
+	blt			.next_sensor
+
+	; if( _dir_x+_dir_y == -2 )
+	; {
+	; 	_dir_x = 0;
+	; 	_dir_y = 0;
+	; 	return;
+	; }
+	move.b		d0,d4
+	add.b		d1,d4
+	cmp.b		#-2,d4
+	bne			.l8_a
+
+	clr			d0
+	clr			d1
+	bra			.next_sensor
+
+.l8_a:
+	; if((_dir_x<0) && (_dir_y>0))
+	; {
+	; 	_dir_x = 0;
+	; 	_dir_y = 1;
+	; 	return;
+	; }
+	cmp.w		#0,d0
+	bge			.l8_b
+	cmp.w		#0,d1
+	ble			.l8_b
+
+	move.w		#0,d0
+	move.w		#1,d1
+	bra			.next_sensor
+
+.l8_b:
+	; if((_dir_x>0) && (_dir_y<0))
+	; {
+	; 	_dir_x = 1;
+	; 	_dir_y = 0;
+	; 	return;
+	; }
+	cmp.w		#0,d0
+	ble			.l8_c
+	cmp.w		#0,d1
+	bge			.l8_c
+
+	move.w		#1,d0
+	move.w		#0,d1
+	bra			.next_sensor
+
+.l8_c:
+	; if( _dir_y < 0 )
+	; 	_dir_x = 1;
+	cmp.w		#0,d1
+	bge			.l8_d
+	move.w		#1,d0
+
+.l8_d:
+	; if( _dir_x > 0 )
+	; 	_dir_y = 1;
+	cmp.w		#0,d0
+	bge			.l8_e
+	move.w		#1,d1
+
+.l8_e:
+	bra			.next_sensor
+
 
 
 
