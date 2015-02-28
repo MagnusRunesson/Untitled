@@ -571,13 +571,13 @@ _checkCollision:
 
 	; Find the wanted X position based on player position (a3), the sensor offset (d2), and the wanted direction (d0)
 	move.l		a3,d4	; a3=player world position X
-	add.b		d2,d4	; d2=sensor X offset
-	add.b		d0,d4	; d0=wanted X direction
+	add.w		d2,d4	; d2=sensor X offset
+	add.w		d0,d4	; d0=wanted X direction
 
 	; Also find the wanted Y position based on player position (a4), the sensor offset (d3), and the wanted direction (d1)
 	move.l		a4,d5	; a4=player world position Y
-	add.b		d3,d5	; d3=sensor Y offset
-	add.b		d1,d5	; d1=wanted Y direction
+	add.w		d3,d5	; d3=sensor Y offset
+	add.w		d1,d5	; d1=wanted Y direction
 
 	; Calculate the tile position from a pixel position
 	; Tile X from world X
