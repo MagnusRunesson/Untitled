@@ -616,7 +616,7 @@ _checkCollision:
 	cmp.b		#4,d6		; Check for collision tile 4
 	beq			.l4
 	cmp.b		#5,d6		; Check for collision tile 5
-	beq			.l5
+	beq			.l5_slope_upleft
 	cmp.b		#6,d6		; Check for collision tile 6
 	beq			.l6_slope_upright
 	cmp.b		#9,d6
@@ -634,7 +634,7 @@ _checkCollision:
 	clr			d0
 	bra			.next_sensor
 
-.l5:
+.l5_slope_upleft:
 
 	; if( (7-_in_tile_x) > _in_tile_y )
 	;	return;
