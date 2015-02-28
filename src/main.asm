@@ -23,6 +23,7 @@ _potion2_go_handle			rs.w		1
 _potion3_go_handle			rs.w		1
 _potion4_go_handle			rs.w		1
 _potionanim_time			rs.w		1
+_current_collisionmap		rs.l		1
 
 
 main:
@@ -44,6 +45,9 @@ main:
 	;
 	move		#0,_testanim_time(a2)
 	move.w		#0,_potionanim_time(a2)
+
+	;
+	move.l		#_data_testmap_collisionmap,_current_collisionmap(a2)
 
 	;
 	; Load world graphics
@@ -445,6 +449,7 @@ _checkBorders:
 	move.l		#fileid_testmap_map,d0
 	move.l		#0,d1
 	jsr			rendLoadTileMap(pc)
+	move.l		#_data_testmap_collisionmap,_current_collisionmap(a2)
 
 	;
 	; Warp hero to the right of the new map
@@ -464,6 +469,7 @@ _checkBorders:
 	move.l		#fileid_testmap2_map,d0
 	move.l		#0,d1
 	jsr			rendLoadTileMap(pc)
+	move.l		#_data_testmap2_collisionmap,_current_collisionmap(a2)
 
 	;
 	; Warp hero to the left of the new map
@@ -528,6 +534,10 @@ _checkCollision:
 	; a3 is now player position X, in 32.0 format
 	; a4 is now player position Y, in 32.0 format
 
+	; Fetch the pointer to the collision tiles
+	move.l		_current_collisionmap(a2),a0
+	add.l		#2,a0
+
 	; The sensor order list contain 8 entries for list, so we need to convert from index into byte offset
 	lsl.w		#3,d2
 
@@ -542,10 +552,6 @@ _checkCollision:
 
 	; Fetch the sensor offset list
 	lea			.player_sensor_offsets(pc),a1
-
-	; Fetch the list of collision tiles
-	lea			_data_testmap_collisionmap,a0
-	add.l		#2,a0
 
 
 	; d7 is the number of sensors, so we will use that to control the number of loops
