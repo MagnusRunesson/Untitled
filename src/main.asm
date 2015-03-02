@@ -476,13 +476,13 @@ _checkBorders:
 	;
 	; Warp hero to the right of the new map
 	;
-	move.l		#(511-16)*$10000,_hero_sprite_pos_x(a2)
+	move.l		#511*$10000,_hero_sprite_pos_x(a2)
 
 	; Done
 	bra			.done
 
 .no_left:
-	cmp.l		#(511-16)*$10000,d0
+	cmp.l		#511*$10000,d0
 	ble			.no_right
 
 	;
