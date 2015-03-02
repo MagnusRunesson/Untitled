@@ -440,6 +440,10 @@ public class bmp2tile : EditorWindow
 				}
 				GUILayout.EndHorizontal();
 			}
+
+			GUILayout.Label( "Hotspot" );
+			m_currentImageConfig.m_hotSpotX = EditorGUILayout.IntField( "X:", m_currentImageConfig.m_hotSpotX );
+			m_currentImageConfig.m_hotSpotY = EditorGUILayout.IntField( "Y:", m_currentImageConfig.m_hotSpotY );
 		}
 
 		if( dirty )
