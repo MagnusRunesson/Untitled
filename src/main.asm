@@ -23,6 +23,7 @@ _potion2_go_handle			rs.w		1
 _potion3_go_handle			rs.w		1
 _potion4_go_handle			rs.w		1
 _signpost_go_handle			rs.w		1
+_stoneblock_go_handle		rs.w		1
 _potionanim_time			rs.w		1
 _current_collisionmap		rs.l		1
 
@@ -113,6 +114,16 @@ main:
 	move.w		d0,_signpost_go_handle(a2)
 	move.l		#$280000,d1
 	move.l		#$140000,d2
+	jsr			gomSetPosition(pc)
+
+	;
+	; Load stone block
+	;
+	lea			stoneblock_go(pc),a0
+	jsr			gomLoadObject(pc)
+	move.w		d0,_stoneblock_go_handle(a2)
+	move.l		#$780000,d1
+	move.l		#$840000,d2
 	jsr			gomSetPosition(pc)
 
 .main_loop:
