@@ -222,8 +222,8 @@ resourceLoadFile
 * }
 
 resourceGetBySlotIndex
-	mulu		#_ResSlotSizeof,d0
-	lea			(a0,d0.l),a0
+	mulu.w		#_ResSlotSizeof,d0				; TODO: Use shift!
+	add.l		d0,a0
 	move.l		__ResSlotFilePointer(a0),a0
 	rts
 
@@ -232,6 +232,8 @@ resourceGetBySlotIndex
 ; Wrappers for Sprite Bank
 ; Input
 ;   d0.w=resource slot index
+; Output
+;   a0.l=pointer to resource
 ;
 ;==============================================================================
 
@@ -254,6 +256,8 @@ resourceGetSpriteBank
 ; Wrappers for Sprite
 ; Input
 ;   d0.w=resource slot index
+; Output
+;   a0.l=pointer to resource
 ;
 ;==============================================================================
 
