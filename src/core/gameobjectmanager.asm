@@ -24,6 +24,8 @@ _gom_max_objects	equ			40		; Maximum number of game objects in a room at any giv
 	rsreset
 _go_world_pos_x		rs.l		1							; Game object world X position
 _go_world_pos_y		rs.l		1							; Game object world Y position
+_go_hotspot_x		rs.w		1							; This value is subtracted from the world X position before rendering the sprite
+_go_hotspot_y		rs.w		1							; This value is subtracted from the world Y position before rendering the sprite
 _go_sprite_handle	rs.w		1							; Hardware sprite handle for the associated sprite
 _go_anim_time		rs.w		1							; Current animation time
 _go_sort			rs.w		1							; Sort value for object compared to other objects. Haven't decided if lower sort means drawn before or after higher sort values
@@ -90,12 +92,14 @@ gomInit:
 ;==============================================================================
 
 gomLoadObject:
-	pushm.l				d2-d3
+	pushm.l				d2-d3/a2
 	; First we load the sprite, while the registers are untouched
+	move.l				a0,a2				; a2 is the address to the source game object data
+
 	clr					d0
 	clr					d1
-	move.w				(a0)+,d0			; Read the file ID for the sprite tiles into d0
-	move.w				(a0)+,d1			; Read the file ID for the sprite definition into d1
+	move.w				(a2)+,d0			; Read the file ID for the sprite tiles into d0
+	move.w				(a2)+,d1			; Read the file ID for the sprite definition into d1
 	jsr					rendLoadSprite(pc)	;
 	push.w				d0
 
@@ -118,6 +122,7 @@ gomLoadObject:
 	add.l				d1,a0					; From the game object array, go to the specific game object
 	; Current register status at this point
 	; a0=the data for this specific game object
+	; a2=pointer to the definition data for this game object
 	; d0=the object ID for the game object we're working on
 	; a1=unused
 	; d1=unused
@@ -125,6 +130,10 @@ gomLoadObject:
 	; Retain the sprite handle in this game object
 	pop.w				d2
 	move.w				d2,_go_sprite_handle(a0)
+
+	; Copy data from the definition to the instance
+	move.w				(a2)+,_go_hotspot_x(a0)
+	move.w				(a2)+,_go_hotspot_y(a0)
 
 	; Setup default values for our new game object
 	move.w				#0,_go_anim_time(a0)
@@ -153,7 +162,7 @@ gomLoadObject:
 	move.w				d3,d0				; Put the new object ID in the return register
 
 	;
-	popm.l				d2-d3
+	popm.l				d2-d3/a2
 
 	rts
 
@@ -240,7 +249,6 @@ gomRender:
 	; d5 is the game object ID, which is also used as the loop counter
 	; a2 is the game object manager base address
 	; a3 is now the address to the last game object and will be used for as a pointer to the current game object we're working on
-
 .loop:
 	move		_go_sprite_handle(a3),d0	; d0 = sprite handle
 
@@ -250,6 +258,8 @@ gomRender:
 	sub.l		d4,d2						; World to camera space on Y
 	swap		d1							; Get the high word from the 16.16 fixed point and pass it to the render function
 	swap		d2							; Get the high word from the 16.16 fixed point and pass it to the render function
+	sub.w		_go_hotspot_x(a3),d1		; Adjust the sprite with the hotspot (X)
+	sub.w		_go_hotspot_y(a3),d2		; Adjust the sprite with the hotspot (Y)
 	jsr			rendSetSpritePosition(pc)	; Refresh hardware sprite position
 
 	; Go to next game object (i.e. the game object that is
