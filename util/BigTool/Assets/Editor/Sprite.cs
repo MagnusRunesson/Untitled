@@ -17,13 +17,17 @@ public class Sprite
 		Debug.Log ("Exporting sprite to " + _outfilename );
 
 		int numFrames = m_imageConfig.GetNumFrames();
+
+		int flags = 0x00;
+		flags |= m_imageConfig.m_importAsBSprite ? 0x01 : 0x00;
+
 		int outsize = 6 + numFrames;		// 1 extra byte per frame, for the frame time
 
 		byte[] outBytes = new byte[ outsize ];
 		Halp.Write8( outBytes, 0, m_imageConfig.GetSpriteWidth() );
 		Halp.Write8( outBytes, 1, m_imageConfig.GetSpriteHeight() );
 		Halp.Write8( outBytes, 2, numFrames );
-		Halp.Write8( outBytes, 3, 0 ); // To pad to 4 bytes
+		Halp.Write8( outBytes, 3, flags );
 		Halp.Write16( outBytes, 4, 0xdead );	// Put file handle here!
 
 		int iFrame;
