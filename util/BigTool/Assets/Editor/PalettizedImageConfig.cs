@@ -11,6 +11,8 @@ public class PalettizedImageConfig
 	const string JSONKEY_IMPORTASBSPRITE = "Import_As_B_Sprite";
 	const string JSONKEY_SPRITENUMFRAMES = "Sprite_Num_Frames";
 	const string JSONKEY_FRAMETIMES = "Frame_Times";
+	const string JSONKEY_SPRITE_HOTSPOT_X = "Sprite_HotSpot_X";
+	const string JSONKEY_SPRITE_HOTSPOT_Y = "Sprite_HotSpot_Y";
 
 	string m_fileName;
 
@@ -18,6 +20,9 @@ public class PalettizedImageConfig
 	public bool m_importAsSprite;
 	public bool m_importAsBSprite;
 	public Dictionary<int,int> m_frameTimes;
+
+	public int m_hotSpotX;
+	public int m_hotSpotY;
 
 	int m_spriteFrames;
 	int m_spriteWidth;
@@ -42,6 +47,8 @@ public class PalettizedImageConfig
 		LoadBool( ref m_importAsSprite, JSONKEY_IMPORTASSPRITE, dict );
 		LoadBool( ref m_importAsBSprite, JSONKEY_IMPORTASBSPRITE, dict);
 		LoadInt( ref m_spriteFrames, JSONKEY_SPRITENUMFRAMES, dict );
+		LoadInt( ref m_hotSpotX, JSONKEY_SPRITE_HOTSPOT_X, dict );
+		LoadInt( ref m_hotSpotY, JSONKEY_SPRITE_HOTSPOT_Y, dict );
 	}
 
 	public void Save()
@@ -53,6 +60,8 @@ public class PalettizedImageConfig
 		jsonDict [JSONKEY_IMPORTASBSPRITE] = m_importAsBSprite;
 		jsonDict[ JSONKEY_SPRITENUMFRAMES ] = m_spriteFrames;
 		jsonDict[ JSONKEY_FRAMETIMES ] = m_frameTimes;
+		jsonDict[ JSONKEY_SPRITE_HOTSPOT_X ] = m_hotSpotX;
+		jsonDict[ JSONKEY_SPRITE_HOTSPOT_Y ] = m_hotSpotY;
 
 		// Generate JSON string from settings dictionary
 		string jsonString = MiniJSON.Json.Serialize( jsonDict );
