@@ -5,8 +5,9 @@
 ;
 ;==============================================================================
 
-_rend_sprite_flag_isspriteb_bit_	equ		(0)
-_rend_sprite_flag_isspriteb_mask_	equ		(1<<0)
+_rend_sprite_max_count_				equ		(80)
+
+
 
 ;==============================================================================
 ;
@@ -17,22 +18,24 @@ _rend_sprite_flag_isspriteb_mask_	equ		(1<<0)
 							rsreset
 __RendSpritePosX			rs.w	1
 __RendSpritePosY			rs.w	1
+__RendSpriteFrame			rs.w	1
 __RendSpriteResourceId		rs.w	1
 __RendSpriteBankResourceId	rs.w	1
-__RendSpriteFlags			rs.w	1
-_RendSpriteSizeof			rs.b	0
+;__RendSpriteFlags			rs.w	1
+__RendSpriteSizeof			rs.b	0
 
 							rsreset
-__RendScrollX				rs.l	1
-__RendScrollY				rs.l	1
-__RendNextSprite			rs.b	1
-_RendVarsSizeof				rs.b	0
+__RendScrollX				rs.w	1
+__RendScrollY				rs.w	1
+__RendNextSprite			rs.w	1
+__RendSpriteCopperPointer	rs.l	1
+__RendVarsSizeof			rs.b	0
 
 _RendVars
-	dcb.b	_RendVarsSizeof
+	dcb.b	__RendVarsSizeof
 
 _RendSprites
-	dcb.b	_RendSpriteSizeof
+	dcb.b	_rend_sprite_max_count_*__RendSpriteSizeof
 
 	cnop	0,2
 	
@@ -75,8 +78,9 @@ rendInit:
 
 	; RendVars defaults
 	lea			_RendVars(pc),a0
-	move.l		#0,__RendScrollX(a0)
-	move.l		#0,__RendScrollY(a0)
+	move.w		#0,__RendScrollX(a0)
+	move.w		#0,__RendScrollY(a0)
+	move.w		#0,__RendNextSprite(a0)
 
 	popm		d2-d7/a2-a6
 	rts
@@ -229,24 +233,55 @@ rendLoadTileMap:
 ;
 ;==============================================================================
 
-rendLoadSprite:
-	move.l		d1,d2					; store file id of sprite file in d2
+rendLoadSprite
+	pushm		d2-d7/a2-a7
+
+	; a2=Rend vars struct
+	; d7=Sprite handle (return value)
+	lea			_RendVars(pc),a2
+	move.w		__RendNextSprite(a2),d7			
+	
+	; Check if this sprite available
+	cmp.w		#_rend_sprite_max_count_,d7
+	beq			.noSpriteAvailable
+
+	; Update __RendNextSprite variable
+	; d2=Next sprite handle	
+	move.w		d7,d2							
+	addq		#1,d2
+	move.w		d2,__RendNextSprite(a2)
+
+	; a3=Sprite struct pointer
+	lea			_RendSprites(pc),a3
+	move.w		d7,d2
+	mulu.w		#__RendSpriteSizeof,d2
+	add.l		d2,a3
+
+	; Default values for sprite
+	move.w		#0,__RendSpritePosX(a3)
+	move.w		#0,__RendSpritePosY(a3)
+	move.w		#0,__RendSpriteFrame(a3)
+
+	; Load sprite bank
+	move.l		d1,d2					; Backup file id of sprite file in d2
 	bsr			resourceLoadSpriteBank
-	;d0=index for this sprite bank
+	move.w		d0,__RendSpriteBankResourceId(a3)
 
 	move.l		d2,d0					; file id back into d0
 	bsr			resourceLoadSprite
-	;d0=index for this sprite
-	
-	lea			.spriteCounterTemp(pc),a0
-	move.l		(a0),d0
-	move.l		d0,d1
-	addq.l		#1,d1
-	move.l		d1,(a0)
+	move.w		d0,__RendSpriteResourceId(a3)
 
+	; Return sprite handle
+	moveq		#0,d0
+	move.w		d7,d0
+
+	popm		d2-d7/a2-a7
 	rts
 
-.spriteCounterTemp	dc.l	0
+.noSpriteAvailable
+	move.w		#$00f0,d0
+	jmp			sysError(pc)
+
 
 
 ;==============================================================================
@@ -267,7 +302,7 @@ rendLoadPalette:
 	
 	; fileLoad accept the file ID as d0, so no need to do any tricks here
 	_get_workmem_ptr	PaletteMem,a0
-	jsr			fileLoad
+	jsr			fileLoad(pc)
 
 	_get_workmem_ptr	PaletteMem,a0
 	lea			Copper_color+2(pc),a1
@@ -311,7 +346,14 @@ rendWaitVSync:
 	beq		.1
 .2	btst	#0,(_custom+vposr+1)
 	bne		.2
-	
+
+	; Probably not the right place for this code
+	pushm	a0-a1
+	lea		_RendVars,a0
+	lea 	Copper_sprpt+2(pc),a1
+	move.l	a1,__RendSpriteCopperPointer(a0)
+	popm	a0-a1
+
 	rts
 
 
@@ -330,8 +372,8 @@ rendSetScrollXY:
 
 	; Update RendVars
 	lea			_RendVars(pc),a0
-	move.l		d0,__RendScrollX(a0)
-	move.l		d1,__RendScrollY(a0)
+	move.w		d0,__RendScrollX(a0)
+	move.w		d1,__RendScrollY(a0)
 
 	subq.l		#2,a0					; make up for ddfstrt
 
@@ -376,16 +418,156 @@ rendSetScrollXY:
 ;==============================================================================
 
 rendSetSpritePosition:
+	; a0=Sprite struct pointer
+	lea			_RendSprites(pc),a0
+	mulu.w		#__RendSpriteSizeof,d0
+	add.l		d0,a0
+
+	; Update position
+	move.w		d1,__RendSpritePosX(a0)
+	move.w		d2,__RendSpritePosY(a0)
+
+	rts
 
 
-	; temp hack to move player character (sprite ID=1)
+;==============================================================================
+;
+; Set which frame of a sprite animation that should be shown
+;
+; d0=Sprite ID
+; d1=Frame index
+;
+;==============================================================================
 
+rendSetSpriteFrame:
+	; a0=Sprite struct pointer
+	lea			_RendSprites(pc),a0
+	mulu.w		#__RendSpriteSizeof,d0
+	add.l		d0,a0
+
+	move.w		d1,__RendSpriteFrame(a0)
+	rts
+
+
+
+;==============================================================================
+;
+; Set the draw order of our sprites. The table should contain sprite handles
+; in the order they should be drawn. That means that the sprite handle that
+; appear first in this table should be drawn first to the screen. The second
+; sprite that appears in the table should be dawn on top of the previous one.
+;
+; Input
+;	a0 = address to table of draw orders. Each entry should be 1 byte
+;	d0 = the number of entries in the table.
+;
+;==============================================================================
+rendSetSpriteDrawOrder:
+	pushm		d2-d7/a2-a6
+
+	lea			_custom,a6
+
+	; Move inbound parameters to registers that wont be destroyed by calls to 
+	; sub routines
+	; a3=address to table of draw orders
+	; d2=number of sprites to draw
+	move.l		d0,d2
+	move.l		a0,a3
+
+	;subq		#1,d2
+.loop
+	; d0=Sprite handle
+	moveq		#0,d0
+	move.b		(a3)+,d0
+
+	; a2=Sprite struct pointer
+	lea			_RendSprites(pc),a2
+	mulu		#__RendSpriteSizeof,d0
+	add.l		d0,a2
+
+	; Get resource for sprite bank, put it in a1
+	move.w		__RendSpriteBankResourceId(a2),d0
+	bsr			resourceGetSpriteBank
+	move.l		a0,a1
+
+	; Get resource for sprite , leave it in a0
+	move.w		__RendSpriteResourceId(a2),d0
+	bsr			resourceGetSprite
+
+
+	; d0=Sprite flags
+	move.b		spritefile_struct_flags(a0),d0
+	;moveq		#0,d3
+	;moveq		#0,d4
+	;move.w		__RendSpritePosX(a2),d3
+	;move.w		__RendSpritePosY(a2),d4
+	btst		#spritefile_flag_isspriteb_bit,d0
+
+	bne			.drawBSprite
+
+.drawASprite	
+	bsr			_drawBob	
+	bra			.continue
+
+.drawBSprite
+	bsr			_drawSprite
+
+	; continue
+.continue
+	dbf			d2,.loop
+
+	; exit
+	popm		d2-d7/a2-a6
+	rts
+
+
+;==============================================================================
+;
+; Draw hardware sprite
+;
+; Input
+;	a0 = resource for sprite
+;	a1 = resource for sprite bank
+;   a2=Sprite struct pointer
+;
+;==============================================================================
+
+_drawSprite
 	pushm		d2-d7/a2-a5
-	
-	cmp.w		#1,d0
-	bne.s		testBob
+	;popm		d2-d7/a2-a5
+	;rts
 
-	bsr			_rendSetupSpritePointers
+	;bsr			_rendSetupSpritePointers
+
+	lea			_RendVars,a3
+	move.l		__RendSpriteCopperPointer(a3),a4
+
+	move.l		a1,d0
+	swap.w		d0
+	move.w		d0,(a4)
+	swap.w		d0
+	move.w		d0,4(a4)
+	
+	;lea			72(a0),a0
+	addq		#8,a4
+	;move.l		a0,d0
+	add.l		#72,d0
+	swap.w		d0
+	move.w		d0,(a4)
+	swap.w		d0
+	move.w		d0,4(a4)
+
+	addq		#8,a4
+	move.l		a4,__RendSpriteCopperPointer(a3)
+
+
+
+
+	moveq		#0,d1
+	moveq		#0,d2
+	move.w		__RendSpritePosX(a2),d1
+	move.w		__RendSpritePosY(a2),d2
+
 
 	add.w		#$81,d1		; d1=hstart (high bits)
 	move.l		d1,d3		; d3=hstart (low bit)
@@ -411,9 +593,6 @@ rendSetSpritePosition:
 	and.w		#$0004,d4
 	or.w		d4,d5		;d5=sprxctl
 	
-	lea 		_ResSpriteMemPool(pc),a3
-	move.l		__ResMemPoolBottomOfMem(a3),a0
-	add.l		#512*2,a0
 	lea			72(a0),a1
 
 	move.w		d1,(a0)+
@@ -425,39 +604,51 @@ rendSetSpritePosition:
 	popm		d2-d7/a2-a5
 	rts
 
+;==============================================================================
+;
+; Draw blitter object
+;
+; Input
+;	a0 = resource for sprite
+;	a1 = resource for sprite bank
+;   a2 = Sprite struct pointer
+;   a6 = Custom base
+;
+;==============================================================================
+_drawBob
+	pushm		d2-d7/a2-a5
 
-testBob
-	lea			_RendVars(pc),a0
-	add.l		__RendScrollX(a0),d1
-	add.l		__RendScrollY(a0),d2
+	moveq		#0,d0
+	moveq		#0,d1
+	move.w		__RendSpritePosX(a2),d0
+	move.w		__RendSpritePosY(a2),d1
 
-	lea			_custom,a6
+	lea			_RendVars(pc),a3
+	add.w		__RendScrollX(a3),d0
+	add.w		__RendScrollY(a3),d1
 
-	move.l		d1,d3
-	lsr.l		#3,d1
-	and.l		#$fffffffe,d1
+	move.l		d0,d2
+	lsr.l		#3,d0
+	and.l		#$fffffffe,d0
 	
-	lsl.l		#8,d2
+	lsl.l		#8,d1
 
+	and.w		#$0f,d2
+	ror.w		#4,d2
 
-	and.w		#$0f,d3
-	ror.w		#4,d3
+	_get_workmem_ptr BitplaneMem,a4
+	add.l		d0,a4
+	add.l		d1,a4
 
-	_get_workmem_ptr BitplaneMem,a2
-	add.l		d1,a2
-	add.l		d2,a2
-
-	lea 		_ResSpriteMemPool(pc),a3
-	move.l		__ResMemPoolBottomOfMem(a3),a0
-
-	lea			16*16/8*4(a0),a1
+	move.l		a1,a5
 	
 	_wait_blit
 
-	move.l		a0,bltbpt(a6)
-	move.l		a1,bltapt(a6)
-	move.l		a2,bltcpt(a6)
-	move.l		a2,bltdpt(a6)
+	move.l		a5,bltbpt(a6)
+	add.l		#16*16/8*4,a5
+	move.l		a5,bltapt(a6)
+	move.l		a4,bltcpt(a6)
+	move.l		a4,bltdpt(a6)
 	move.w		#-2,bltamod(a6)
 	move.w		#-2,bltbmod(a6)
 	move.w		#60,bltcmod(a6)
@@ -465,46 +656,15 @@ testBob
 	move.w		#$0000,bltalwm(a6)
 	move.w		#$ffff,bltafwm(a6)	
 
-	move.w		d3,d4
-	or.w		#SRCA|SRCB|SRCC|DEST|$CA,d4			; D=A:$f0 $E2
-	move.w		d4,bltcon0(a6)	
+	move.w		d2,d3
+	or.w		#SRCA|SRCB|SRCC|DEST|$CA,d3			; D=A:$f0 $E2
+	move.w		d3,bltcon0(a6)	
 	;move.w		#SRCA|DEST|$F0,bltcon0(a6)	; D=A:$f0
-	move.w		d3,bltcon1(a6)
+	move.w		d2,bltcon1(a6)
 	move.w		#$1002,bltsize(a6)
 
 	popm		d2-d7/a2-a5
 	rts
-
-
-;==============================================================================
-;
-; Set which frame of a sprite animation that should be shown
-;
-; d0=Sprite ID
-; d1=Frame index
-;
-;==============================================================================
-
-rendSetSpriteFrame:
-	rts
-
-
-
-;==============================================================================
-;
-; Set the draw order of our sprites. The table should contain sprite handles
-; in the order they should be drawn. That means that the sprite handle that
-; appear first in this table should be drawn first to the screen. The second
-; sprite that appears in the table should be dawn on top of the previous one.
-;
-; Input
-;	a0 = address to table of draw orders. Each entry should be 1 byte
-;	d0 = the number of entries in the table.
-;
-;==============================================================================
-rendSetSpriteDrawOrder:
-	rts
-
 
 ;==============================================================================
 ;
