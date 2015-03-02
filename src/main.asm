@@ -23,7 +23,6 @@ _potion2_go_handle			rs.w		1
 _potion3_go_handle			rs.w		1
 _potion4_go_handle			rs.w		1
 _signpost_go_handle			rs.w		1
-_stoneblock_go_handle		rs.w		1
 _potionanim_time			rs.w		1
 _current_collisionmap		rs.l		1
 
@@ -114,16 +113,6 @@ main:
 	move.w		d0,_signpost_go_handle(a2)
 	move.l		#$280000,d1
 	move.l		#$140000,d2
-	jsr			gomSetPosition(pc)
-
-	;
-	; Load stone block
-	;
-	lea			stoneblock_go(pc),a0
-	jsr			gomLoadObject(pc)
-	move.w		d0,_stoneblock_go_handle(a2)
-	move.l		#$780000,d1
-	move.l		#$840000,d2
 	jsr			gomSetPosition(pc)
 
 .main_loop:
@@ -476,13 +465,13 @@ _checkBorders:
 	;
 	; Warp hero to the right of the new map
 	;
-	move.l		#511*$10000,_hero_sprite_pos_x(a2)
+	move.l		#(511-16)*$10000,_hero_sprite_pos_x(a2)
 
 	; Done
 	bra			.done
 
 .no_left:
-	cmp.l		#511*$10000,d0
+	cmp.l		#(511-16)*$10000,d0
 	ble			.no_right
 
 	;
@@ -602,41 +591,10 @@ _checkCollision:
 	add.w		d2,d4	; d2=sensor X offset
 	add.w		d0,d4	; d0=wanted X direction
 
-	; Check if too far to the left
-	cmp.w		#0,d4
-	bge			.pos_x_check_right
-	move.w		#0,d4
-	bra			.pos_x_done
-
-	;
-	; Check if too far to the right
-	;
-.pos_x_check_right:
-	cmp.w		#511,d4
-	ble			.pos_x_done
-	move.w		#511,d4
-
-.pos_x_done:
 	; Also find the wanted Y position based on player position (a4), the sensor offset (d3), and the wanted direction (d1)
 	move.l		a4,d5	; a4=player world position Y
 	add.w		d3,d5	; d3=sensor Y offset
 	add.w		d1,d5	; d1=wanted Y direction
-
-	;
-	; Check if too far above
-	;
-	cmp.w		#0,d5
-	bge			.pos_y_check_bottom
-	move.w		#0,d5
-	bra			.pos_y_done
-
-.pos_y_check_bottom:
-	; Check if too far below
-	cmp.w		#511,d5
-	ble			.pos_y_done
-	move.w		#511,d5
-
-.pos_y_done:
 
 	; Calculate the tile position from a pixel position
 	; Tile X from world X
