@@ -31,10 +31,13 @@ fileid_housetiles_palette               equ 29
 fileid_signpost_sprite_bank             equ 30
 fileid_signpost_palette                 equ 31
 fileid_signpost_sprite                  equ 32
-fileid_testmap_map                      equ 33
-fileid_testmap_collisionmap             equ 34
-fileid_testmap2_map                     equ 35
-fileid_testmap2_collisionmap            equ 36
+fileid_stoneblock_sprite_bank           equ 33
+fileid_stoneblock_palette               equ 34
+fileid_stoneblock_sprite                equ 35
+fileid_testmap_map                      equ 36
+fileid_testmap_collisionmap             equ 37
+fileid_testmap2_map                     equ 38
+fileid_testmap2_collisionmap            equ 39
 
 FileIDMap:
 	dc.w	_data_collisionsprite_bank_pos,_data_collisionsprite_bank_length
@@ -70,6 +73,9 @@ FileIDMap:
 	dc.w	_data_signpost_sprite_bank_pos,_data_signpost_sprite_bank_length
 	dc.w	_data_signpost_palette_pos,_data_signpost_palette_length
 	dc.w	_data_signpost_sprite_pos,_data_signpost_sprite_length
+	dc.w	_data_stoneblock_sprite_bank_pos,_data_stoneblock_sprite_bank_length
+	dc.w	_data_stoneblock_palette_pos,_data_stoneblock_palette_length
+	dc.w	_data_stoneblock_sprite_pos,_data_stoneblock_sprite_length
 	dc.w	_data_testmap_map_pos,_data_testmap_map_length
 	dc.w	_data_testmap_collisionmap_pos,_data_testmap_collisionmap_length
 	dc.w	_data_testmap2_map_pos,_data_testmap2_map_length

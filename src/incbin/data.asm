@@ -374,6 +374,40 @@ _data_signpost_sprite_length            equ ((_data_signpost_sprite_end-_data_si
 _data_signpost_sprite_end:
 
 
+; stoneblock_sprite_bank.bin
+
+	cnop		0,_chunk_size
+_data_stoneblock_sprite_bank:
+	ifd	is_mega_drive
+	incbin	"../src/incbin/stoneblock_sprite_bank.bin"
+	else
+	incbin	"../src/incbin/stoneblock_sprite_bank_amiga_a_bob.bin"
+	endif
+_data_stoneblock_sprite_bank_pos        equ _data_stoneblock_sprite_bank/_chunk_size
+_data_stoneblock_sprite_bank_length     equ ((_data_stoneblock_sprite_bank_end-_data_stoneblock_sprite_bank)+(_chunk_size-1))/_chunk_size
+_data_stoneblock_sprite_bank_end:
+
+
+; stoneblock_palette.bin
+
+	cnop		0,_chunk_size
+_data_stoneblock_palette:
+	incbin	"../src/incbin/stoneblock_palette.bin"
+_data_stoneblock_palette_pos            equ _data_stoneblock_palette/_chunk_size
+_data_stoneblock_palette_length         equ ((_data_stoneblock_palette_end-_data_stoneblock_palette)+(_chunk_size-1))/_chunk_size
+_data_stoneblock_palette_end:
+
+
+; stoneblock_sprite.bin
+
+	cnop		0,_chunk_size
+_data_stoneblock_sprite:
+	incbin	"../src/incbin/stoneblock_sprite.bin"
+_data_stoneblock_sprite_pos             equ _data_stoneblock_sprite/_chunk_size
+_data_stoneblock_sprite_length          equ ((_data_stoneblock_sprite_end-_data_stoneblock_sprite)+(_chunk_size-1))/_chunk_size
+_data_stoneblock_sprite_end:
+
+
 ; testmap_map.bin
 
 	cnop		0,_chunk_size
