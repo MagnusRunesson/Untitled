@@ -566,14 +566,14 @@ _checkCollision:
 .loop_sensors:
 	clr			d6			; Not sure if this needs to be cleared, but it will be used as an address offset, so I assume so
 	move.b		(a2,d7),d6	; Read sensor index from sensor order list
-	lsl.b		#1,d6
+	lsl.b		#2,d6
 
 	; Read the sensor pixel offset from the table of sensor offsets
 	clr			d2
 	clr			d3
-	move.b		(a1,d6),d2
-	add.b		#1,d6
-	move.b		(a1,d6),d3
+	move.w		(a1,d6),d2
+	add.b		#2,d6
+	move.w		(a1,d6),d3
 
 	; Find the wanted X position based on player position (a3), the sensor offset (d2), and the wanted direction (d0)
 	move.l		a3,d4	; a3=player world position X
@@ -979,11 +979,11 @@ _checkCollision:
 	dc.b		5,1,2,6,7,3,-1,-1			; new int[]{1, 2, 6, 7, 3},
 
 .player_sensor_offsets:
-	dc.b		2,2							; 0 - Top left
-	dc.b		13,2						; 1 - Top right
-	dc.b		2,13						; 2 - Bottom left
-	dc.b		13,13						; 3 - Bottom right
-	dc.b		8,2							; 4 - Top center
-	dc.b		2,8							; 5 - Mid left
-	dc.b		13,8						; 6 - Mid right
-	dc.b		8,13						; 7 - Bottom center
+	dc.w		-6,-6						; 0 - Top left
+	dc.w		5,-6						; 1 - Top right
+	dc.w		-6,5						; 2 - Bottom left
+	dc.w		5,5							; 3 - Bottom right
+	dc.w		0,-6						; 4 - Top center
+	dc.w		-6,0						; 5 - Mid left
+	dc.w		5,0							; 6 - Mid right
+	dc.w		0,5							; 7 - Bottom center
