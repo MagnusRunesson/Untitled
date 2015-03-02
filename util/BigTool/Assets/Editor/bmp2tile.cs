@@ -35,8 +35,15 @@ public class bmp2tile : EditorWindow
 	Rect m_paletteRemapRect;
 	Rect m_imageSettingsRect;
 	Rect m_projectWindowRect;
-	Vector2 m_spriteFrameTimeScroll;
 	Rect m_mapWindowRect;
+
+	bool m_isResizingTileBank;
+	bool m_isResizingPaletteRemap;
+	bool m_isResizingImageSettings;
+	bool m_isResizingProject;
+	bool m_isResizingMapWindow;
+	
+	Vector2 m_spriteFrameTimeScroll;
 
 	const float m_windowTop = 30.0f;
 	const float m_windowPadding = 10.0f;
@@ -77,6 +84,12 @@ public class bmp2tile : EditorWindow
 		m_tileMap = null;
 
 		m_collisionAlpha = 0.5f;
+
+		m_isResizingTileBank = false;
+		m_isResizingPaletteRemap = false;
+		m_isResizingImageSettings = false;
+		m_isResizingProject = false;
+		m_isResizingMapWindow = false;
 	}
 
 	void OnGUI()
@@ -141,7 +154,14 @@ public class bmp2tile : EditorWindow
 		}
 		*/
 
+		m_isResizingTileBank = ResizeWindow( ref m_tileBankWindowRect, m_isResizingTileBank );
+		m_isResizingPaletteRemap = ResizeWindow( ref m_paletteRemapRect, m_isResizingPaletteRemap );
+		m_isResizingImageSettings = ResizeWindow( ref m_imageSettingsRect, m_isResizingImageSettings );
+		m_isResizingProject = ResizeWindow( ref m_projectWindowRect, m_isResizingProject );
+		m_isResizingMapWindow = ResizeWindow( ref m_mapWindowRect, m_isResizingMapWindow );
+
 		BeginWindows();
+
 		if( m_tileBank != null )
 		{
 			m_tileBankWindowRect = GUI.Window( 0, m_tileBankWindowRect, OnDrawTileBank, "Tiles: " + m_openImageName );
@@ -163,6 +183,47 @@ public class bmp2tile : EditorWindow
 		EndWindows();
 
 		GUILayout.EndHorizontal();
+	}
+
+	bool ResizeWindow( ref Rect _r, bool _wasResizing )
+	{
+		Event cev = Event.current;
+		EventType et = cev.type;
+		if( et == EventType.Layout || et==EventType.Repaint )
+			return _wasResizing;
+
+		if( _wasResizing )
+		{
+			if( cev.type == EventType.mouseUp )
+			{
+				// Stop resizing
+				cev.Use();
+				return false;
+			}
+
+			if( cev.type == EventType.MouseDrag )
+			{
+				Vector2 d = cev.delta;
+				_r.width += d.x;
+				_r.height += d.y;
+				cev.Use();
+				Repaint();
+			}
+		}
+		else
+		{
+			Vector2 np = cev.mousePosition;
+			float resizeRectSize = 10.0f;
+			Rect resizeRect = new Rect( _r.x+_r.width-resizeRectSize, _r.y+_r.height-resizeRectSize, resizeRectSize, resizeRectSize );
+			if( resizeRect.Contains( np ))
+			{
+				Debug.Log ("event=" + cev.type + ", delta=" + cev.delta + ", pos=" + cev.mousePosition );
+				cev.Use();
+				return true;	// Start resizing
+			}
+		}
+		
+		return _wasResizing;
 	}
 
 	void OnDrawTileBank( int _id )
