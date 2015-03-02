@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
+[System.Serializable]
 public class TileInstance
 {
 	public TileInstance( TileBank _tileBank, Tile _tile, int _tileBankIndex, bool _flipX, bool _flipY )

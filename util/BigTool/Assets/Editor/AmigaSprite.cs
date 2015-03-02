@@ -3,6 +3,7 @@ using UnityEditor;
 using System.Collections;
 using System;
 
+[System.Serializable]
 public class AmigaSprite
 {
 	private int m_imageWidth;

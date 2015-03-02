@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Hjg.Pngcs;
 using Hjg.Pngcs.Chunks;
 
+[System.Serializable]
 public class PalettizedImage
 {
 	public List<Color> m_palette;

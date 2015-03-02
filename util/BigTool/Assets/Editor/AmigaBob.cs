@@ -3,6 +3,7 @@ using UnityEditor;
 using System.Collections;
 using System;
 
+[System.Serializable]
 public class AmigaBob
 {
 	private int m_imageWidth;

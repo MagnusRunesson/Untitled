@@ -2,9 +2,10 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class Project
+[System.Serializable]
+public class Project : ISerializationCallbackReceiver
 {
-	Dictionary<string,object> m_defaultSettings = new Dictionary<string, object>{{"hej",0},{"hopp",1}};
+	Dictionary<string,object> m_defaultSettings;
 
 	Dictionary<string,object> m_settings;
 	string m_path;
@@ -13,8 +14,35 @@ public class Project
 	public string[] m_imageFiles;
 	public string[] m_mapFiles;
 
+
+	public List<string> _keys = new List<string>();
+	public List<object> _values = new List<object>();
+	//Unity doesn't know how to serialize a Dictionary
+	public void OnBeforeSerialize()
+	{
+		_keys.Clear();
+		_values.Clear();
+		foreach(var kvp in m_settings)
+		{
+			_keys.Add(kvp.Key);
+			_values.Add(kvp.Value);
+		}
+	}
+
+	public void OnAfterDeserialize()
+	{
+		m_settings = new Dictionary<string,object>();
+		if((_keys != null) && (_values != null))
+		{
+			for (int i=0; i!= System.Math.Min(_keys.Count,_values.Count); i++)
+				m_settings.Add(_keys[i],_values[i]);
+		}
+	}
+
 	public Project( string _path )
 	{
+		m_defaultSettings = new Dictionary<string, object>{{"hej",0},{"hopp",1}};
+
 		/*
 		Debug.Log( "default settings:" );
 		foreach( var kvp in m_defaultSettings )

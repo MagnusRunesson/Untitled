@@ -3,6 +3,7 @@ using UnityEditor;
 using System.Collections;
 using System;
 
+[System.Serializable]
 class PlanarImage
 {
 	private int m_width;

@@ -2,7 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class PalettizedImageConfig
+[System.Serializable]
+public class PalettizedImageConfig : ISerializationCallbackReceiver
 {
 	const int DEFAULT_FRAME_TIME = 6;		// 10 frames per second for animation when game is running at 60 FPS
 	
@@ -29,8 +30,69 @@ public class PalettizedImageConfig
 	int m_spriteHeight;
 	PalettizedImage m_imageData;
 
+	public List<int> _keysColRemap = null;
+	public List<int> _valuesColRemap = null;
+	public List<int> _keysFrameTimes = null;
+	public List<int> _valuesFrameTimes = null;
+	//Unity doesn't know how to serialize a Dictionary
+	public void OnBeforeSerialize()
+	{
+		Debug.Log ("palimgconfig before serialize. hash=" + GetHashCode());
+		if( m_colorRemapSourceToDest != null )
+		{
+			_keysColRemap = new List<int>();
+			_valuesColRemap = new List<int>();
+			foreach(var kvp in m_colorRemapSourceToDest)
+			{
+				_keysColRemap.Add(kvp.Key);
+				_valuesColRemap.Add(kvp.Value);
+			}
+		}
+
+		if( m_frameTimes != null )
+		{
+			_keysFrameTimes = new List<int>();
+			_valuesFrameTimes = new List<int>();
+			foreach(var kvp in m_frameTimes)
+			{
+				_keysFrameTimes.Add(kvp.Key);
+				_valuesFrameTimes.Add(kvp.Value);
+			}
+		}
+	}
+
+	public void OnAfterDeserialize()
+	{
+		Debug.Log ("palimgconfig after serialize yo!. hash=" + GetHashCode());
+		m_colorRemapSourceToDest = null;
+		if((_keysColRemap != null) && (_valuesColRemap != null))
+		{
+			m_colorRemapSourceToDest = new Dictionary<int,int>();
+			int a = _keysColRemap.Count;
+			int b = _valuesColRemap.Count;
+			for (int i=0; i!= System.Math.Min( a, b ); i++)
+				m_colorRemapSourceToDest.Add(_keysColRemap[i],_valuesColRemap[i]);
+		}
+
+		m_frameTimes = null;
+		if((_keysFrameTimes != null) && (_valuesFrameTimes != null))
+		{
+			m_frameTimes = new Dictionary<int,int>();
+			for (int i=0; i!= System.Math.Min(_keysFrameTimes.Count,_valuesFrameTimes.Count); i++)
+				m_frameTimes.Add(_keysFrameTimes[i],_valuesFrameTimes[i]);
+		}
+	}
+
+
+
+	PalettizedImageConfig()
+	{
+		Debug.Log ("hello?");
+	}
+
 	public PalettizedImageConfig( string _path )
 	{
+		Debug.Log ("creating palimgconf from path");
 		m_fileName = _path;
 		SetupDefaults();
 

@@ -3,7 +3,7 @@ using UnityEditor;
 using System.Collections;
 using System.Collections.Generic;
 
-public class bmp2tile : EditorWindow
+public class bmp2tile : EditorWindow, ISerializationCallbackReceiver
 {
 	const string PPKEY_PROJECT_PATH = "bmp2tile_project_path";
 	const string PPKEY_LAST_OPEN_DIRECTORY = "bmp2tile_last_open_directory";
@@ -22,6 +22,30 @@ public class bmp2tile : EditorWindow
 
 	string m_openImageName;
 	string m_openMapName;
+
+
+	public List<int> _keys = new List<int>();
+	public List<string> _values = new List<string>();
+	//Unity doesn't know how to serialize a Dictionary
+	public void OnBeforeSerialize()
+	{
+		_keys.Clear();
+		_values.Clear();
+		if( m_currentFrameTimesString != null )
+		{
+			foreach(var kvp in m_currentFrameTimesString)
+			{
+				_keys.Add(kvp.Key);
+				_values.Add(kvp.Value);
+			}
+		}
+	}
+	public void OnAfterDeserialize()
+	{
+		m_currentFrameTimesString = new Dictionary<int,string>();
+		for (int i = 0; i != System.Math.Min( _keys.Count,_values.Count ); i++)
+			m_currentFrameTimesString.Add( _keys[ i ],_values[ i ]);
+	}
 
 	Project m_project;
 
@@ -179,7 +203,7 @@ public class bmp2tile : EditorWindow
 			// Show the project window.
 			m_projectWindowRect = GUI.Window( 100, m_projectWindowRect, OnDrawProject, "Project" );
 		}
-		
+
 		EndWindows();
 
 		GUILayout.EndHorizontal();
@@ -605,6 +629,7 @@ public class bmp2tile : EditorWindow
 
 		Texture2D collTiles = AssetDatabase.LoadAssetAtPath( "assets/collisiontiles.psd", typeof( Texture2D )) as Texture2D;
 		Debug.Log ("colltiles = " + collTiles );
+
 
 		// Find each layer
 		List<object> layersJson = (List<object>)json[ "layers" ];

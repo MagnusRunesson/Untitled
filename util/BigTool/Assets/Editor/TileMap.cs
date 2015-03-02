@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
+[System.Serializable]
 public class TileMap
 {
 	public TileMap( TileBank _bank, PalettizedImage _sourceImage )

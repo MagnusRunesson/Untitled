@@ -28,6 +28,7 @@ using System.Collections;
 			DoCollision_Corner_DownRightAsm( tile_x, tile_y, ref new_dir_x, ref new_dir_y );
 		else if( coll_tile_index == 9 )
  */
+[System.Serializable]
 public class CollisionMap
 {
 	int m_width;
