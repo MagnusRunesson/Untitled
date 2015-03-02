@@ -340,28 +340,18 @@ _data_housetiles_palette_length         equ ((_data_housetiles_palette_end-_data
 _data_housetiles_palette_end:
 
 
-; signpost_bank.bin
+; signpost_sprite_bank.bin
 
 	cnop		0,_chunk_size
-_data_signpost_bank:
+_data_signpost_sprite_bank:
 	ifd	is_mega_drive
-	incbin	"../src/incbin/signpost_bank.bin"
+	incbin	"../src/incbin/signpost_sprite_bank.bin"
 	else
-	incbin	"../src/incbin/signpost_bank_amiga.bin"
+	incbin	"../src/incbin/signpost_sprite_bank_amiga_a_bob.bin"
 	endif
-_data_signpost_bank_pos                 equ _data_signpost_bank/_chunk_size
-_data_signpost_bank_length              equ ((_data_signpost_bank_end-_data_signpost_bank)+(_chunk_size-1))/_chunk_size
-_data_signpost_bank_end:
-
-
-; signpost_map.bin
-
-	cnop		0,_chunk_size
-_data_signpost_map:
-	incbin	"../src/incbin/signpost_map.bin"
-_data_signpost_map_pos                  equ _data_signpost_map/_chunk_size
-_data_signpost_map_length               equ ((_data_signpost_map_end-_data_signpost_map)+(_chunk_size-1))/_chunk_size
-_data_signpost_map_end:
+_data_signpost_sprite_bank_pos          equ _data_signpost_sprite_bank/_chunk_size
+_data_signpost_sprite_bank_length       equ ((_data_signpost_sprite_bank_end-_data_signpost_sprite_bank)+(_chunk_size-1))/_chunk_size
+_data_signpost_sprite_bank_end:
 
 
 ; signpost_palette.bin
@@ -372,6 +362,16 @@ _data_signpost_palette:
 _data_signpost_palette_pos              equ _data_signpost_palette/_chunk_size
 _data_signpost_palette_length           equ ((_data_signpost_palette_end-_data_signpost_palette)+(_chunk_size-1))/_chunk_size
 _data_signpost_palette_end:
+
+
+; signpost_sprite.bin
+
+	cnop		0,_chunk_size
+_data_signpost_sprite:
+	incbin	"../src/incbin/signpost_sprite.bin"
+_data_signpost_sprite_pos               equ _data_signpost_sprite/_chunk_size
+_data_signpost_sprite_length            equ ((_data_signpost_sprite_end-_data_signpost_sprite)+(_chunk_size-1))/_chunk_size
+_data_signpost_sprite_end:
 
 
 ; testmap_map.bin

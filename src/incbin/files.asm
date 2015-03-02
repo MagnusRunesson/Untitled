@@ -28,9 +28,9 @@ fileid_herotestpng_sprite               equ 26
 fileid_housetiles_bank                  equ 27
 fileid_housetiles_map                   equ 28
 fileid_housetiles_palette               equ 29
-fileid_signpost_bank                    equ 30
-fileid_signpost_map                     equ 31
-fileid_signpost_palette                 equ 32
+fileid_signpost_sprite_bank             equ 30
+fileid_signpost_palette                 equ 31
+fileid_signpost_sprite                  equ 32
 fileid_testmap_map                      equ 33
 fileid_testmap_collisionmap             equ 34
 fileid_testmap2_map                     equ 35
@@ -67,9 +67,9 @@ FileIDMap:
 	dc.w	_data_housetiles_bank_pos,_data_housetiles_bank_length
 	dc.w	_data_housetiles_map_pos,_data_housetiles_map_length
 	dc.w	_data_housetiles_palette_pos,_data_housetiles_palette_length
-	dc.w	_data_signpost_bank_pos,_data_signpost_bank_length
-	dc.w	_data_signpost_map_pos,_data_signpost_map_length
+	dc.w	_data_signpost_sprite_bank_pos,_data_signpost_sprite_bank_length
 	dc.w	_data_signpost_palette_pos,_data_signpost_palette_length
+	dc.w	_data_signpost_sprite_pos,_data_signpost_sprite_length
 	dc.w	_data_testmap_map_pos,_data_testmap_map_length
 	dc.w	_data_testmap_collisionmap_pos,_data_testmap_collisionmap_length
 	dc.w	_data_testmap2_map_pos,_data_testmap2_map_length
