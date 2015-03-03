@@ -534,10 +534,6 @@ rendSetSpriteDrawOrder:
 
 _drawSprite
 	pushm		d2-d7/a2-a5
-	;popm		d2-d7/a2-a5
-	;rts
-
-	;bsr			_rendSetupSpritePointers
 
 	lea			_RendVars,a3
 	move.l		__RendSpriteCopperPointer(a3),a4
@@ -548,9 +544,7 @@ _drawSprite
 	swap.w		d0
 	move.w		d0,4(a4)
 	
-	;lea			72(a0),a0
 	addq		#8,a4
-	;move.l		a0,d0
 	add.l		#72,d0
 	swap.w		d0
 	move.w		d0,(a4)
@@ -559,9 +553,6 @@ _drawSprite
 
 	addq		#8,a4
 	move.l		a4,__RendSpriteCopperPointer(a3)
-
-
-
 
 	moveq		#0,d1
 	moveq		#0,d2
@@ -593,13 +584,13 @@ _drawSprite
 	and.w		#$0004,d4
 	or.w		d4,d5		;d5=sprxctl
 	
-	lea			72(a0),a1
+	lea			72(a1),a3
 
-	move.w		d1,(a0)+
 	move.w		d1,(a1)+
-	move.w		d5,(a0)
-	or.w		#$0080,d5	; attach
+	move.w		d1,(a3)+
 	move.w		d5,(a1)
+	or.w		#$0080,d5	; attach
+	move.w		d5,(a3)
 
 	popm		d2-d7/a2-a5
 	rts
