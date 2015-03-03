@@ -10,6 +10,7 @@ public class Project : ISerializationCallbackReceiver
 	Dictionary<string,object> m_settings;
 	string m_path;
 	string m_projectFileName;
+	string m_lastExportDirectory;
 
 	public string[] m_imageFiles;
 	public string[] m_mapFiles;
@@ -129,6 +130,147 @@ public class Project : ISerializationCallbackReceiver
 		m_mapFiles = System.IO.Directory.GetFiles( m_path, "*.json" );
 
 		VerifyMapFiles();
+	}
+
+	int m_exportedFileListIndex;
+	public void Export( string _directory )
+	{
+		m_lastExportDirectory = _directory;
+
+		//
+		m_exportedFileListIndex = 0;
+		
+		//
+		// Build data.asm and files.asm content
+		//
+		string asmData = "";
+		string asmFileList = "";
+		string asmFileMap = "FileIDMap:\n";
+		
+		//
+		// Export all images
+		//
+		foreach( string imageFile in m_imageFiles )
+		{
+			Debug.Log( "Exporting file '" + imageFile + "'" );
+			
+			string outFileNameNoExt = GetOutFileNameNoExt( imageFile );
+			//string outBaseName = GetOutBaseName( imageFile );
+			
+			//
+			PalettizedImageConfig imageConfig = new PalettizedImageConfig( imageFile + ".config" );
+			PalettizedImage imageData = PalettizedImage.LoadImage( imageFile, imageConfig );
+			
+			//
+			if( imageData != null )
+			{
+				// Export it
+				if( imageConfig.m_importAsSprite )
+				{
+					string alternativeAmigaSpriteName;
+					if( imageConfig.m_importAsBSprite )
+					{
+						alternativeAmigaSpriteName = "_sprite_bank_amiga_b_hw.bin";
+					}
+					else
+					{
+						alternativeAmigaSpriteName = "_sprite_bank_amiga_a_bob.bin";						
+					}
+
+					AddFile( ref asmData, ref asmFileList, ref asmFileMap, outFileNameNoExt + "_sprite_bank.bin", outFileNameNoExt + alternativeAmigaSpriteName );
+					AddFile( ref asmData, ref asmFileList, ref asmFileMap, outFileNameNoExt + "_palette.bin" );
+					AddFile( ref asmData, ref asmFileList, ref asmFileMap, outFileNameNoExt + "_sprite.bin" );
+				}
+				else
+				{
+					AddFile( ref asmData, ref asmFileList, ref asmFileMap, outFileNameNoExt + "_bank.bin", outFileNameNoExt + "_bank_amiga.bin" );
+					AddFile( ref asmData, ref asmFileList, ref asmFileMap, outFileNameNoExt + "_map.bin" );
+					AddFile( ref asmData, ref asmFileList, ref asmFileMap, outFileNameNoExt + "_palette.bin" );
+				}
+			}
+		}
+		
+		//
+		// Export all maps
+		//
+		foreach( string mapFile in m_mapFiles )
+		{
+			Debug.Log( "Exporting map '" + mapFile + "'" );
+			
+			string outFileNameNoExt = GetOutFileNameNoExt( mapFile );
+
+			//
+			AddFile( ref asmData, ref asmFileList, ref asmFileMap, outFileNameNoExt + "_map.bin" );
+			AddFile( ref asmData, ref asmFileList, ref asmFileMap, outFileNameNoExt + "_collisionmap.bin" );
+		}
+		
+		System.IO.File.WriteAllText( m_lastExportDirectory + System.IO.Path.DirectorySeparatorChar + "data.asm", asmData );
+		System.IO.File.WriteAllText( m_lastExportDirectory + System.IO.Path.DirectorySeparatorChar + "files.asm", asmFileList + "\n" + asmFileMap );
+	}
+
+	void AddFile( ref string _asmData, ref string _asmFileList, ref string _asmFileMap, string _filename, string _alternativeAmigaFilename = null )
+	{
+		//string asmFileName = System.IO.Path.GetFileNameWithoutExtension( _filename ).Replace( ' ', '_' );
+		string label = GetLabelNameFromFileName( _filename );
+		string constant = GetConstantNameFromFileName( _filename );
+		
+		// Append to data.asm
+		_asmData += "\n\n; " + _filename + "\n\n";
+		_asmData += "\tcnop\t\t0,_chunk_size\n";
+		_asmData += label + ":\n";
+		
+		if (_alternativeAmigaFilename == null) 
+		{
+			_asmData += "\tincbin\t\"../src/incbin/" + _filename + "\"\n";
+		}
+		else
+		{
+			_asmData += "\tifd\tis_mega_drive\n";
+			_asmData += "\tincbin\t\"../src/incbin/" + _filename + "\"\n";
+			_asmData += "\telse\n";
+			_asmData += "\tincbin\t\"../src/incbin/" + _alternativeAmigaFilename + "\"\n";
+			_asmData += "\tendif\n";
+		}
+		
+		_asmData += (label + "_pos").PadRight( 40 ) + "equ " + label + "/_chunk_size\n";
+		_asmData += (label + "_length").PadRight( 40 ) +"equ ((" + label + "_end-" + label + ")+(_chunk_size-1))/_chunk_size\n";
+		_asmData += label + "_end:\n";
+		
+		// Append to files.asm
+		_asmFileList += constant.PadRight( 40 ) + "equ " + m_exportedFileListIndex + "\n";
+		_asmFileMap += "\tdc.w\t" + label + "_pos," + label + "_length\n";
+		m_exportedFileListIndex++;
+	}
+	
+	string GetLabelNameFromFileName( string _sourceFileName )
+	{
+		string ret = "_data_";
+		ret += System.IO.Path.GetFileNameWithoutExtension( _sourceFileName );
+		ret = ret.Replace( ' ', '_' );
+		ret = ret.ToLower();
+		
+		return ret;
+	}
+	
+	string GetConstantNameFromFileName( string _sourceFileName )
+	{
+		string ret = "fileid_";
+		ret += System.IO.Path.GetFileNameWithoutExtension( _sourceFileName );
+		ret = ret.Replace( ' ', '_' );
+		ret = ret.ToLower();
+		
+		return ret;
+	}
+
+	public string GetOutFileNameNoExt( string _sourceFileName )
+	{
+		return System.IO.Path.GetFileNameWithoutExtension( _sourceFileName ).ToLower();
+	}
+
+	public string GetOutBaseName( string _sourceFileName )
+	{
+		string outFileNameNoExt = GetOutFileNameNoExt( _sourceFileName );
+		return m_lastExportDirectory + System.IO.Path.DirectorySeparatorChar + outFileNameNoExt;
 	}
 
 	// Filter out all found JSON files that aren't Tiled data

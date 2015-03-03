@@ -76,7 +76,6 @@ public class bmp2tile : EditorWindow, ISerializationCallbackReceiver
 	const float m_windowPadding = 10.0f;
 	const float m_projectWindowWidth = 250.0f;
 
-	int m_exportedFileListIndex;
 	float m_collisionAlpha;
 
 	[MenuItem("Untitled/bmp2tile %e")]
@@ -749,21 +748,13 @@ public class bmp2tile : EditorWindow, ISerializationCallbackReceiver
 	void ExportAll()
 	{
 		//
-		m_exportedFileListIndex = 0;
-
-		//
 		string outFileName = EditorUtility.SaveFilePanel( "Select folder to export to", m_lastExportDirectory, "filenameignored", "bin" );
 		
 		//
 		m_lastExportDirectory = System.IO.Path.GetDirectoryName( outFileName );
 		SaveLastExportDirectory();
 
-		//
-		// Build data.asm and files.asm content
-		//
-		string asmData = "";
-		string asmFileList = "";
-		string asmFileMap = "FileIDMap:\n";
+		m_project.Export( m_lastExportDirectory );
 
 		//
 		// Export all images
@@ -811,10 +802,6 @@ public class bmp2tile : EditorWindow, ISerializationCallbackReceiver
 					tileBank.ExportMegaDrive( outBaseName + "_sprite_bank.bin" );
 					tilePalette.Export( outBaseName + "_palette.bin" );
 					sprite.Export( outBaseName + "_sprite.bin" );
-
-					AddFile( ref asmData, ref asmFileList, ref asmFileMap, outFileNameNoExt + "_sprite_bank.bin", outFileNameNoExt + alternativeAmigaSpriteName );
-					AddFile( ref asmData, ref asmFileList, ref asmFileMap, outFileNameNoExt + "_palette.bin" );
-					AddFile( ref asmData, ref asmFileList, ref asmFileMap, outFileNameNoExt + "_sprite.bin" );
 				}
 				else
 				{
@@ -824,10 +811,6 @@ public class bmp2tile : EditorWindow, ISerializationCallbackReceiver
 					tileBank.ExportAmiga( outBaseName + "_bank_amiga.bin" );
 					tileMap.Export( outBaseName + "_map.bin" );
 					tilePalette.Export( outBaseName + "_palette.bin" );
-							
-					AddFile( ref asmData, ref asmFileList, ref asmFileMap, outFileNameNoExt + "_bank.bin", outFileNameNoExt + "_bank_amiga.bin" );
-					AddFile( ref asmData, ref asmFileList, ref asmFileMap, outFileNameNoExt + "_map.bin" );
-					AddFile( ref asmData, ref asmFileList, ref asmFileMap, outFileNameNoExt + "_palette.bin" );
 				}
 			}
 		}
@@ -849,111 +832,9 @@ public class bmp2tile : EditorWindow, ISerializationCallbackReceiver
 
 			tileMap.Export( outBaseName + "_map.bin" );
 			collisionmap.Export( outBaseName  + "_collisionmap.bin" );
-
-			//
-			AddFile( ref asmData, ref asmFileList, ref asmFileMap, outFileNameNoExt + "_map.bin" );
-			AddFile( ref asmData, ref asmFileList, ref asmFileMap, outFileNameNoExt + "_collisionmap.bin" );
 		}
-
-		System.IO.File.WriteAllText( m_lastExportDirectory + System.IO.Path.DirectorySeparatorChar + "data.asm", asmData );
-		System.IO.File.WriteAllText( m_lastExportDirectory + System.IO.Path.DirectorySeparatorChar + "files.asm", asmFileList + "\n" + asmFileMap );
-
-		/*
-		//
-		string outFileNameNoExt = System.IO.Path.GetFileNameWithoutExtension( outFileName ).ToLower();
-		string outBaseName = m_lastExportDirectory + System.IO.Path.DirectorySeparatorChar + outFileNameNoExt;
-
-		// Load corresponding config first as it have information on how the image should be loaded
-		m_imageConfig = new PalettizedImageConfig( _path + ".config" );
-		
-		m_imageData = PalettizedImage.LoadBMP( _path, m_imageConfig );
-		if( m_imageData != null )
-		{
-			m_openImageName = System.IO.Path.GetFileNameWithoutExtension( _path );
-			m_tileBankWindowRect = new Rect( m_projectWindowWidth + (m_windowPadding*2.0f), m_windowTop, m_imageData.m_width*2.0f+10.0f, m_imageData.m_height*2.0f+10.0f+15.0f );
-			m_paletteRemapRect = new Rect( m_tileBankWindowRect.x + m_tileBankWindowRect.width + m_windowPadding, m_tileBankWindowRect.y, 100.0f, 15.0f + (16.0f * 30.0f) );
-			
-			//
-			m_planarImage = new PlanarImage( m_imageData);
-			m_tileBank = new TileBank( m_imageData );
-			m_tileMap = new TileMap( m_tileBank, m_imageData );
-			m_tilePalette = new TilePalette( m_imageData );
-		}
-
-		//
-		m_tileBank.Export( outBaseName + "_bank.bin" );
-		m_tileMap.Export( outBaseName + "_map.bin" );
-		m_tilePalette.Export( outBaseName + "_palette.bin" );
-		m_planarImage.Export( outBaseName + "_planar.bin" );
-		*/
 
         Debug.Log("Export is finished!");
-	}
-
-	void AddFile( ref string _asmData, ref string _asmFileList, ref string _asmFileMap, string _filename, string _alternativeAmigaFilename = null )
-	{
-		//string asmFileName = System.IO.Path.GetFileNameWithoutExtension( _filename ).Replace( ' ', '_' );
-		string label = GetLabelNameFromFileName( _filename );
-		string constant = GetConstantNameFromFileName( _filename );
-
-		// Append to data.asm
-		_asmData += "\n\n; " + _filename + "\n\n";
-		_asmData += "\tcnop\t\t0,_chunk_size\n";
-		_asmData += label + ":\n";
-
-		if (_alternativeAmigaFilename == null) 
-		{
-			_asmData += "\tincbin\t\"../src/incbin/" + _filename + "\"\n";
-		}
-		else
-		{
-			_asmData += "\tifd\tis_mega_drive\n";
-			_asmData += "\tincbin\t\"../src/incbin/" + _filename + "\"\n";
-			_asmData += "\telse\n";
-			_asmData += "\tincbin\t\"../src/incbin/" + _alternativeAmigaFilename + "\"\n";
-			_asmData += "\tendif\n";
-		}
-
-		_asmData += (label + "_pos").PadRight( 40 ) + "equ " + label + "/_chunk_size\n";
-		_asmData += (label + "_length").PadRight( 40 ) +"equ ((" + label + "_end-" + label + ")+(_chunk_size-1))/_chunk_size\n";
-		_asmData += label + "_end:\n";
-
-		// Append to files.asm
-		_asmFileList += constant.PadRight( 40 ) + "equ " + m_exportedFileListIndex + "\n";
-		_asmFileMap += "\tdc.w\t" + label + "_pos," + label + "_length\n";
-		m_exportedFileListIndex++;
-/*
- * This is what we want to output to data.asm
-
-	cnop		0,_chunk_size
-
-_data_untitled_splash_bank:
-	incbin	"../src/incbin/untitled_splash_bank.bin"
-_data_untitled_splash_bank_pos				equ _data_untitled_splash_bank/_chunk_size
-_data_untitled_splash_bank_length			equ ((_data_untitled_splash_bank_end-_data_untitled_splash_bank)+(_chunk_size-1))/_chunk_size
-_data_untitled_splash_bank_end:
-
-*/
-	}
-
-	string GetLabelNameFromFileName( string _sourceFileName )
-	{
-		string ret = "_data_";
-		ret += System.IO.Path.GetFileNameWithoutExtension( _sourceFileName );
-		ret = ret.Replace( ' ', '_' );
-		ret = ret.ToLower();
-		
-		return ret;
-	}
-
-	string GetConstantNameFromFileName( string _sourceFileName )
-	{
-		string ret = "fileid_";
-		ret += System.IO.Path.GetFileNameWithoutExtension( _sourceFileName );
-		ret = ret.Replace( ' ', '_' );
-		ret = ret.ToLower();
-
-		return ret;
 	}
 }
 
