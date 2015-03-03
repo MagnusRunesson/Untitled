@@ -446,3 +446,13 @@ _data_testmap2_collisionmap:
 _data_testmap2_collisionmap_pos         equ _data_testmap2_collisionmap/_chunk_size
 _data_testmap2_collisionmap_length      equ ((_data_testmap2_collisionmap_end-_data_testmap2_collisionmap)+(_chunk_size-1))/_chunk_size
 _data_testmap2_collisionmap_end:
+
+
+; herotest_gameobject.bin
+
+	cnop		0,_chunk_size
+_data_herotest_gameobject:
+	incbin	"../src/incbin/herotest_gameobject.bin"
+_data_herotest_gameobject_pos           equ _data_herotest_gameobject/_chunk_size
+_data_herotest_gameobject_length        equ ((_data_herotest_gameobject_end-_data_herotest_gameobject)+(_chunk_size-1))/_chunk_size
+_data_herotest_gameobject_end:
