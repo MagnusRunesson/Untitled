@@ -2,36 +2,12 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
+
 [System.Serializable]
-public class TileBank : ISerializationCallbackReceiver
+public class TileBank
 {
 	public List<Tile> m_tiles;
 	public Dictionary<int,TileInstance> m_allTileInstances;
-
-	public List<int> _keys = new List<int>();
-	public List<TileInstance> _values = new List<TileInstance>();
-	public void OnBeforeSerialize()
-	{
-		Debug.Log("tilebank onbeforeserialize");
-		/*
-		_keys.Clear();
-		_values.Clear();
-		foreach( var kvp in m_allTileInstances )
-		{
-			_keys.Add(kvp.Key);
-			_values.Add(kvp.Value);
-		}
-		*/
-	}
-	public void OnAfterDeserialize()
-	{
-		Debug.Log("tilebank onafterseserialize");
-		/*
-		m_allTileInstances = new Dictionary<int,TileInstance>();
-		for( int i = 0; i != System.Math.Min( _keys.Count, _values.Count ); i++)
-			m_allTileInstances.Add( _keys[ i ],_values[ i ]);
-			*/
-	}
 
 	//
 	// Optimized tile bank means to remove duplicates
