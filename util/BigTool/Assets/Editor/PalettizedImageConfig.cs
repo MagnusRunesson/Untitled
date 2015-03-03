@@ -28,7 +28,9 @@ public class PalettizedImageConfig : ISerializationCallbackReceiver
 	int m_spriteFrames;
 	int m_spriteWidth;
 	int m_spriteHeight;
-	PalettizedImage m_imageData;
+
+	int m_sourceImageWidth;
+	int m_sourceImageHeight;
 
 	public List<int> _keysColRemap = null;
 	public List<int> _valuesColRemap = null;
@@ -132,7 +134,8 @@ public class PalettizedImageConfig : ISerializationCallbackReceiver
 
 	public void SetImage( PalettizedImage _imageData )
 	{
-		m_imageData = _imageData;
+		m_sourceImageWidth = _imageData.m_width;
+		m_sourceImageHeight = _imageData.m_height;
 		RefreshInternalThings();
 	}
 
@@ -174,8 +177,8 @@ public class PalettizedImageConfig : ISerializationCallbackReceiver
 
 	void RefreshInternalThings()
 	{
-		m_spriteWidth = m_imageData.m_width / m_spriteFrames;
-		m_spriteHeight = m_imageData.m_height;
+		m_spriteWidth = m_sourceImageWidth / m_spriteFrames;
+		m_spriteHeight = m_sourceImageHeight;
 	}
 
 	void SetupDefaults()
