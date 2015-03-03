@@ -50,6 +50,7 @@ public class bmp2tile : EditorWindow, ISerializationCallbackReceiver
 	}
 
 	Project m_project;
+	bool m_projectLoaded;
 
 	TileBank m_tileBank;
 	TileMap m_tileMap;
@@ -139,7 +140,7 @@ public class bmp2tile : EditorWindow, ISerializationCallbackReceiver
 			}
 		}
 
-		if( m_project != null )
+		if( m_projectLoaded )
 		{
 			if( GUILayout.Button( "Export all" ))
 			{
@@ -202,7 +203,7 @@ public class bmp2tile : EditorWindow, ISerializationCallbackReceiver
 			m_mapWindowRect = GUI.Window( 200, m_mapWindowRect, OnDrawMapWindow, "Map: " + m_openMapName );
 		}
 
-		if( m_project != null )
+		if( m_projectLoaded )
 		{
 			// Show the project window.
 			m_projectWindowRect = GUI.Window( 100, m_projectWindowRect, OnDrawProject, "Project" );
@@ -528,6 +529,7 @@ public class bmp2tile : EditorWindow, ISerializationCallbackReceiver
 	{
 		m_project = new Project( _path );
 		m_projectWindowRect = new Rect( m_windowPadding, m_windowTop, m_projectWindowWidth, 600.0f );
+		m_projectLoaded = true;
 	}
 
 	void LoadBMP( string _path )
