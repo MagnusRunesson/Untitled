@@ -60,7 +60,7 @@ public class PalettizedImage
 		int height = ReadInt( imageFile, 0x16 );
 		int bpp = ReadWord ( imageFile, 0x1c );
 		int coloursInPalette = ReadWord ( imageFile, 0x2e );
-		Debug.Log ("width=" + width + ", height=" + height + ", bpp=" + bpp + " (pixels start=" + pixelsOffset + ") Colours in palette=" + coloursInPalette );
+		//Debug.Log ("width=" + width + ", height=" + height + ", bpp=" + bpp + " (pixels start=" + pixelsOffset + ") Colours in palette=" + coloursInPalette );
 
 		if( coloursInPalette == 0 )
 			coloursInPalette = 256;

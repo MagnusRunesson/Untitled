@@ -93,7 +93,7 @@ public class PalettizedImageConfig : ISerializationCallbackReceiver
 	
 	public PalettizedImageConfig( string _path )
 	{
-		Debug.Log ("creating palimgconf from path");
+		//Debug.Log ("creating palimgconf from path");
 		m_fileName = _path;
 		SetupDefaults();
 
