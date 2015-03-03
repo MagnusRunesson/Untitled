@@ -15,6 +15,7 @@ public class Project : ISerializationCallbackReceiver
 	public string[] m_imageFiles;
 	public string[] m_mapFiles;
 
+	List<string> m_allFiles;
 
 	public List<string> _keys = new List<string>();
 	public List<object> _values = new List<object>();
@@ -130,16 +131,94 @@ public class Project : ISerializationCallbackReceiver
 		m_mapFiles = System.IO.Directory.GetFiles( m_path, "*.json" );
 
 		VerifyMapFiles();
+		BuildFileList();
 	}
 
-	int m_exportedFileListIndex;
-	public void Export( string _directory )
+	public string GetOutFileNameNoExt( string _sourceFileName )
 	{
+		return System.IO.Path.GetFileNameWithoutExtension( _sourceFileName ).ToLower();
+	}
+	
+	public string GetOutBaseName( string _sourceFileName )
+	{
+		string outFileNameNoExt = GetOutFileNameNoExt( _sourceFileName );
+		return m_lastExportDirectory + System.IO.Path.DirectorySeparatorChar + outFileNameNoExt;
+	}
+
+	public string GetSpriteTileName( string _sourceFileName )
+	{
+		string outFileNameNoExt = GetOutFileNameNoExt( _sourceFileName );
+		return outFileNameNoExt + "_sprite_bank.bin";
+	}
+
+	public string GetSpriteName( string _sourceFileName )
+	{
+		string outFileNameNoExt = GetOutFileNameNoExt( _sourceFileName );
+		return outFileNameNoExt + "_sprite.bin";
+	}
+
+	public string GetTileBankName( string _sourceFileName )
+	{
+		string outFileNameNoExt = GetOutFileNameNoExt( _sourceFileName );
+		return outFileNameNoExt + "_bank.bin";
+	}
+
+	public string GetTileMapName( string _sourceFileName )
+	{
+		string outFileNameNoExt = GetOutFileNameNoExt( _sourceFileName );
+		return outFileNameNoExt + "_map.bin";
+	}
+
+	public string GetCollisionMapName( string _sourceFileName )
+	{
+		string outFileNameNoExt = GetOutFileNameNoExt( _sourceFileName );
+		return outFileNameNoExt + "_collisionmap.bin";
+	}
+
+	public string GetPaletteName( string _sourceFileName )
+	{
+		string outFileNameNoExt = GetOutFileNameNoExt( _sourceFileName );
+		return outFileNameNoExt + "_palette.bin";
+	}
+
+	public string GetLabelNameFromFileName( string _sourceFileName )
+	{
+		string ret = "_data_";
+		ret += System.IO.Path.GetFileNameWithoutExtension( _sourceFileName );
+		ret = ret.Replace( ' ', '_' );
+		ret = ret.ToLower();
+		
+		return ret;
+	}
+	
+	public string GetConstantNameFromFileName( string _sourceFileName )
+	{
+		string ret = "fileid_";
+		ret += System.IO.Path.GetFileNameWithoutExtension( _sourceFileName );
+		ret = ret.Replace( ' ', '_' );
+		ret = ret.ToLower();
+		
+		return ret;
+	}
+
+	public int GetIDFromConstant( string _constant )
+	{
+		int i;
+		for( i=0; i<m_allFiles.Count; i++ )
+		{
+			if( m_allFiles[ i ].Equals( _constant ))
+				return i;
+		}
+
+		Debug.LogException( new UnityException( "The constant '" + _constant + "' isn't known to the project." ));
+		return -1;
+	}
+
+	public void Export( string _directory, bool _dryRun = false )
+	{
+		m_allFiles = new List<string>();
 		m_lastExportDirectory = _directory;
 
-		//
-		m_exportedFileListIndex = 0;
-		
 		//
 		// Build data.asm and files.asm content
 		//
@@ -152,7 +231,8 @@ public class Project : ISerializationCallbackReceiver
 		//
 		foreach( string imageFile in m_imageFiles )
 		{
-			Debug.Log( "Exporting file '" + imageFile + "'" );
+			if( _dryRun == false )
+				Debug.Log( "Exporting file '" + imageFile + "'" );
 			
 			string outFileNameNoExt = GetOutFileNameNoExt( imageFile );
 			//string outBaseName = GetOutBaseName( imageFile );
@@ -177,15 +257,15 @@ public class Project : ISerializationCallbackReceiver
 						alternativeAmigaSpriteName = "_sprite_bank_amiga_a_bob.bin";						
 					}
 
-					AddFile( ref asmData, ref asmFileList, ref asmFileMap, outFileNameNoExt + "_sprite_bank.bin", outFileNameNoExt + alternativeAmigaSpriteName );
-					AddFile( ref asmData, ref asmFileList, ref asmFileMap, outFileNameNoExt + "_palette.bin" );
-					AddFile( ref asmData, ref asmFileList, ref asmFileMap, outFileNameNoExt + "_sprite.bin" );
+					AddFile( ref asmData, ref asmFileList, ref asmFileMap, GetSpriteTileName( outFileNameNoExt ), outFileNameNoExt + alternativeAmigaSpriteName );
+					AddFile( ref asmData, ref asmFileList, ref asmFileMap, GetPaletteName( outFileNameNoExt ));
+					AddFile( ref asmData, ref asmFileList, ref asmFileMap, GetSpriteName( outFileNameNoExt ));
 				}
 				else
 				{
-					AddFile( ref asmData, ref asmFileList, ref asmFileMap, outFileNameNoExt + "_bank.bin", outFileNameNoExt + "_bank_amiga.bin" );
-					AddFile( ref asmData, ref asmFileList, ref asmFileMap, outFileNameNoExt + "_map.bin" );
-					AddFile( ref asmData, ref asmFileList, ref asmFileMap, outFileNameNoExt + "_palette.bin" );
+					AddFile( ref asmData, ref asmFileList, ref asmFileMap, GetTileBankName( outFileNameNoExt ), outFileNameNoExt + "_bank_amiga.bin" );
+					AddFile( ref asmData, ref asmFileList, ref asmFileMap, GetTileMapName( outFileNameNoExt ));
+					AddFile( ref asmData, ref asmFileList, ref asmFileMap, GetPaletteName( outFileNameNoExt ));
 				}
 			}
 		}
@@ -195,19 +275,29 @@ public class Project : ISerializationCallbackReceiver
 		//
 		foreach( string mapFile in m_mapFiles )
 		{
-			Debug.Log( "Exporting map '" + mapFile + "'" );
+			if( _dryRun == false )
+				Debug.Log( "Exporting map '" + mapFile + "'" );
 			
 			string outFileNameNoExt = GetOutFileNameNoExt( mapFile );
 
 			//
-			AddFile( ref asmData, ref asmFileList, ref asmFileMap, outFileNameNoExt + "_map.bin" );
-			AddFile( ref asmData, ref asmFileList, ref asmFileMap, outFileNameNoExt + "_collisionmap.bin" );
+			AddFile( ref asmData, ref asmFileList, ref asmFileMap, GetTileMapName( outFileNameNoExt ));
+			AddFile( ref asmData, ref asmFileList, ref asmFileMap, GetCollisionMapName( outFileNameNoExt ));
 		}
-		
-		System.IO.File.WriteAllText( m_lastExportDirectory + System.IO.Path.DirectorySeparatorChar + "data.asm", asmData );
-		System.IO.File.WriteAllText( m_lastExportDirectory + System.IO.Path.DirectorySeparatorChar + "files.asm", asmFileList + "\n" + asmFileMap );
+
+		if( _dryRun == false )
+		{
+			System.IO.File.WriteAllText( m_lastExportDirectory + System.IO.Path.DirectorySeparatorChar + "data.asm", asmData );
+			System.IO.File.WriteAllText( m_lastExportDirectory + System.IO.Path.DirectorySeparatorChar + "files.asm", asmFileList + "\n" + asmFileMap );
+		}
 	}
 
+
+	void BuildFileList()
+	{
+		Export( null, _dryRun:true );
+	}
+	
 	void AddFile( ref string _asmData, ref string _asmFileList, ref string _asmFileMap, string _filename, string _alternativeAmigaFilename = null )
 	{
 		//string asmFileName = System.IO.Path.GetFileNameWithoutExtension( _filename ).Replace( ' ', '_' );
@@ -237,40 +327,11 @@ public class Project : ISerializationCallbackReceiver
 		_asmData += label + "_end:\n";
 		
 		// Append to files.asm
-		_asmFileList += constant.PadRight( 40 ) + "equ " + m_exportedFileListIndex + "\n";
+		_asmFileList += constant.PadRight( 40 ) + "equ " + m_allFiles.Count + "\n";
 		_asmFileMap += "\tdc.w\t" + label + "_pos," + label + "_length\n";
-		m_exportedFileListIndex++;
-	}
-	
-	string GetLabelNameFromFileName( string _sourceFileName )
-	{
-		string ret = "_data_";
-		ret += System.IO.Path.GetFileNameWithoutExtension( _sourceFileName );
-		ret = ret.Replace( ' ', '_' );
-		ret = ret.ToLower();
-		
-		return ret;
-	}
-	
-	string GetConstantNameFromFileName( string _sourceFileName )
-	{
-		string ret = "fileid_";
-		ret += System.IO.Path.GetFileNameWithoutExtension( _sourceFileName );
-		ret = ret.Replace( ' ', '_' );
-		ret = ret.ToLower();
-		
-		return ret;
-	}
 
-	public string GetOutFileNameNoExt( string _sourceFileName )
-	{
-		return System.IO.Path.GetFileNameWithoutExtension( _sourceFileName ).ToLower();
-	}
-
-	public string GetOutBaseName( string _sourceFileName )
-	{
-		string outFileNameNoExt = GetOutFileNameNoExt( _sourceFileName );
-		return m_lastExportDirectory + System.IO.Path.DirectorySeparatorChar + outFileNameNoExt;
+		//
+		m_allFiles.Add( constant );
 	}
 
 	// Filter out all found JSON files that aren't Tiled data
