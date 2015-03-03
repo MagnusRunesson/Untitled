@@ -222,9 +222,8 @@ main:
 	jsr			rendWaitVSync(pc)
 	perf_start
 
-	jsr			gomSortObjects(pc)
 	jsr			gomRender(pc)
-
+	jsr			gomSortObjects(pc)
 
 	;
 	; Slow loop to test performance thingie
