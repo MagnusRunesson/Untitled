@@ -37,8 +37,11 @@ public class PalettizedImageConfig : ISerializationCallbackReceiver
 	//Unity doesn't know how to serialize a Dictionary
 	public void OnBeforeSerialize()
 	{
-		Debug.Log ("palimgconfig before serialize. hash=" + GetHashCode());
-		if( m_colorRemapSourceToDest != null )
+		if( m_colorRemapSourceToDest == null )
+		{
+			_keysColRemap = null;
+			_valuesColRemap = null;
+		} else
 		{
 			_keysColRemap = new List<int>();
 			_valuesColRemap = new List<int>();
@@ -49,7 +52,11 @@ public class PalettizedImageConfig : ISerializationCallbackReceiver
 			}
 		}
 
-		if( m_frameTimes != null )
+		if( m_frameTimes == null )
+		{
+			_keysFrameTimes = null;
+			_valuesFrameTimes = null;
+		} else
 		{
 			_keysFrameTimes = new List<int>();
 			_valuesFrameTimes = new List<int>();
@@ -63,7 +70,6 @@ public class PalettizedImageConfig : ISerializationCallbackReceiver
 
 	public void OnAfterDeserialize()
 	{
-		Debug.Log ("palimgconfig after serialize yo!. hash=" + GetHashCode());
 		m_colorRemapSourceToDest = null;
 		if((_keysColRemap != null) && (_valuesColRemap != null))
 		{
@@ -82,14 +88,7 @@ public class PalettizedImageConfig : ISerializationCallbackReceiver
 				m_frameTimes.Add(_keysFrameTimes[i],_valuesFrameTimes[i]);
 		}
 	}
-
-
-
-	PalettizedImageConfig()
-	{
-		Debug.Log ("hello?");
-	}
-
+	
 	public PalettizedImageConfig( string _path )
 	{
 		Debug.Log ("creating palimgconf from path");

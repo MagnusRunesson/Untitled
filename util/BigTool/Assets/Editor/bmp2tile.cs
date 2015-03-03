@@ -3,6 +3,7 @@ using UnityEditor;
 using System.Collections;
 using System.Collections.Generic;
 
+[System.Serializable]
 public class bmp2tile : EditorWindow, ISerializationCallbackReceiver
 {
 	const string PPKEY_PROJECT_PATH = "bmp2tile_project_path";
@@ -11,6 +12,7 @@ public class bmp2tile : EditorWindow, ISerializationCallbackReceiver
 
 	PalettizedImage m_currentImageData;
 	PalettizedImageConfig m_currentImageConfig;
+	bool m_haveLoadedImage;
 	string m_currentFramesString;
 	Dictionary<int,string> m_currentFrameTimesString;
 
@@ -80,10 +82,9 @@ public class bmp2tile : EditorWindow, ISerializationCallbackReceiver
 	static public void OpenWindow()
 	{
 		bmp2tile wnd = EditorWindow.GetWindow( typeof( bmp2tile ), false, "Untitled 2 Data" ) as bmp2tile;
-		wnd.Init();
 	}
 
-	public void Init()
+	bmp2tile()
 	{
 		m_project = null;
 		if( PlayerPrefs.HasKey( PPKEY_PROJECT_PATH ))
@@ -104,8 +105,11 @@ public class bmp2tile : EditorWindow, ISerializationCallbackReceiver
 
 		m_imageTexture = null;
 		m_currentImageData = null;
+		m_currentImageConfig = null;
 		m_tileBank = null;
 		m_tileMap = null;
+
+		m_haveLoadedImage = false;
 
 		m_collisionAlpha = 0.5f;
 
@@ -186,7 +190,7 @@ public class bmp2tile : EditorWindow, ISerializationCallbackReceiver
 
 		BeginWindows();
 
-		if( m_tileBank != null )
+		if( m_haveLoadedImage )
 		{
 			m_tileBankWindowRect = GUI.Window( 0, m_tileBankWindowRect, OnDrawTileBank, "Tiles: " + m_openImageName );
 			m_paletteRemapRect = GUI.Window( 1, m_paletteRemapRect, OnDrawColorRemapTable, "Color remap" );
@@ -532,6 +536,7 @@ public class bmp2tile : EditorWindow, ISerializationCallbackReceiver
 
 		// Load corresponding config first as it have information on how the image should be loaded
 		m_currentImageConfig = new PalettizedImageConfig( _path + ".config" );
+		m_haveLoadedImage = true;
 
 		m_currentImageData = PalettizedImage.LoadImage( _path, m_currentImageConfig );
 		if( m_currentImageData != null )
@@ -590,6 +595,8 @@ public class bmp2tile : EditorWindow, ISerializationCallbackReceiver
 
 	void LoadMapPreview( string _path )
 	{
+		m_haveLoadedImage = false;
+
 		string jsonString = System.IO.File.ReadAllText( _path );
 		Dictionary<string,object> json = (Dictionary<string,object>)MiniJSON.Json.Deserialize( jsonString );
 		m_mapTexture = null;
