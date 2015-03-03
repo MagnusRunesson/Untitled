@@ -14,6 +14,7 @@ public class Project : ISerializationCallbackReceiver
 
 	public string[] m_imageFiles;
 	public string[] m_mapFiles;
+	public string[] m_gameObjectFiles;
 
 	List<string> m_allFiles;
 
@@ -129,6 +130,7 @@ public class Project : ISerializationCallbackReceiver
 		imageFiles.AddRange( System.IO.Directory.GetFiles( m_path, "*.png" ));
 		m_imageFiles = imageFiles.ToArray();
 		m_mapFiles = System.IO.Directory.GetFiles( m_path, "*.json" );
+		m_gameObjectFiles = System.IO.Directory.GetFiles( m_path, "*.go_json" );
 
 		VerifyMapFiles();
 		BuildFileList();
@@ -179,6 +181,12 @@ public class Project : ISerializationCallbackReceiver
 	{
 		string outFileNameNoExt = GetOutFileNameNoExt( _sourceFileName );
 		return outFileNameNoExt + "_palette.bin";
+	}
+
+	public string GetGreatGameObjectName( string _sourceFileName )
+	{
+		string outFileNameNoExt = GetOutFileNameNoExt( _sourceFileName );
+		return outFileNameNoExt + "_gameobject.bin";
 	}
 
 	public string GetLabelNameFromFileName( string _sourceFileName )
@@ -285,6 +293,26 @@ public class Project : ISerializationCallbackReceiver
 			AddFile( ref asmData, ref asmFileList, ref asmFileMap, GetCollisionMapName( outFileNameNoExt ));
 		}
 
+		//
+		// Export all game objects
+		//
+		foreach( string goFile in m_gameObjectFiles )
+		{
+			if( _dryRun == false )
+				Debug.Log( "Exporting file '" + goFile + "'" );
+			
+			string outFileNameNoExt = GetOutFileNameNoExt( goFile );
+			//string outBaseName = GetOutBaseName( imageFile );
+
+			GreatGameObject ggo = new GreatGameObject(  goFile );
+
+			//
+			AddFile( ref asmData, ref asmFileList, ref asmFileMap, GetGreatGameObjectName( outFileNameNoExt ));
+		}
+
+		//
+		// Generate assembly files that tie everything together
+		//
 		if( _dryRun == false )
 		{
 			System.IO.File.WriteAllText( m_lastExportDirectory + System.IO.Path.DirectorySeparatorChar + "data.asm", asmData );
