@@ -292,6 +292,9 @@ _gomSortObjects:
 	sub.w			#1,d0						; Don't check the last object in the array since we always compare pairs (we compare i and i+1)
 	sub.w			#1,d0						; Compensate for dbra
 
+	cmp.w			#0,d0				; If there are no objects to sort, or only one, then don't bother
+	ble				.done
+
 	; a2=address to the draw order table
 	; a3=address to the game object table
 	; d0=num game objects in scene-1 (because bubble sort compair pairs)
@@ -375,6 +378,7 @@ _gomSortObjects:
 	move.l			a1,a0							; Address to draw order table should be in a0
 	jsr				rendSetSpriteDrawOrder(pc)
 
+.done:
 	; Done and done
 	popm			d2-d7/a2-a7
 	rts
