@@ -3,16 +3,19 @@
 ; Get the address to a file
 ;
 ; Input:
-;	d0=file ID
+;	d0.w=file ID
 ;
 ; Output
-;	a0=address to file data
+;	a0.l=address to file data
 ;	d0=file size
 ;
 ;==============================================================================
 fileLoad:
 	lea			FileIDMap,a0
+
+	and.l		#$0000ffff,d0
 	mulu		#4,d0
+
 	add.l		d0,a0
 	clr.l		d0
 	clr.l		d1
