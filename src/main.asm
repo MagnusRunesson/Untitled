@@ -223,7 +223,6 @@ main:
 	perf_start
 
 	jsr			gomRender(pc)
-	jsr			gomSortObjects(pc)
 
 	;
 	; Slow loop to test performance thingie

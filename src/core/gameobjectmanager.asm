@@ -267,6 +267,9 @@ gomRender:
 	sub				#_go_size,a3
 	dbra			d5,.loop
 
+	; Sort and draw objects to screen
+	bsr			_gomSortObjects
+
 	popm			d2-d7/a2-a7
 
 	rts
@@ -274,7 +277,7 @@ gomRender:
 ;
 ; A simple bubble sort
 ;
-gomSortObjects:
+_gomSortObjects:
 	pushm			d2-d7/a2-a7
 
 	; Fetch the address of the draw order table
