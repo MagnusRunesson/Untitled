@@ -74,42 +74,41 @@ main:
 	;
 	; Load the potion game object
 	;
-	lea			potion_go(pc),a0
+	move.w		#fileid_potion_gameobject,d0
 	jsr			gomLoadObject(pc)
 	move.l		d0,_potion_go_handle(a2)
 
 	;
 	; Load the hero game object
 	;
-	lea			hero_go(pc),a0
+	move.w		#fileid_herotest_gameobject,d0
 	jsr			gomLoadObject(pc)
 	move.l		d0,_hero_go_handle(a2)
 
 	;
 	; Load more the potions
 	;
-	lea			potion_go(pc),a0
+	move.w		#fileid_potion_gameobject,d0
 	jsr			gomLoadObject(pc)
 	move.w		d0,_potion2_go_handle(a2)
-
 	;
 	; Load more the potions
 	;
-	lea			potion_go(pc),a0
+	move.w		#fileid_potion_gameobject,d0
 	jsr			gomLoadObject(pc)
 	move.w		d0,_potion3_go_handle(a2)
 
 	;
 	; Load more the potions
 	;
-	lea			potion_go(pc),a0
+	move.w		#fileid_potion_gameobject,d0
 	jsr			gomLoadObject(pc)
 	move.w		d0,_potion4_go_handle(a2)
 
 	;
 	; Load more the potions
 	;
-	lea			signpost_go(pc),a0
+	move.w		#fileid_signpost_gameobject,d0
 	jsr			gomLoadObject(pc)
 	move.w		d0,_signpost_go_handle(a2)
 	move.l		#$280000,d1
@@ -119,7 +118,7 @@ main:
 	;
 	; Load stone block
 	;
-	lea			stoneblock_go(pc),a0
+	move.w		#fileid_stoneblock_gameobject,d0
 	jsr			gomLoadObject(pc)
 	move.w		d0,_stoneblock_go_handle(a2)
 	move.l		#$780000,d1

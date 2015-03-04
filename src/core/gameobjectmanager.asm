@@ -84,7 +84,7 @@ gomInit:
 ; Loads a game object and set up all the state variables needed
 ;
 ; Input
-;	a0=address pointing at static game object data
+;	d0.w=file ID for the game object to load
 ;
 ; Output
 ;	d0=handle to the game object
@@ -93,6 +93,9 @@ gomInit:
 
 gomLoadObject:
 	pushm.l				d2-d3/a2
+
+	jsr					fileLoad
+
 	; First we load the sprite, while the registers are untouched
 	move.l				a0,a2				; a2 is the address to the source game object data
 

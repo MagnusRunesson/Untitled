@@ -456,3 +456,33 @@ _data_herotest_gameobject:
 _data_herotest_gameobject_pos           equ _data_herotest_gameobject/_chunk_size
 _data_herotest_gameobject_length        equ ((_data_herotest_gameobject_end-_data_herotest_gameobject)+(_chunk_size-1))/_chunk_size
 _data_herotest_gameobject_end:
+
+
+; potion_gameobject.bin
+
+	cnop		0,_chunk_size
+_data_potion_gameobject:
+	incbin	"../src/incbin/potion_gameobject.bin"
+_data_potion_gameobject_pos             equ _data_potion_gameobject/_chunk_size
+_data_potion_gameobject_length          equ ((_data_potion_gameobject_end-_data_potion_gameobject)+(_chunk_size-1))/_chunk_size
+_data_potion_gameobject_end:
+
+
+; signpost_gameobject.bin
+
+	cnop		0,_chunk_size
+_data_signpost_gameobject:
+	incbin	"../src/incbin/signpost_gameobject.bin"
+_data_signpost_gameobject_pos           equ _data_signpost_gameobject/_chunk_size
+_data_signpost_gameobject_length        equ ((_data_signpost_gameobject_end-_data_signpost_gameobject)+(_chunk_size-1))/_chunk_size
+_data_signpost_gameobject_end:
+
+
+; stoneblock_gameobject.bin
+
+	cnop		0,_chunk_size
+_data_stoneblock_gameobject:
+	incbin	"../src/incbin/stoneblock_gameobject.bin"
+_data_stoneblock_gameobject_pos         equ _data_stoneblock_gameobject/_chunk_size
+_data_stoneblock_gameobject_length      equ ((_data_stoneblock_gameobject_end-_data_stoneblock_gameobject)+(_chunk_size-1))/_chunk_size
+_data_stoneblock_gameobject_end:
