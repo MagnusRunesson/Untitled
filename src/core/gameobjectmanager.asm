@@ -48,9 +48,6 @@ _gom_debug_b			rs.b		1
 _gom_debug_c			rs.b		1
 _gom_size				rs.w		0
 
-	printt	"gom_size"
-	printv	_gom_size
-
 ;==============================================================================
 ;
 ; Game Object Manager Init
@@ -87,9 +84,6 @@ gomInit:
 	jsr			fileLoad
 	move.l		a0,d0						; a0 is the address of all game object definitions
 	pop.l		a0
-
-	printt		"hey you!"
-	printv		*
 
 	move.l		d0,_gom_definitions(a0)		; Retain the address
 

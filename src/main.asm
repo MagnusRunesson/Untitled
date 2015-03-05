@@ -28,9 +28,6 @@ _potionanim_time			rs.w		1
 _current_collisionmap		rs.l		1
 _size						rs.b		1
 
-	printt	"usersize"
-	printv	_size
-
 main:
 	jsr			gomInit(pc)
 

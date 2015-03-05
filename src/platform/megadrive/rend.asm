@@ -44,9 +44,6 @@ VarHWSprites			so.b	_cpu_sprite_size*rend_num_sprites		; This is reserved to the
 VarSize					so.b	1
 	clrso
 
-	printt	"MD renderer size"
-	printv	VarSize-platform_renderer_start
-
 ;
 ; VRAM memory map
 ;
