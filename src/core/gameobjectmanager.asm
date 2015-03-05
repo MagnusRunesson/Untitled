@@ -232,7 +232,7 @@ gomSetCameraPosition:
 ;==============================================================================
 
 gomRender:
-	pushm			d2-d7/a2-a7
+	pushm			d2-d7/a2-a6
 
 	; Sort and draw objects to screen
 	bsr				_gomSortObjects
@@ -299,7 +299,7 @@ gomRender:
 	sub				#_go_size,a3
 	dbra			d5,.loop
 
-	popm			d2-d7/a2-a7
+	popm			d2-d7/a2-a6
 
 	rts
 
