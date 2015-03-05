@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -14,7 +14,7 @@ public class Project : ISerializationCallbackReceiver
 
 	public string[] m_imageFiles;
 	public string[] m_mapFiles;
-	public string[] m_gameObjectFiles;
+	public string[] m_gameObjectCollectionFiles;
 
 	List<string> m_allFiles;
 
@@ -130,7 +130,7 @@ public class Project : ISerializationCallbackReceiver
 		imageFiles.AddRange( System.IO.Directory.GetFiles( m_path, "*.png" ));
 		m_imageFiles = imageFiles.ToArray();
 		m_mapFiles = System.IO.Directory.GetFiles( m_path, "*.json" );
-		m_gameObjectFiles = System.IO.Directory.GetFiles( m_path, "*.go_json" );
+		m_gameObjectCollectionFiles = System.IO.Directory.GetFiles( m_path, "*.goc" );
 
 		VerifyMapFiles();
 		BuildFileList();
@@ -186,7 +186,7 @@ public class Project : ISerializationCallbackReceiver
 	public string GetGreatGameObjectName( string _sourceFileName )
 	{
 		string outFileNameNoExt = GetOutFileNameNoExt( _sourceFileName );
-		return outFileNameNoExt + "_gameobject.bin";
+		return outFileNameNoExt + "_goc.bin";
 	}
 
 	public string GetLabelNameFromFileName( string _sourceFileName )
@@ -296,7 +296,7 @@ public class Project : ISerializationCallbackReceiver
 		//
 		// Export all game objects
 		//
-		foreach( string goFile in m_gameObjectFiles )
+		foreach( string goFile in m_gameObjectCollectionFiles )
 		{
 			if( _dryRun == false )
 				Debug.Log( "Exporting file '" + goFile + "'" );
@@ -304,7 +304,7 @@ public class Project : ISerializationCallbackReceiver
 			string outFileNameNoExt = GetOutFileNameNoExt( goFile );
 			//string outBaseName = GetOutBaseName( imageFile );
 
-			GreatGameObject ggo = new GreatGameObject(  goFile );
+			GameObjectCollection ggo = new GameObjectCollection(  goFile );
 
 			//
 			AddFile( ref asmData, ref asmFileList, ref asmFileMap, GetGreatGameObjectName( outFileNameNoExt ));

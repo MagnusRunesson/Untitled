@@ -77,41 +77,41 @@ main:
 	;
 	; Load the potion game object
 	;
-	move.w		#fileid_potion_gameobject,d0
+	move.w		#3,d0
 	jsr			gomLoadObject(pc)
 	move.l		d0,_potion_go_handle(a2)
 
 	;
 	; Load the hero game object
 	;
-	move.w		#fileid_herotest_gameobject,d0
+	move.w		#0,d0
 	jsr			gomLoadObject(pc)
 	move.l		d0,_hero_go_handle(a2)
 
 	;
 	; Load more the potions
 	;
-	move.w		#fileid_potion_gameobject,d0
+	move.w		#3,d0
 	jsr			gomLoadObject(pc)
 	move.w		d0,_potion2_go_handle(a2)
 	;
 	; Load more the potions
 	;
-	move.w		#fileid_potion_gameobject,d0
+	move.w		#3,d0
 	jsr			gomLoadObject(pc)
 	move.w		d0,_potion3_go_handle(a2)
 
 	;
 	; Load more the potions
 	;
-	move.w		#fileid_potion_gameobject,d0
+	move.w		#3,d0
 	jsr			gomLoadObject(pc)
 	move.w		d0,_potion4_go_handle(a2)
 
 	;
-	; Load more the potions
+	; Load the signpost
 	;
-	move.w		#fileid_signpost_gameobject,d0
+	move.w		#2,d0
 	jsr			gomLoadObject(pc)
 	move.w		d0,_signpost_go_handle(a2)
 	move.l		#$280000,d1
@@ -121,7 +121,7 @@ main:
 	;
 	; Load stone block
 	;
-	move.w		#fileid_stoneblock_gameobject,d0
+	move.w		#1,d0
 	jsr			gomLoadObject(pc)
 	move.w		d0,_stoneblock_go_handle(a2)
 	move.l		#$780000,d1
@@ -148,7 +148,7 @@ main:
 	;
 	; Update camera
 	;
-	bsr			_checkBorders
+;	bsr			_checkBorders
 
 	;
 	; Update hero position with the game object manager
@@ -158,52 +158,52 @@ main:
 	move.l		_hero_sprite_pos_y(a2),d2
 	jsr			gomSetPosition(pc)
 
-	;
-	; Sinus movement for potions
-	;
-	move.w		_potion_go_handle(a2),d0	; d0 is game object handle
-	move.w		_potionanim_time(a2),d3
-	lsl.w		#1,d3
-	move.l		#30*$10000,d1				; d1 is world X position
-	move.w		(a3,d3),d2					; d2 is world Y position, from sin table. Can be negative.
-	asr.w		#3,d2
-	swap.w		d2
-	clr.w		d2
-	add.l		#100*$10000,d2
-	jsr			gomSetPosition(pc)
-
-	move.w		_potion2_go_handle(a2),d0	; d0 is game object handle
-	add.w		#30,d3
-	and.w		#$1ff,d3
-	add.l		#8*$10000,d1				; d1 is world X position
-	move.w		(a3,d3),d2					; d2 is world Y position, from sin table. Can be negative.
-	asr.w		#3,d2
-	swap.w		d2
-	clr.w		d2	
-	add.l		#100*$10000,d2
-	jsr			gomSetPosition(pc)
-
-	move.w		_potion3_go_handle(a2),d0	; d0 is game object handle
-	add.w		#30,d3
-	and.w		#$1ff,d3
-	add.l		#8*$10000,d1				; d1 is world X position
-	move.w		(a3,d3),d2					; d2 is world Y position, from sin table. Can be negative.
-	asr.w		#3,d2
-	swap.w		d2
-	clr.w		d2	
-	add.l		#100*$10000,d2
-	jsr			gomSetPosition(pc)
-
-	move.w		_potion4_go_handle(a2),d0	; d0 is game object handle
-	add.w		#30,d3
-	and.w		#$1ff,d3
-	add.l		#8*$10000,d1				; d1 is world X position
-	move.w		(a3,d3),d2					; d2 is world Y position, from sin table. Can be negative.
-	asr.w		#3,d2
-	swap.w		d2
-	clr.w		d2	
-	add.l		#100*$10000,d2
-	jsr			gomSetPosition(pc)
+;	;
+;	; Sinus movement for potions
+;	;
+;	move.w		_potion_go_handle(a2),d0	; d0 is game object handle
+;	move.w		_potionanim_time(a2),d3
+;	lsl.w		#1,d3
+;	move.l		#30*$10000,d1				; d1 is world X position
+;	move.w		(a3,d3),d2					; d2 is world Y position, from sin table. Can be negative.
+;	asr.w		#3,d2
+;	swap.w		d2
+;	clr.w		d2
+;	add.l		#100*$10000,d2
+;	jsr			gomSetPosition(pc)
+;
+;	move.w		_potion2_go_handle(a2),d0	; d0 is game object handle
+;	add.w		#30,d3
+;	and.w		#$1ff,d3
+;	add.l		#8*$10000,d1				; d1 is world X position
+;	move.w		(a3,d3),d2					; d2 is world Y position, from sin table. Can be negative.
+;	asr.w		#3,d2
+;	swap.w		d2
+;	clr.w		d2	
+;	add.l		#100*$10000,d2
+;	jsr			gomSetPosition(pc)
+;
+;	move.w		_potion3_go_handle(a2),d0	; d0 is game object handle
+;	add.w		#30,d3
+;	and.w		#$1ff,d3
+;	add.l		#8*$10000,d1				; d1 is world X position
+;	move.w		(a3,d3),d2					; d2 is world Y position, from sin table. Can be negative.
+;	asr.w		#3,d2
+;	swap.w		d2
+;	clr.w		d2	
+;	add.l		#100*$10000,d2
+;	jsr			gomSetPosition(pc)
+;
+;	move.w		_potion4_go_handle(a2),d0	; d0 is game object handle
+;	add.w		#30,d3
+;	and.w		#$1ff,d3
+;	add.l		#8*$10000,d1				; d1 is world X position
+;	move.w		(a3,d3),d2					; d2 is world Y position, from sin table. Can be negative.
+;	asr.w		#3,d2
+;	swap.w		d2
+;	clr.w		d2	
+;	add.l		#100*$10000,d2
+;	jsr			gomSetPosition(pc)
 
 
 
@@ -211,20 +211,20 @@ main:
 	;
 	; Update camera so the player doesn't go out of bounds
 	;
-	bsr			_cameraUpdate
+;	bsr			_cameraUpdate
 
 	;
 	; Update camera position with the game object manager
 	;
-	move.l		_camera_pos_x(a2),d0
-	move.l		_camera_pos_y(a2),d1
-	jsr			gomSetCameraPosition(pc)
+;	move.l		_camera_pos_x(a2),d0
+;	move.l		_camera_pos_y(a2),d1
+;	jsr			gomSetCameraPosition(pc)
 
 	perf_stop
-	jsr			rendWaitVSync(pc)
+;	jsr			rendWaitVSync(pc)
 	perf_start
 
-	jsr			gomRender(pc)
+;	jsr			gomRender(pc)
 
 	;
 	; Slow loop to test performance thingie
@@ -233,30 +233,30 @@ main:
 ;.perf_loop_test:
 ;	dbra		d1,.perf_loop_test
 
-	;
-	; Update animation
-	;
-	move.w		_potion_go_handle(a2),d0
-	move.w		_testanim_time(a2),d1
-	lsr			#4,d1
-	and			#1,d1
-	jsr			rendSetSpriteFrame(pc)
-
-	;
-	; Increment animation time
-	;
-	move.w		_testanim_time(a2),d0
-	add.w		#1,d0
-	and.w		#$ff,d0
-	move.w		d0,_testanim_time(a2)
-
-	;
-	; Increment potion animation time
-	;
-	move.w		_potionanim_time(a2),d0
-	add.w		#1,d0
-	and.w		#$ff,d0
-	move.w		d0,_potionanim_time(a2)
+;	;
+;	; Update animation
+;	;
+;	move.w		_potion_go_handle(a2),d0
+;	move.w		_testanim_time(a2),d1
+;	lsr			#4,d1
+;	and			#1,d1
+;	jsr			rendSetSpriteFrame(pc)
+;
+;	;
+;	; Increment animation time
+;	;
+;	move.w		_testanim_time(a2),d0
+;	add.w		#1,d0
+;	and.w		#$ff,d0
+;	move.w		d0,_testanim_time(a2)
+;
+;	;
+;	; Increment potion animation time
+;	;
+;	move.w		_potionanim_time(a2),d0
+;	add.w		#1,d0
+;	and.w		#$ff,d0
+;	move.w		d0,_potionanim_time(a2)
 
 
 	;

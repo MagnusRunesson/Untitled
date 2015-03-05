@@ -41,7 +41,11 @@ VarLoadedPalette		so.w	1										; The file ID of the last loaded palette
 VarLoadedTileBank		so.w	1										; The file ID of the last loaded tile bank
 VarLoadedTileMap		so.w	1										; The file ID of the last loaded tile map
 VarHWSprites			so.b	_cpu_sprite_size*rend_num_sprites		; This is reserved to the cpu ram mirror of the VRAM
+VarSize					so.b	1
 	clrso
+
+	printt	"MD renderer size"
+	printv	VarSize-platform_renderer_start
 
 ;
 ; VRAM memory map

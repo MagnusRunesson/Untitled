@@ -11,12 +11,12 @@ totalmem_size		=	$e000			; This is the total amount of RAM allocated for the sha
 
 ; Game logic etc..
 usermem_base		=	$0000
-usermem_size		=	$0100
+usermem_size		=	$0400
 usermem_end			=	usermem_size
 
 ; Game Object Manager
 gommem_base			= 	usermem_size
-gommem_size			=	$0100
+gommem_size			=	$0400
 gommem_end			=	gommem_base+gommem_size
 
 ;==================================================================================================

@@ -448,41 +448,11 @@ _data_testmap2_collisionmap_length      equ ((_data_testmap2_collisionmap_end-_d
 _data_testmap2_collisionmap_end:
 
 
-; herotest_gameobject.bin
+; overworld_goc.bin
 
 	cnop		0,_chunk_size
-_data_herotest_gameobject:
-	incbin	"../src/incbin/herotest_gameobject.bin"
-_data_herotest_gameobject_pos           equ _data_herotest_gameobject/_chunk_size
-_data_herotest_gameobject_length        equ ((_data_herotest_gameobject_end-_data_herotest_gameobject)+(_chunk_size-1))/_chunk_size
-_data_herotest_gameobject_end:
-
-
-; potion_gameobject.bin
-
-	cnop		0,_chunk_size
-_data_potion_gameobject:
-	incbin	"../src/incbin/potion_gameobject.bin"
-_data_potion_gameobject_pos             equ _data_potion_gameobject/_chunk_size
-_data_potion_gameobject_length          equ ((_data_potion_gameobject_end-_data_potion_gameobject)+(_chunk_size-1))/_chunk_size
-_data_potion_gameobject_end:
-
-
-; signpost_gameobject.bin
-
-	cnop		0,_chunk_size
-_data_signpost_gameobject:
-	incbin	"../src/incbin/signpost_gameobject.bin"
-_data_signpost_gameobject_pos           equ _data_signpost_gameobject/_chunk_size
-_data_signpost_gameobject_length        equ ((_data_signpost_gameobject_end-_data_signpost_gameobject)+(_chunk_size-1))/_chunk_size
-_data_signpost_gameobject_end:
-
-
-; stoneblock_gameobject.bin
-
-	cnop		0,_chunk_size
-_data_stoneblock_gameobject:
-	incbin	"../src/incbin/stoneblock_gameobject.bin"
-_data_stoneblock_gameobject_pos         equ _data_stoneblock_gameobject/_chunk_size
-_data_stoneblock_gameobject_length      equ ((_data_stoneblock_gameobject_end-_data_stoneblock_gameobject)+(_chunk_size-1))/_chunk_size
-_data_stoneblock_gameobject_end:
+_data_overworld_goc:
+	incbin	"../src/incbin/overworld_goc.bin"
+_data_overworld_goc_pos                 equ _data_overworld_goc/_chunk_size
+_data_overworld_goc_length              equ ((_data_overworld_goc_end-_data_overworld_goc)+(_chunk_size-1))/_chunk_size
+_data_overworld_goc_end:

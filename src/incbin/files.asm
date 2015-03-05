@@ -38,10 +38,7 @@ fileid_testmap_map                      equ 36
 fileid_testmap_collisionmap             equ 37
 fileid_testmap2_map                     equ 38
 fileid_testmap2_collisionmap            equ 39
-fileid_herotest_gameobject              equ 40
-fileid_potion_gameobject                equ 41
-fileid_signpost_gameobject              equ 42
-fileid_stoneblock_gameobject            equ 43
+fileid_overworld_goc                    equ 40
 
 FileIDMap:
 	dc.w	_data_collisionsprite_bank_pos,_data_collisionsprite_bank_length
@@ -84,7 +81,4 @@ FileIDMap:
 	dc.w	_data_testmap_collisionmap_pos,_data_testmap_collisionmap_length
 	dc.w	_data_testmap2_map_pos,_data_testmap2_map_length
 	dc.w	_data_testmap2_collisionmap_pos,_data_testmap2_collisionmap_length
-	dc.w	_data_herotest_gameobject_pos,_data_herotest_gameobject_length
-	dc.w	_data_potion_gameobject_pos,_data_potion_gameobject_length
-	dc.w	_data_signpost_gameobject_pos,_data_signpost_gameobject_length
-	dc.w	_data_stoneblock_gameobject_pos,_data_stoneblock_gameobject_length
+	dc.w	_data_overworld_goc_pos,_data_overworld_goc_length

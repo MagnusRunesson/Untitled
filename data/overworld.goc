@@ -1,0 +1,32 @@
+{
+	"gameobjects": [
+		{
+			"identifier" : "herotest",
+			"tiles_fileid" : "fileid_herotest_sprite_bank",
+			"sprite_fileid" : "fileid_herotest_sprite",
+			"hotspot_x" : 8,
+			"hotspot_y" : 12
+		},
+		{
+			"identifier" : "stoneblock",
+			"tiles_fileid" : "fileid_stoneblock_sprite_bank",
+			"sprite_fileid" : "fileid_stoneblock_sprite",
+			"hotspot_x" : 8,
+			"hotspot_y" : 24
+		},
+		{
+			"identifier" : "signpost",
+			"tiles_fileid" : "fileid_signpost_sprite_bank",
+			"sprite_fileid" : "fileid_signpost_sprite",
+			"hotspot_x" : 8,
+			"hotspot_y" : 14
+		},
+		{
+			"identifier": "potion",
+			"tiles_fileid" : "fileid_testsprite2_sprite_bank",
+			"sprite_fileid" : "fileid_testsprite2_sprite",
+			"hotspot_x" : 8,
+			"hotspot_y" : 12
+		}
+	]
+}

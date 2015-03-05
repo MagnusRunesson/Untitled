@@ -39,12 +39,17 @@ _gom_numobjects			rs.w		1							; How many objects we currently have loaded. Thi
 _gom_watermark			rs.w		1							; To unload game objects
 _gom_camera_x			rs.l		1							; Camera world X position, so we can do world to screen transform
 _gom_camera_y			rs.l		1							; Camera world Y position, same reason as above
+_gom_definitions		rs.l		1							; Address to where the game object definitions are
 _gom_gameobjects		rs.b		_gom_max_objects*_go_size	; All game objects goes here
 _gom_draworder			rs.b		_gom_max_objects			; This table describe which game object to draw when. First entry should be drawn first (i.e. earlier entries should be displayed "behind" later entries in this list)
 _gom_debug_a			rs.b		1
 _gom_draworder_sprites	rs.b		_gom_max_objects			; Before we send the draw order table to the renderer we need to convert it into sprite handles, not game object handles
 _gom_debug_b			rs.b		1
+_gom_debug_c			rs.b		1
 _gom_size				rs.w		0
+
+	printt	"gom_size"
+	printv	_gom_size
 
 ;==============================================================================
 ;
@@ -66,13 +71,29 @@ gomInit:
 	;	
 	; Clear all local variables
 	;
+	move.l		a0,a1
 	move.l		#(_gom_size/4)-1,d0
 .loop:
-	move.l		#0,(a0)+
+	move.l		#0,(a1)+
 	dbra		d0,.loop
 
+	;
+	; Initialize all game object manager state variables
+	;
+
+	; Load the game object definitions and store the address
+	push.l		a0
+	move.w		#fileid_overworld_goc,d0
+	jsr			fileLoad
+	move.l		a0,d0						; a0 is the address of all game object definitions
+	pop.l		a0
+
+	printt		"hey you!"
+	printv		*
+
+	move.l		d0,_gom_definitions(a0)		; Retain the address
+
 	; Set debug stuff
-	jsr			memGetGameObjectManagerBaseAddress(pc)
 	move.b		#$ff,_gom_debug_a(a0)
 	move.b		#$ff,_gom_debug_b(a0)
 
@@ -94,21 +115,24 @@ gomInit:
 gomLoadObject:
 	pushm.l				d2-d3/a2
 
-	jsr					fileLoad
+	; Fetch the address to the game object manager
+	push.w				d0
+	jsr					memGetGameObjectManagerBaseAddress(pc)
+	pop.w				d0
+	; Now a0 is the address to the game object manager
 
-	; First we load the sprite, while the registers are untouched
-	move.l				a0,a2				; a2 is the address to the source game object data
+	; Find the address to the correct game object
+	move.l				_gom_definitions(a0),a2
+	mulu				#8,d0
+	add.l				d0,a2
 
+	;
 	clr					d0
 	clr					d1
 	move.w				(a2)+,d0			; Read the file ID for the sprite tiles into d0
 	move.w				(a2)+,d1			; Read the file ID for the sprite definition into d1
 	jsr					rendLoadSprite(pc)	;
 	push.w				d0
-
-	; Fetch the address to the game object manager
-	jsr					memGetGameObjectManagerBaseAddress(pc)
-	; Now a0 is the address to the game object manager
 
 	; Find the next free game object ID
 	move.w				_gom_numobjects(a0),d0
@@ -208,6 +232,9 @@ gomSetCameraPosition:
 gomRender:
 	pushm			d2-d7/a2-a7
 
+	; Sort and draw objects to screen
+	bsr				_gomSortObjects
+
 	; Iterate over all game objects
 	; For each game object:
 	;	Transform them from world space to screen space
@@ -269,9 +296,6 @@ gomRender:
 	; before this in memory, since we're iterating down)
 	sub				#_go_size,a3
 	dbra			d5,.loop
-
-	; Sort and draw objects to screen
-	bsr			_gomSortObjects
 
 	popm			d2-d7/a2-a7
 

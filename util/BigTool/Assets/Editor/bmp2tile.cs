@@ -509,13 +509,13 @@ public class bmp2tile : EditorWindow, ISerializationCallbackReceiver
 		}
 
 		GUILayout.Label( "Game objects: " );
-		string[] goFiles = m_project.m_gameObjectFiles;
+		string[] goFiles = m_project.m_gameObjectCollectionFiles;
 		foreach( string fullPath in goFiles )
 		{
 			string name = System.IO.Path.GetFileName( fullPath );
 			if( GUILayout.Button( name ))
 			{
-				new GreatGameObject( fullPath );
+				new GameObjectCollection( fullPath );
 			}
 		}
 
@@ -848,14 +848,14 @@ public class bmp2tile : EditorWindow, ISerializationCallbackReceiver
 		//
 		// Export all game objects
 		//
-		foreach( string goFile in m_project.m_gameObjectFiles )
+		foreach( string goFile in m_project.m_gameObjectCollectionFiles )
 		{
 			Debug.Log( "Exporting game object '" + goFile + "'" );
 			
 			string outFileNameNoExt = m_project.GetOutFileNameNoExt( goFile );
 			string outBaseName = m_lastExportDirectory + System.IO.Path.DirectorySeparatorChar;
 
-			GreatGameObject ggo = new GreatGameObject(  goFile );
+			GameObjectCollection ggo = new GameObjectCollection(  goFile );
 			ggo.Export( outBaseName + m_project.GetGreatGameObjectName( goFile ), m_project );
 		}
 
