@@ -131,7 +131,9 @@ gomLoadObject:
 	clr					d1
 	move.w				(a2)+,d0			; Read the file ID for the sprite tiles into d0
 	move.w				(a2)+,d1			; Read the file ID for the sprite definition into d1
+	push.l				a0
 	jsr					rendLoadSprite(pc)	;
+	pop.l				a0
 	push.w				d0
 
 	; Find the next free game object ID
