@@ -74,41 +74,41 @@ main:
 	;
 	; Load the potion game object
 	;
-	move.w		#3,d0
+	move.w		#potion_gameobject,d0
 	jsr			gomLoadObject(pc)
 	move.w		d0,_potion_go_handle(a2)
 
 	;
 	; Load the hero game object
 	;
-	move.w		#0,d0
+	move.w		#herotest_gameobject,d0
 	jsr			gomLoadObject(pc)
 	move.w		d0,_hero_go_handle(a2)
 
 	;
 	; Load more the potions
 	;
-	move.w		#3,d0
+	move.w		#potion_gameobject,d0
 	jsr			gomLoadObject(pc)
 	move.w		d0,_potion2_go_handle(a2)
 	;
 	; Load more the potions
 	;
-	move.w		#3,d0
+	move.w		#potion_gameobject,d0
 	jsr			gomLoadObject(pc)
 	move.w		d0,_potion3_go_handle(a2)
 
 	;
 	; Load more the potions
 	;
-	move.w		#3,d0
+	move.w		#potion_gameobject,d0
 	jsr			gomLoadObject(pc)
 	move.w		d0,_potion4_go_handle(a2)
 
 	;
 	; Load the signpost
 	;
-	move.w		#2,d0
+	move.w		#signpost_gameobject,d0
 	jsr			gomLoadObject(pc)
 	move.w		d0,_signpost_go_handle(a2)
 	move.l		#$280000,d1
@@ -118,7 +118,7 @@ main:
 	;
 	; Load stone block
 	;
-	move.w		#1,d0
+	move.w		#stoneblock_gameobject,d0
 	jsr			gomLoadObject(pc)
 	move.w		d0,_stoneblock_go_handle(a2)
 	move.l		#$780000,d1
