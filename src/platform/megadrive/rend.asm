@@ -446,12 +446,15 @@ rendSetSpritePosition:
 ;
 ; Set which frame of a sprite animation that should be shown
 ;
-; d0=Sprite ID
-; d1=Frame index
+; d0.w=Sprite ID
+; d1.w=Frame index
 ;
 ;==============================================================================
 rendSetSpriteFrame:
 	push		d2
+
+	and.l		#$0000ffff,d0
+	and.l		#$0000ffff,d1
 
 	push		d0							; Retain the sprite ID on the stack, for later
 
@@ -764,10 +767,11 @@ _rendAddSprite_Index:
 ; Copy the sprite mirror table entry from CPU RAM to VRAM
 ;
 ; Input
-;	d0 = Sprite entry index. Allowed range is 0-79
+;	d0.w = Sprite entry index. Allowed range is 0-79
 ;
 ;==============================================================================
 _rendCopySpriteToVRAM_Index:
+	and.l		#$0000ffff,d0
 	push		d0
 
 	move.l		#VRAM_SpriteAttributes_Start,d1
