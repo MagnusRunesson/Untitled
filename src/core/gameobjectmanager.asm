@@ -228,8 +228,10 @@ gomSetCameraPosition:
 gomRender:
 	pushm			d2-d7/a2-a6
 
+	ifd	is_mega_drive
 	; Sort and draw objects to screen
 	bsr				_gomSortObjects
+	endif
 
 	; Iterate over all game objects
 	; For each game object:
@@ -292,6 +294,11 @@ gomRender:
 	; before this in memory, since we're iterating down)
 	sub				#_go_size,a3
 	dbra			d5,.loop
+
+	ifd	is_amiga
+	; Sort and draw objects to screen
+	bsr				_gomSortObjects
+	endif
 
 	popm			d2-d7/a2-a6
 
