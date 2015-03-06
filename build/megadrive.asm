@@ -19,3 +19,4 @@ _chunk_size		equ		128			; same as TD_SECTOR (size of sector on floppy)
 
 	include		"../src/incbin/data.asm"
 	include		"../src/incbin/files.asm"
+	include		"../src/incbin/overworld_goc_identifiers.asm"	; This should really be included by something else. Preferrably by data.asm
