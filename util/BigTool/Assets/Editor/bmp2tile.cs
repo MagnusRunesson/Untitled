@@ -16,6 +16,8 @@ public class bmp2tile : EditorWindow, ISerializationCallbackReceiver
 	string m_currentFramesString;
 	Dictionary<int,string> m_currentFrameTimesString;
 
+	GameObjectCollection m_gameObjectCollection;
+
 	string m_lastOpenDirectory;
 	string m_lastExportDirectory;
 	Texture2D m_imageTexture;
@@ -540,6 +542,12 @@ public class bmp2tile : EditorWindow, ISerializationCallbackReceiver
 		m_project = new Project( _path );
 		m_projectWindowRect = new Rect( m_windowPadding, m_windowTop, m_projectWindowWidth, 600.0f );
 		m_projectLoaded = true;
+
+		// If there is one, and only one, game object collection file, we load it to memory
+		if( m_project.m_gameObjectCollectionFiles.Length == 1 )
+		{
+			m_gameObjectCollection = new GameObjectCollection( m_project.m_gameObjectCollectionFiles[ 0 ]);
+		}
 	}
 
 	void LoadBMP( string _path )
