@@ -12,7 +12,7 @@ camera_padding_horizontal	equ			96
 camera_padding_vertical		equ			64
 
 	rsreset
-_hero_go_handle				rs.l		1
+_hero_go_handle				rs.w		1
 _hero_sprite_pos_x			rs.l		1
 _hero_sprite_pos_y			rs.l		1
 _camera_pos_x				rs.l		1
@@ -76,14 +76,14 @@ main:
 	;
 	move.w		#3,d0
 	jsr			gomLoadObject(pc)
-	move.l		d0,_potion_go_handle(a2)
+	move.w		d0,_potion_go_handle(a2)
 
 	;
 	; Load the hero game object
 	;
 	move.w		#0,d0
 	jsr			gomLoadObject(pc)
-	move.l		d0,_hero_go_handle(a2)
+	move.w		d0,_hero_go_handle(a2)
 
 	;
 	; Load more the potions
@@ -150,7 +150,7 @@ main:
 	;
 	; Update hero position with the game object manager
 	;
-	move.l		_hero_go_handle(a2),d0
+	move.w		_hero_go_handle(a2),d0
 	move.l		_hero_sprite_pos_x(a2),d1
 	move.l		_hero_sprite_pos_y(a2),d2
 	jsr			gomSetPosition(pc)
