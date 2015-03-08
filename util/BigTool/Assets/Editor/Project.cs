@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using Assets.Editor;
 
 [System.Serializable]
 public class Project : ISerializationCallbackReceiver
@@ -12,11 +13,12 @@ public class Project : ISerializationCallbackReceiver
 	string m_projectFileName;
 	string m_lastExportDirectory;
 
+    private FileIdConstants m_fileIdList;
+
 	public string[] m_imageFiles;
 	public string[] m_mapFiles;
 	public string[] m_gameObjectCollectionFiles;
 
-	List<string> m_allFiles;
 
 	public List<string> _keys = new List<string>();
 	public List<object> _values = new List<object>();
@@ -153,6 +155,15 @@ public class Project : ISerializationCallbackReceiver
 		return outFileNameNoExt + "_sprite_bank.bin";
 	}
 
+    public string GetSpriteTileNameAmiga(string _sourceFileName)
+    {
+        //"_sprite_bank_amiga_b_hw.bin"
+        //"_sprite_bank_amiga_a_bob.bin";
+
+        string outFileNameNoExt = GetOutFileNameNoExt(_sourceFileName);
+        return outFileNameNoExt + "_sprite_bank_amiga.bin";
+    }
+
 	public string GetSpriteName( string _sourceFileName )
 	{
 		string outFileNameNoExt = GetOutFileNameNoExt( _sourceFileName );
@@ -164,6 +175,12 @@ public class Project : ISerializationCallbackReceiver
 		string outFileNameNoExt = GetOutFileNameNoExt( _sourceFileName );
 		return outFileNameNoExt + "_bank.bin";
 	}
+
+    public string GetTileBankNameAmiga(string _sourceFileName)
+    {
+        string outFileNameNoExt = GetOutFileNameNoExt(_sourceFileName);
+        return outFileNameNoExt + "_bank_amiga.bin";
+    }
 
 	public string GetTileMapName( string _sourceFileName )
 	{
@@ -189,50 +206,21 @@ public class Project : ISerializationCallbackReceiver
 		return outFileNameNoExt + "_goc.bin";
 	}
 
-	public string GetLabelNameFromFileName( string _sourceFileName )
-	{
-		string ret = "_data_";
-		ret += System.IO.Path.GetFileNameWithoutExtension( _sourceFileName );
-		ret = ret.Replace( ' ', '_' );
-		ret = ret.ToLower();
-		
-		return ret;
-	}
-	
-	public string GetConstantNameFromFileName( string _sourceFileName )
-	{
-		string ret = "fileid_";
-		ret += System.IO.Path.GetFileNameWithoutExtension( _sourceFileName );
-		ret = ret.Replace( ' ', '_' );
-		ret = ret.ToLower();
-		
-		return ret;
-	}
-
-	public int GetIDFromConstant( string _constant )
-	{
-		int i;
-		for( i=0; i<m_allFiles.Count; i++ )
-		{
-			if( m_allFiles[ i ].Equals( _constant ))
-				return i;
-		}
-
-		Debug.LogException( new UnityException( "The constant '" + _constant + "' isn't known to the project." ));
-		return -1;
-	}
+    public int GetIDFromConstant( string _constant )
+    {
+        return m_fileIdList.GetIDFromConstant(_constant);
+    }
 
 	public void Export( string _directory, bool _dryRun = false )
 	{
-		m_allFiles = new List<string>();
 		m_lastExportDirectory = _directory;
 
 		//
 		// Build data.asm and files.asm content
 		//
-		string asmData = "";
-		string asmFileList = "";
-		string asmFileMap = "FileIDMap:\n";
+        m_fileIdList = new FileIdConstants();
+        var megadriveFileData = new FileData();
+        var amigaFileData = new FileData();
 		
 		//
 		// Export all images
@@ -255,25 +243,37 @@ public class Project : ISerializationCallbackReceiver
 				// Export it
 				if( imageConfig.m_importAsSprite )
 				{
-					string alternativeAmigaSpriteName;
-					if( imageConfig.m_importAsBSprite )
-					{
-						alternativeAmigaSpriteName = "_sprite_bank_amiga_b_hw.bin";
-					}
-					else
-					{
-						alternativeAmigaSpriteName = "_sprite_bank_amiga_a_bob.bin";						
-					}
+                    //string alternativeAmigaSpriteName;
+                    //if( imageConfig.m_importAsBSprite )
+                    //{
+                    //    alternativeAmigaSpriteName = "_sprite_bank_amiga_b_hw.bin";
+                    //}
+                    //else
+                    //{
+                    //    alternativeAmigaSpriteName = "_sprite_bank_amiga_a_bob.bin";						
+                    //}
 
-					AddFile( ref asmData, ref asmFileList, ref asmFileMap, GetSpriteTileName( outFileNameNoExt ), outFileNameNoExt + alternativeAmigaSpriteName );
-					AddFile( ref asmData, ref asmFileList, ref asmFileMap, GetPaletteName( outFileNameNoExt ));
-					AddFile( ref asmData, ref asmFileList, ref asmFileMap, GetSpriteName( outFileNameNoExt ));
+                    m_fileIdList.AddFile(GetSpriteTileName(outFileNameNoExt));
+                    megadriveFileData.AddDynamicFile(GetSpriteTileName(outFileNameNoExt));
+                    amigaFileData.AddDynamicFile(GetSpriteTileNameAmiga(outFileNameNoExt));
+                    m_fileIdList.AddFile(GetPaletteName(outFileNameNoExt));
+                    megadriveFileData.AddDynamicFile(GetPaletteName(outFileNameNoExt));
+                    amigaFileData.AddDynamicFile(GetPaletteName(outFileNameNoExt));
+                    m_fileIdList.AddFile(GetSpriteName(outFileNameNoExt));
+                    megadriveFileData.AddStaticFile(GetSpriteName(outFileNameNoExt));
+                    amigaFileData.AddDynamicFile(GetSpriteName(outFileNameNoExt));
 				}
 				else
 				{
-					AddFile( ref asmData, ref asmFileList, ref asmFileMap, GetTileBankName( outFileNameNoExt ), outFileNameNoExt + "_bank_amiga.bin" );
-					AddFile( ref asmData, ref asmFileList, ref asmFileMap, GetTileMapName( outFileNameNoExt ));
-					AddFile( ref asmData, ref asmFileList, ref asmFileMap, GetPaletteName( outFileNameNoExt ));
+                    m_fileIdList.AddFile(GetTileBankName(outFileNameNoExt));
+                    megadriveFileData.AddDynamicFile(GetTileBankName(outFileNameNoExt));
+                    amigaFileData.AddDynamicFile(GetTileBankNameAmiga(outFileNameNoExt)); 
+                    m_fileIdList.AddFile(GetTileMapName(outFileNameNoExt));
+                    megadriveFileData.AddDynamicFile(GetTileMapName(outFileNameNoExt));
+                    amigaFileData.AddDynamicFile(GetTileMapName(outFileNameNoExt));
+                    m_fileIdList.AddFile(GetPaletteName(outFileNameNoExt));
+                    megadriveFileData.AddDynamicFile(GetPaletteName(outFileNameNoExt));
+                    amigaFileData.AddDynamicFile(GetPaletteName(outFileNameNoExt));
 				}
 			}
 		}
@@ -289,8 +289,12 @@ public class Project : ISerializationCallbackReceiver
 			string outFileNameNoExt = GetOutFileNameNoExt( mapFile );
 
 			//
-			AddFile( ref asmData, ref asmFileList, ref asmFileMap, GetTileMapName( outFileNameNoExt ));
-			AddFile( ref asmData, ref asmFileList, ref asmFileMap, GetCollisionMapName( outFileNameNoExt ));
+            m_fileIdList.AddFile(GetTileMapName(outFileNameNoExt));
+            megadriveFileData.AddDynamicFile(GetTileMapName(outFileNameNoExt));
+            amigaFileData.AddDynamicFile(GetTileMapName(outFileNameNoExt));
+            m_fileIdList.AddFile(GetCollisionMapName(outFileNameNoExt));
+            megadriveFileData.AddDynamicFile(GetCollisionMapName(outFileNameNoExt));
+            amigaFileData.AddDynamicFile(GetCollisionMapName(outFileNameNoExt));
 		}
 
 		//
@@ -307,16 +311,25 @@ public class Project : ISerializationCallbackReceiver
 			GameObjectCollection ggo = new GameObjectCollection(  goFile );
 
 			//
-			AddFile( ref asmData, ref asmFileList, ref asmFileMap, GetGreatGameObjectName( outFileNameNoExt ));
+            m_fileIdList.AddFile(GetGreatGameObjectName(outFileNameNoExt));
+            megadriveFileData.AddStaticFile(GetGreatGameObjectName(outFileNameNoExt));
+            amigaFileData.AddStaticFile(GetGreatGameObjectName(outFileNameNoExt));
 		}
 
 		//
 		// Generate assembly files that tie everything together
 		//
 		if( _dryRun == false )
-		{
-			System.IO.File.WriteAllText( m_lastExportDirectory + System.IO.Path.DirectorySeparatorChar + "data.asm", asmData );
-			System.IO.File.WriteAllText( m_lastExportDirectory + System.IO.Path.DirectorySeparatorChar + "files.asm", asmFileList + "\n" + asmFileMap );
+		{			
+            m_fileIdList.ExportAsm(m_lastExportDirectory + System.IO.Path.DirectorySeparatorChar + "files.asm");
+
+            megadriveFileData.ExportFileIdMap(m_lastExportDirectory + System.IO.Path.DirectorySeparatorChar + "fileidmap_md.asm");
+            megadriveFileData.ExportDynamicDataFile(m_lastExportDirectory + System.IO.Path.DirectorySeparatorChar + "datadyn_md.asm");
+            megadriveFileData.ExportStaticDataFile(m_lastExportDirectory + System.IO.Path.DirectorySeparatorChar + "datasta_md.asm");
+
+            amigaFileData.ExportFileIdMap(m_lastExportDirectory + System.IO.Path.DirectorySeparatorChar + "fileidmap_adf.asm");
+            amigaFileData.ExportDynamicDataFile(m_lastExportDirectory + System.IO.Path.DirectorySeparatorChar + "datadyn_adf.asm");
+            amigaFileData.ExportStaticDataFile(m_lastExportDirectory + System.IO.Path.DirectorySeparatorChar + "datasta_adf.asm");  
 		}
 	}
 
@@ -326,41 +339,9 @@ public class Project : ISerializationCallbackReceiver
 		Export( null, _dryRun:true );
 	}
 	
-	void AddFile( ref string _asmData, ref string _asmFileList, ref string _asmFileMap, string _filename, string _alternativeAmigaFilename = null )
-	{
-		//string asmFileName = System.IO.Path.GetFileNameWithoutExtension( _filename ).Replace( ' ', '_' );
-		string label = GetLabelNameFromFileName( _filename );
-		string constant = GetConstantNameFromFileName( _filename );
-		
-		// Append to data.asm
-		_asmData += "\n\n; " + _filename + "\n\n";
-		_asmData += "\tcnop\t\t0,_chunk_size\n";
-		_asmData += label + ":\n";
-		
-		if (_alternativeAmigaFilename == null) 
-		{
-			_asmData += "\tincbin\t\"../src/incbin/" + _filename + "\"\n";
-		}
-		else
-		{
-			_asmData += "\tifd\tis_mega_drive\n";
-			_asmData += "\tincbin\t\"../src/incbin/" + _filename + "\"\n";
-			_asmData += "\telse\n";
-			_asmData += "\tincbin\t\"../src/incbin/" + _alternativeAmigaFilename + "\"\n";
-			_asmData += "\tendif\n";
-		}
-		
-		_asmData += (label + "_pos").PadRight( 40 ) + "equ " + label + "/_chunk_size\n";
-		_asmData += (label + "_length").PadRight( 40 ) +"equ ((" + label + "_end-" + label + ")+(_chunk_size-1))/_chunk_size\n";
-		_asmData += label + "_end:\n";
-		
-		// Append to files.asm
-		_asmFileList += constant.PadRight( 40 ) + "equ " + m_allFiles.Count + "\n";
-		_asmFileMap += "\tdc.w\t" + label + "_pos," + label + "_length\n";
 
-		//
-		m_allFiles.Add( constant );
-	}
+
+
 
 	// Filter out all found JSON files that aren't Tiled data
 	void VerifyMapFiles()

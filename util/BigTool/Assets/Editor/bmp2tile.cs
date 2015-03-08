@@ -805,18 +805,15 @@ public class bmp2tile : EditorWindow, ISerializationCallbackReceiver
 				if( imageConfig.m_importAsSprite )
 				{
 					Sprite sprite = new Sprite( imageConfig );
-					string alternativeAmigaSpriteName;
 					if( imageConfig.m_importAsBSprite )
 					{
 						AmigaSprite amigaSprite = new AmigaSprite( imageData, imageConfig);
-						alternativeAmigaSpriteName = "_sprite_bank_amiga_b_hw.bin";
-						amigaSprite.Export( outBaseName + alternativeAmigaSpriteName );
+						amigaSprite.Export( outBaseName + "_sprite_bank_amiga.bin" );
 					}
 					else
 					{
 						AmigaBob amigaBob = new AmigaBob( imageData, imageConfig);
-						alternativeAmigaSpriteName = "_sprite_bank_amiga_a_bob.bin";						
-						amigaBob.Export( outBaseName + alternativeAmigaSpriteName );
+						amigaBob.Export( outBaseName + "_sprite_bank_amiga.bin" );
 					}
 					tileBank.ExportMegaDrive( outBaseName + "_sprite_bank.bin" );
 					tilePalette.Export( outBaseName + "_palette.bin" );
