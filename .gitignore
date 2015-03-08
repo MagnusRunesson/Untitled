@@ -9,9 +9,10 @@ util/BigTool/BigTool.sln
 util/BigTool/BigTool.userprefs
 util/BigTool/BigTool-csharp.sln
 util/BigTool/Library
+util/BigTool/Temp
+util/BigTool/obj
 build/out
 build/mess/roms
-util/BigTool/Temp
 projects/*.sublime-workspace
 src/platform/amiga/amiga_lib/not_fixed_yet
 *_listfile.txt
