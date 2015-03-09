@@ -25,47 +25,52 @@ namespace Assets.Editor
 
         public void AddDynamicFile(string _filename)
         {
-            AddFile(_filename, 0);
+            AddFile(_filename, false);
         }
 
         public void AddStaticFile(string _filename)
         {
-            AddFile(_filename, 1);
+            AddFile(_filename, true);
         }
 
         //public void AddFile(string _filename, string _alternativeAmigaFilename = null)
         
-        private void AddFile(string _filename, int dataIndex)
+        private void AddFile(string _filename, bool isStatic)
         {
-            //string asmFileName = System.IO.Path.GetFileNameWithoutExtension( _filename ).Replace( ' ', '_' );
+            int dataIndex = isStatic ? 1 : 0;
+            string chunkSize = isStatic ? "4" : "_chunk_size";
+
             string label = GetLabelNameFromFileName(_filename);
+
 
             // Append to data.asm
             m_asmData[dataIndex] += "\n\n; " + _filename + "\n\n";
-            m_asmData[dataIndex] += "\tcnop\t\t0,_chunk_size\n";
+            m_asmData[dataIndex] += "\tcnop\t\t0," + chunkSize + "\n";
             m_asmData[dataIndex] += label + ":\n";
 
-            //if (_alternativeAmigaFilename == null)
-            //{
-            //    m_asmData += "\tincbin\t\"../src/incbin/" + _filename + "\"\n";
-            //}
-            //else
-            //{
-            //    m_asmData += "\tifd\tis_mega_drive\n";
-            //    m_asmData += "\tincbin\t\"../src/incbin/" + _filename + "\"\n";
-            //    m_asmData += "\telse\n";
-            //    m_asmData += "\tincbin\t\"../src/incbin/" + _alternativeAmigaFilename + "\"\n";
-            //    m_asmData += "\tendif\n";
-            //}
             m_asmData[dataIndex] += "\tincbin\t\"../src/incbin/" + _filename + "\"\n";
 
-            m_asmData[dataIndex] += (label + "_pos").PadRight(60) + "equ " + label + "/_chunk_size\n";
-            m_asmData[dataIndex] += (label + "_length").PadRight(60) + "equ ((" + label + "_end-" + label + ")+(_chunk_size-1))/_chunk_size\n";
-            m_asmData[dataIndex] += label + "_end:\n";
+            if (isStatic)
+            {
+                m_asmData[dataIndex] += (label + "_pos").PadRight(60) + "equ (" + label + "-StaticData)\n";
+            }
+            else
+            {
+                m_asmData[dataIndex] += (label + "_pos").PadRight(60) + "equ " + label + "/" + chunkSize + "\n";
+                m_asmData[dataIndex] += (label + "_length").PadRight(60) + "equ ((" + label + "_end-" + label + ")+(_chunk_size-1))/_chunk_size\n";
+                m_asmData[dataIndex] += label + "_end:\n";
+            }
 
-            // Append to filemap.asm
-           
-            m_asmFileMap += "\tdc.w\t" + label + "_pos," + label + "_length\n";
+
+            // Append to filemap.asm      
+            if (isStatic)
+            {
+                m_asmFileMap += "\tdc.l\t$80000000|" + label + "_pos\n";
+            }
+            else
+            {
+                m_asmFileMap += "\tdc.w\t" + label + "_pos," + label + "_length\n";
+            }
         }
 
         private string GetLabelNameFromFileName(string _sourceFileName)
