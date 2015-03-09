@@ -81,7 +81,7 @@ gomInit:
 	; Load the game object definitions and store the address
 	push.l		a0
 	move.w		#fileid_overworld_goc,d0
-	jsr			fileLoad
+	jsr			resourceLoadGoc(pc)
 	move.l		a0,d0						; a0 is the address of all game object definitions
 	pop.l		a0
 
