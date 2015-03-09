@@ -1,0 +1,18 @@
+{
+	"rooms": [
+		{
+			"identifier" : "room_overworld_001",
+			"tilebank_fileid" : "fileid_testtiles_bank",
+			"palette_fileid" : "fileid_testtiles_palette",
+			"tilemap_fileid" : "fileid_testmap_map",
+			"collisionmap_fileid" : "fileid_testmap_collisionmap"
+		},
+		{
+			"identifier" : "room_overworld_002",
+			"tilebank_fileid" : "fileid_testtiles_bank",
+			"palette_fileid" : "fileid_testtiles_palette",
+			"tilemap_fileid" : "fileid_testmap2_map",
+			"collisionmap_fileid" : "fileid_testmap2_collisionmap"
+		}
+	]
+}
