@@ -917,7 +917,7 @@ public class bmp2tile : EditorWindow, ISerializationCallbackReceiver
 			string outBaseName = m_lastExportDirectory + System.IO.Path.DirectorySeparatorChar;
 			
 			RoomCollection rc = new RoomCollection(  rcFile );
-			rc.Export( outBaseName + m_project.GetGreatGameObjectName( rcFile ), m_project, m_gameObjectCollection );
+			rc.Export( outBaseName + m_project.GetRoomCollectionName( rcFile ), m_project, m_gameObjectCollection );
 		}
 
 		Debug.Log("Export is finished!");
