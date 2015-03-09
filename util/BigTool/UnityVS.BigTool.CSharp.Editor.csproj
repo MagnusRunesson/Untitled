@@ -94,6 +94,7 @@
     <Compile Include="Assets\Editor\PalettizedImageConfig.cs" />
     <Compile Include="Assets\Editor\PlanarImage.cs" />
     <Compile Include="Assets\Editor\Project.cs" />
+    <Compile Include="Assets\Editor\RoomCollection.cs" />
     <Compile Include="Assets\Editor\Sprite.cs" />
     <Compile Include="Assets\Editor\Tile.cs" />
     <Compile Include="Assets\Editor\TileBank.cs" />
