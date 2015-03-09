@@ -279,8 +279,9 @@ rendLoadSprite
 	rts
 
 .noSpriteAvailable
-	move.w		#$00f0,d0
-	jmp			sysError(pc)
+	moveq		#0,d0					; todo: error code
+	move.w		#$00f0,d1
+	jmp			errorScreen(pc)
 
 
 

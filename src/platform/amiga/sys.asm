@@ -25,20 +25,3 @@ sysEntryPoint
 	; Tear down, and restore of Amiga-OS
 	
 	rts
-
-;==============================================================================
-;
-; Error screen. For now simple colorcycling. d0 masks color
-;
-;==============================================================================
-sysError
-	lea			_custom,a6
-.forever
-	moveq		#-1,d1
-.loop
-	move.w		d1,d2
-	and.w		d0,d2
-	move.w		d2,color(a6)
-	dbf			d1,.loop
-
-	bra.s		.forever
