@@ -93,7 +93,7 @@ unsigned long int crc32( unsigned long int crc, const unsigned char* buf, unsign
 	return crc ^ 0xffffffffL;
 }
 
-#define MAX_LINE_LENGTH (4096)
+#define MAX_LINE_LENGTH (8192)
 
 unsigned char* inFileContent;
 unsigned char currentLine[ MAX_LINE_LENGTH ];
