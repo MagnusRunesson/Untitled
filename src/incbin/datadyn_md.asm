@@ -80,6 +80,16 @@ _data_herotest_palette_length                               equ ((_data_herotest
 _data_herotest_palette_end:
 
 
+; herotest_sprite.bin
+
+	cnop		0,_chunk_size
+_data_herotest_sprite:
+	incbin	"../src/incbin/herotest_sprite.bin"
+_data_herotest_sprite_pos                                   equ _data_herotest_sprite/_chunk_size
+_data_herotest_sprite_length                                equ ((_data_herotest_sprite_end-_data_herotest_sprite)+(_chunk_size-1))/_chunk_size
+_data_herotest_sprite_end:
+
+
 ; herotest_big_sprite_bank.bin
 
 	cnop		0,_chunk_size
@@ -98,6 +108,16 @@ _data_herotest_big_palette:
 _data_herotest_big_palette_pos                              equ _data_herotest_big_palette/_chunk_size
 _data_herotest_big_palette_length                           equ ((_data_herotest_big_palette_end-_data_herotest_big_palette)+(_chunk_size-1))/_chunk_size
 _data_herotest_big_palette_end:
+
+
+; herotest_big_sprite.bin
+
+	cnop		0,_chunk_size
+_data_herotest_big_sprite:
+	incbin	"../src/incbin/herotest_big_sprite.bin"
+_data_herotest_big_sprite_pos                               equ _data_herotest_big_sprite/_chunk_size
+_data_herotest_big_sprite_length                            equ ((_data_herotest_big_sprite_end-_data_herotest_big_sprite)+(_chunk_size-1))/_chunk_size
+_data_herotest_big_sprite_end:
 
 
 ; testsprite_sprite_bank.bin
@@ -120,6 +140,16 @@ _data_testsprite_palette_length                             equ ((_data_testspri
 _data_testsprite_palette_end:
 
 
+; testsprite_sprite.bin
+
+	cnop		0,_chunk_size
+_data_testsprite_sprite:
+	incbin	"../src/incbin/testsprite_sprite.bin"
+_data_testsprite_sprite_pos                                 equ _data_testsprite_sprite/_chunk_size
+_data_testsprite_sprite_length                              equ ((_data_testsprite_sprite_end-_data_testsprite_sprite)+(_chunk_size-1))/_chunk_size
+_data_testsprite_sprite_end:
+
+
 ; testsprite2_sprite_bank.bin
 
 	cnop		0,_chunk_size
@@ -138,6 +168,16 @@ _data_testsprite2_palette:
 _data_testsprite2_palette_pos                               equ _data_testsprite2_palette/_chunk_size
 _data_testsprite2_palette_length                            equ ((_data_testsprite2_palette_end-_data_testsprite2_palette)+(_chunk_size-1))/_chunk_size
 _data_testsprite2_palette_end:
+
+
+; testsprite2_sprite.bin
+
+	cnop		0,_chunk_size
+_data_testsprite2_sprite:
+	incbin	"../src/incbin/testsprite2_sprite.bin"
+_data_testsprite2_sprite_pos                                equ _data_testsprite2_sprite/_chunk_size
+_data_testsprite2_sprite_length                             equ ((_data_testsprite2_sprite_end-_data_testsprite2_sprite)+(_chunk_size-1))/_chunk_size
+_data_testsprite2_sprite_end:
 
 
 ; testtiles_bank.bin
@@ -220,6 +260,16 @@ _data_herotestpng_palette_length                            equ ((_data_herotest
 _data_herotestpng_palette_end:
 
 
+; herotestpng_sprite.bin
+
+	cnop		0,_chunk_size
+_data_herotestpng_sprite:
+	incbin	"../src/incbin/herotestpng_sprite.bin"
+_data_herotestpng_sprite_pos                                equ _data_herotestpng_sprite/_chunk_size
+_data_herotestpng_sprite_length                             equ ((_data_herotestpng_sprite_end-_data_herotestpng_sprite)+(_chunk_size-1))/_chunk_size
+_data_herotestpng_sprite_end:
+
+
 ; housetiles_bank.bin
 
 	cnop		0,_chunk_size
@@ -270,6 +320,16 @@ _data_signpost_palette_length                               equ ((_data_signpost
 _data_signpost_palette_end:
 
 
+; signpost_sprite.bin
+
+	cnop		0,_chunk_size
+_data_signpost_sprite:
+	incbin	"../src/incbin/signpost_sprite.bin"
+_data_signpost_sprite_pos                                   equ _data_signpost_sprite/_chunk_size
+_data_signpost_sprite_length                                equ ((_data_signpost_sprite_end-_data_signpost_sprite)+(_chunk_size-1))/_chunk_size
+_data_signpost_sprite_end:
+
+
 ; stoneblock_sprite_bank.bin
 
 	cnop		0,_chunk_size
@@ -288,6 +348,16 @@ _data_stoneblock_palette:
 _data_stoneblock_palette_pos                                equ _data_stoneblock_palette/_chunk_size
 _data_stoneblock_palette_length                             equ ((_data_stoneblock_palette_end-_data_stoneblock_palette)+(_chunk_size-1))/_chunk_size
 _data_stoneblock_palette_end:
+
+
+; stoneblock_sprite.bin
+
+	cnop		0,_chunk_size
+_data_stoneblock_sprite:
+	incbin	"../src/incbin/stoneblock_sprite.bin"
+_data_stoneblock_sprite_pos                                 equ _data_stoneblock_sprite/_chunk_size
+_data_stoneblock_sprite_length                              equ ((_data_stoneblock_sprite_end-_data_stoneblock_sprite)+(_chunk_size-1))/_chunk_size
+_data_stoneblock_sprite_end:
 
 
 ; testmap_map.bin
