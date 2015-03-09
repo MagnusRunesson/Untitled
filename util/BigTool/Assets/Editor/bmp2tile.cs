@@ -26,7 +26,7 @@ public class bmp2tile : EditorWindow, ISerializationCallbackReceiver
 
 	string m_openImageName;
 	string m_openMapName;
-
+	bool[] m_foldOut = new bool[ 20 ];	// An arbitrarily chosen number that is enough :)
 
 	public List<int> _keys = new List<int>();
 	public List<string> _values = new List<string>();
@@ -487,39 +487,81 @@ public class bmp2tile : EditorWindow, ISerializationCallbackReceiver
 
 	void OnDrawProject( int _id )
 	{
-		GUILayout.Label( "Images:" );
-		string[] imageFiles = m_project.m_imageFiles;
-		foreach( string fullPath in imageFiles )
-		{
-			string name = System.IO.Path.GetFileName( fullPath );
-			if( GUILayout.Button( name ))
-			{
-				m_mapTexture = null;
-				LoadBMP( fullPath );
-			}
-		}
+		int foldoutIndex = 0;
 
-		GUILayout.Label( "Tile maps: ");
-		string[] mapFiles = m_project.m_mapFiles;
-		foreach( string fullPath in mapFiles )
+		m_foldOut[ foldoutIndex ] = EditorGUILayout.Foldout( m_foldOut[ foldoutIndex ], "Images" );
+		if( m_foldOut[ foldoutIndex ] )
 		{
-			string name = System.IO.Path.GetFileName( fullPath );
-			if( GUILayout.Button( name ))
+			string[] imageFiles = m_project.m_imageFiles;
+			foreach( string fullPath in imageFiles )
 			{
-				LoadMapPreview( fullPath );
+				string name = System.IO.Path.GetFileName( fullPath );
+				if( GUILayout.Button( name ))
+				{
+					m_mapTexture = null;
+					LoadBMP( fullPath );
+				}
 			}
 		}
+		foldoutIndex++;
 
-		GUILayout.Label( "Game objects: " );
-		string[] goFiles = m_project.m_gameObjectCollectionFiles;
-		foreach( string fullPath in goFiles )
+		m_foldOut[ foldoutIndex ] = EditorGUILayout.Foldout( m_foldOut[ foldoutIndex ], "Tile maps" );
+		if( m_foldOut[ foldoutIndex ] )
 		{
-			string name = System.IO.Path.GetFileName( fullPath );
-			if( GUILayout.Button( name ))
+			string[] mapFiles = m_project.m_mapFiles;
+			foreach( string fullPath in mapFiles )
 			{
-				new GameObjectCollection( fullPath );
+				string name = System.IO.Path.GetFileName( fullPath );
+				if( GUILayout.Button( name ))
+				{
+					LoadMapPreview( fullPath );
+				}
 			}
 		}
+		foldoutIndex++;
+
+		m_foldOut[ foldoutIndex ] = EditorGUILayout.Foldout( m_foldOut[ foldoutIndex ], "Game objects collections" );
+		if( m_foldOut[ foldoutIndex ] )
+		{
+			string[] goFiles = m_project.m_gameObjectCollectionFiles;
+			foreach( string fullPath in goFiles )
+			{
+				string name = System.IO.Path.GetFileName( fullPath );
+				if( GUILayout.Button( name ))
+				{
+					new GameObjectCollection( fullPath );
+				}
+			}
+		}
+		foldoutIndex++;
+
+		m_foldOut[ foldoutIndex ] = EditorGUILayout.Foldout( m_foldOut[ foldoutIndex ], "Game object definitions loaded" );
+		if( m_foldOut[ foldoutIndex ] )
+		{
+			GUILayout.Label( "Game object definitions loaded by the tool:" );
+			int i;
+			for( i=0; i<m_gameObjectCollection.GetNumDefinitions(); i++ )
+			{
+				string defName = m_gameObjectCollection.GetIdentifierFromIndex( i );
+				GUILayout.Label( i.ToString() + ": \"" + defName + "\"" );
+			}
+		}
+		foldoutIndex++;
+
+		m_foldOut[ foldoutIndex ] = EditorGUILayout.Foldout( m_foldOut[ foldoutIndex ], "Room collections" );
+		if( m_foldOut[ foldoutIndex ] )
+		{
+			string[] rcFiles = m_project.m_roomCollectionFiles;
+			foreach( string fullPath in rcFiles )
+			{
+				string name = System.IO.Path.GetFileName( fullPath );
+				if( GUILayout.Button( name ))
+				{
+					new RoomCollection( fullPath );
+				}
+			}
+		}
+		foldoutIndex++;
 
 		GUI.DragWindow();
 	}
@@ -862,6 +904,20 @@ public class bmp2tile : EditorWindow, ISerializationCallbackReceiver
 
 			GameObjectCollection ggo = new GameObjectCollection(  goFile );
 			ggo.Export( outBaseName + m_project.GetGreatGameObjectName( goFile ), m_project );
+		}
+
+		//
+		// Export all room collections
+		//
+		foreach( string rcFile in m_project.m_roomCollectionFiles )
+		{
+			Debug.Log( "Exporting room collection '" + rcFile + "'" );
+
+			string outFileNameNoExt = m_project.GetOutFileNameNoExt( rcFile );
+			string outBaseName = m_lastExportDirectory + System.IO.Path.DirectorySeparatorChar;
+			
+			RoomCollection rc = new RoomCollection(  rcFile );
+			rc.Export( outBaseName + m_project.GetGreatGameObjectName( rcFile ), m_project, m_gameObjectCollection );
 		}
 
 		Debug.Log("Export is finished!");

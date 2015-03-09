@@ -92,6 +92,11 @@ public class GameObjectCollection
 		_outArray[ _byteOffset+1 ] = (byte)(_value&0xff);
 	}
 
+	public int GetNumDefinitions()
+	{
+		return m_definitions.Count;
+	}
+
 	public Definition GetDefinitionFromIdentifier( string _identifier )
 	{
 		foreach( var def in m_definitions )
@@ -101,6 +106,11 @@ public class GameObjectCollection
 		}
 
 		return null;
+	}
+
+	public string GetIdentifierFromIndex( int _index )
+	{
+		return m_definitions[ _index ].m_identifier;
 	}
 
 	public int GetIndexFromIdentifier( string _identifier )

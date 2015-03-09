@@ -18,6 +18,7 @@ public class Project : ISerializationCallbackReceiver
 	public string[] m_imageFiles;
 	public string[] m_mapFiles;
 	public string[] m_gameObjectCollectionFiles;
+	public string[] m_roomCollectionFiles;
 
 
 	public List<string> _keys = new List<string>();
@@ -133,6 +134,7 @@ public class Project : ISerializationCallbackReceiver
 		m_imageFiles = imageFiles.ToArray();
 		m_mapFiles = System.IO.Directory.GetFiles( m_path, "*.json" );
 		m_gameObjectCollectionFiles = System.IO.Directory.GetFiles( m_path, "*.goc" );
+		m_roomCollectionFiles = System.IO.Directory.GetFiles( m_path, "*.rc" );
 
 		VerifyMapFiles();
 		BuildFileList();
@@ -204,6 +206,12 @@ public class Project : ISerializationCallbackReceiver
 	{
 		string outFileNameNoExt = GetOutFileNameNoExt( _sourceFileName );
 		return outFileNameNoExt + "_goc.bin";
+	}
+
+	public string GetRoomCollectionName( string _sourceFileName )
+	{
+		string outFileNameNoExt = GetOutFileNameNoExt( _sourceFileName );
+		return outFileNameNoExt + "_rc.bin";
 	}
 
     public int GetIDFromConstant( string _constant )
@@ -307,15 +315,34 @@ public class Project : ISerializationCallbackReceiver
 			
 			string outFileNameNoExt = GetOutFileNameNoExt( goFile );
 			//string outBaseName = GetOutBaseName( imageFile );
-
+			
 			GameObjectCollection ggo = new GameObjectCollection(  goFile );
-
+			
 			//
-            m_fileIdList.AddFile(GetGreatGameObjectName(outFileNameNoExt));
-            megadriveFileData.AddStaticFile(GetGreatGameObjectName(outFileNameNoExt));
-            amigaFileData.AddStaticFile(GetGreatGameObjectName(outFileNameNoExt));
+			m_fileIdList.AddFile(GetGreatGameObjectName(outFileNameNoExt));
+			megadriveFileData.AddStaticFile(GetGreatGameObjectName(outFileNameNoExt));
+			amigaFileData.AddStaticFile(GetGreatGameObjectName(outFileNameNoExt));
 		}
-
+		
+		//
+		// Export all room collections
+		//
+		foreach( string rcFile in m_roomCollectionFiles )
+		{
+			if( _dryRun == false )
+				Debug.Log( "Exporting file '" + rcFile + "'" );
+			
+			string outFileNameNoExt = GetOutFileNameNoExt( rcFile );
+			//string outBaseName = GetOutBaseName( imageFile );
+			
+			RoomCollection rc = new RoomCollection(  rcFile );
+			
+			//
+			m_fileIdList.AddFile( GetRoomCollectionName( outFileNameNoExt ));
+			megadriveFileData.AddStaticFile( GetRoomCollectionName( outFileNameNoExt ));
+			amigaFileData.AddStaticFile( GetRoomCollectionName( outFileNameNoExt ));
+		}
+		
 		//
 		// Generate assembly files that tie everything together
 		//
