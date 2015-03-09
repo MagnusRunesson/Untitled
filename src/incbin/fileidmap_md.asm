@@ -40,3 +40,5 @@ FileIDMap:
 	dc.w	_data_testmap2_map_pos,_data_testmap2_map_length
 	dc.w	_data_testmap2_collisionmap_pos,_data_testmap2_collisionmap_length
 	dc.w	_data_overworld_goc_pos,_data_overworld_goc_length
+	dc.w	_data_dungeon_01_rc_pos,_data_dungeon_01_rc_length
+	dc.w	_data_overworld_rc_pos,_data_overworld_rc_length

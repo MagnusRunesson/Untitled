@@ -40,3 +40,5 @@ fileid_testmap_collisionmap             equ 37
 fileid_testmap2_map                     equ 38
 fileid_testmap2_collisionmap            equ 39
 fileid_overworld_goc                    equ 40
+fileid_dungeon_01_rc                    equ 41
+fileid_overworld_rc                     equ 42
