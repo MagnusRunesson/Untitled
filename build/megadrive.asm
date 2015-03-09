@@ -13,6 +13,7 @@ _chunk_size		equ		128			; same as TD_SECTOR (size of sector on floppy)
 	include		"../src/platform/megadrive/rend.asm"
 	include		"../src/platform/megadrive/file.asm"
 	include		"../src/platform/megadrive/img.asm"
+	include		"../src/platform/megadrive/error.asm"
 	include		"../src/incasm/data.asm"
 	include		"../src/incbin/datasta_md.asm"
 	include		"../src/incbin/fileidmap_md.asm"
