@@ -268,7 +268,7 @@ public class Project : ISerializationCallbackReceiver
                     megadriveFileData.AddDynamicFile(GetPaletteName(outFileNameNoExt));
                     amigaFileData.AddDynamicFile(GetPaletteName(outFileNameNoExt));
                     m_fileIdList.AddFile(GetSpriteName(outFileNameNoExt));
-                    megadriveFileData.AddStaticFile(GetSpriteName(outFileNameNoExt));
+                    megadriveFileData.AddDynamicFile(GetSpriteName(outFileNameNoExt));
                     amigaFileData.AddDynamicFile(GetSpriteName(outFileNameNoExt));
 				}
 				else
