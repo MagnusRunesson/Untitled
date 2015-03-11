@@ -19,8 +19,8 @@ _rend_sprite_max_count_				equ		(80)
 __RendSpritePosX			rs.w	1
 __RendSpritePosY			rs.w	1
 __RendSpriteFrame			rs.w	1
-__RendSpriteResourceId		rs.w	1
-__RendSpriteBankResourceId	rs.w	1
+__RendSpriteResourcePtr		rs.l	1
+__RendSpriteBankResourcePtr	rs.l	1
 ;__RendSpriteFlags			rs.w	1
 __RendSpriteSizeof			rs.b	0
 
@@ -265,11 +265,11 @@ rendLoadSprite
 	; Load sprite bank
 	move.l		d1,d2					; Backup file id of sprite file in d2
 	bsr			resourceLoadSpriteBank
-	move.w		d0,__RendSpriteBankResourceId(a3)
+	move.l		a0,__RendSpriteBankResourcePtr(a3)
 
 	move.l		d2,d0					; file id back into d0
 	bsr			resourceLoadSprite
-	move.w		d0,__RendSpriteResourceId(a3)
+	move.l		a0,__RendSpriteResourcePtr(a3)
 
 	; Return sprite handle
 	moveq		#0,d0
@@ -487,14 +487,10 @@ rendSetSpriteDrawOrder:
 	add.l		d0,a2
 
 	; Get resource for sprite bank, put it in a1
-	move.w		__RendSpriteBankResourceId(a2),d0
-	bsr			resourceGetSpriteBank
-	move.l		a0,a1
+	move.l		__RendSpriteBankResourcePtr(a2),a1
 
 	; Get resource for sprite , leave it in a0
-	move.w		__RendSpriteResourceId(a2),d0
-	bsr			resourceGetSprite
-
+	move.l		__RendSpriteResourcePtr(a2),a0
 
 	; d0=Sprite flags
 	move.b		spritefile_struct_flags(a0),d0

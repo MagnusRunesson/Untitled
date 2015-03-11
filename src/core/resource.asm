@@ -130,11 +130,11 @@ resourceLoadDynamicFile
 
 	move.l		d2,__ResMemPoolFirstAvailableMem(a2)
 
-	move.l		d6,d0
+	move.l		d7,a0
 	bra			.exit
 
 .foundExistingResource
-	move.w		d6,d0
+	move.l		__ResSlotFilePointer(a1),a0	
 
 .exit
 	popm		d2-d7/a2-a6
@@ -183,26 +183,3 @@ resourceLoadStaticFile
 	moveq		#0,d0								; todo: error code
 	move.w		#$0f0f,d1
 	jmp			errorScreen(pc)
-
-;==============================================================================
-;
-; Get pointer to resource by slot index
-; Input
-;   d0.w=resource slot index
-;   a0.l=pointer to resource slots
-; Output
-;   a0.l=pointer to resource
-;
-;==============================================================================
-
-* long resourceGetBySlotIndex(word slotIndex, resourceSlot[] slotList)
-* {
-* 	long ptr = slotList + slotIndex * sizeof(resourceSlot)
-* 	return ptr
-* }
-
-resourceGetBySlotIndex
-	mulu.w		#_ResSlotSizeof,d0				; TODO: Use shift!
-	add.l		d0,a0
-	move.l		__ResSlotFilePointer(a0),a0
-	rts

@@ -76,11 +76,6 @@ resourceLoadSpriteBank
 	pop			a2
 	rts
 
-resourceGetSpriteBank
-	lea			_ResSpriteBankSlots(pc),a0
-	bsr			resourceGetBySlotIndex
-	rts
-
 ;==============================================================================
 ;
 ; Wrappers for Sprite
@@ -98,11 +93,6 @@ resourceLoadSprite
 	lea			_ResSpriteMemPool(pc),a2
 	bsr			resourceLoadDynamicFile
 	pop			a2
-	rts
-
-resourceGetSprite
-	lea			_ResSpriteSlots(pc),a0
-	bsr			resourceGetBySlotIndex
 	rts
 
 ;==============================================================================
