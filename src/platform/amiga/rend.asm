@@ -602,54 +602,78 @@ _drawSprite
 ;   a2 = Sprite struct pointer
 ;   a6 = Custom base
 ;
+; todo: culling of bobs
+;
 ;==============================================================================
 _drawBob
 	pushm		d2-d7/a2-a5
-
-	moveq		#0,d0
-	moveq		#0,d1
+	
+	moveq		#0,d0						; d0=sprite x position
 	move.w		__RendSpritePosX(a2),d0
+	moveq		#0,d1						; d1=sprite y position
 	move.w		__RendSpritePosY(a2),d1
 
 	lea			_RendVars(pc),a3
 	add.w		__RendScrollX(a3),d0
 	add.w		__RendScrollY(a3),d1
-
-	move.l		d0,d2
-	lsr.l		#3,d0
-	and.l		#$fffffffe,d0
 	
-	lsl.l		#8,d1
-
+	move.l		d0,d2						; d2=bob shift
 	and.w		#$0f,d2
 	ror.w		#4,d2
 
-	_get_workmem_ptr BitplaneMem,a4
-	add.l		d0,a4
-	add.l		d1,a4
-
-	move.l		a1,a5
+	lsr.l		#3,d0						; d0=bob x offset on screen bitmap
+	and.l		#$fffffffe,d0	
+	lsl.l		#8,d1						; d1=bob y offset on screen bitmap
 	
-	_wait_blit
+	_get_workmem_ptr BitplaneMem,a4			; a4=screen bitmap + box x&y offset
+	add.l		d0,a4
+	add.l		d1,a4	
+	
+	moveq		#0,d3							; d3=sprite width in pixels
+	move.b		spritefile_struct_width(a0),d3
+	moveq		#0,d4							; d4=sprite heigth in pixels
+	move.b		spritefile_struct_height(a0),d4
+	
+	move.w		#512,d5				; d5=modulo for screen bitmap
+	sub.w		d3,d5
+	sub.w		#16,d5				; 16 extra pixels (used for shifting the bob)
+	asr.w		#3,d5
 
-	move.l		a5,bltbpt(a6)
-	add.l		#16*16/8*4,a5
-	move.l		a5,bltapt(a6)
+	move.w		d4,d6				; d6=bltsize
+	asl.w		#6+2,d6				; 6 => heigth in bit 6-15, 2 => 'mulu 4' (for number of bitplanes)
+	move.w		d3,d7				; d7=temp width 
+	add.w		#16,d7				; 16 extra pixels (used for shifting the bob)
+	asr.w		#4,d7				; convert width in pixels to width in word
+	or.w		d7,d6
+	
+	asr.w		#1,d3				; d3=bob bitmap size (excluding mask)
+									; 1 => 'divu 2' (number of bits per byte/number of bitplanes, 8/4)
+	mulu		d4,d3
+
+	move.w		d2,d0						; d0=bltcon0, d2bltcon1
+	or.w		#SRCA|SRCB|SRCC|DEST|$CA,d0	; $CA=AB+ÄC (Ä=not A)
+
+	; wait for previous blit to finish
+	; NB: don't alter blt-custom regs until
+	; previous blit is finished!
+	_wait_blit
+	
+	move.l		a1,bltbpt(a6)		; a1=resource for sprite bank (bob bitmap)
+	add.l		d3,a1				; a1=resource for sprite bank (bob mask bitmap)
+	move.l		a1,bltapt(a6)
 	move.l		a4,bltcpt(a6)
 	move.l		a4,bltdpt(a6)
-	move.w		#-2,bltamod(a6)
-	move.w		#-2,bltbmod(a6)
-	move.w		#60,bltcmod(a6)
-	move.w		#60,bltdmod(a6)
-	move.w		#$0000,bltalwm(a6)
+		
+	move.w		#-2,bltamod(a6)		; Modulo for bob is -16 pixels (-2 bytes) 
+	move.w		#-2,bltbmod(a6)		; used for shifting the bob
+	move.w		d5,bltcmod(a6)
+	move.w		d5,bltdmod(a6)
 	move.w		#$ffff,bltafwm(a6)	
+	move.w		#$0000,bltalwm(a6)
 
-	move.w		d2,d3
-	or.w		#SRCA|SRCB|SRCC|DEST|$CA,d3			; D=A:$f0 $E2
-	move.w		d3,bltcon0(a6)	
-	;move.w		#SRCA|DEST|$F0,bltcon0(a6)	; D=A:$f0
+	move.w		d0,bltcon0(a6)	
 	move.w		d2,bltcon1(a6)
-	move.w		#$1002,bltsize(a6)
+	move.w		d6,bltsize(a6)
 
 	popm		d2-d7/a2-a5
 	rts
