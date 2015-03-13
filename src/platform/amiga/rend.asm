@@ -523,9 +523,9 @@ rendSetSpriteDrawOrder:
 ; Draw hardware sprite
 ;
 ; Input
-;	a0 = resource for sprite
-;	a1 = resource for sprite bank
-;   a2=Sprite struct pointer
+;	a0 = Resource for sprite
+;	a1 = Resource for sprite bank
+;   a2 = Sprite struct pointer
 ;
 ;==============================================================================
 
@@ -535,6 +535,13 @@ _drawSprite
 	lea			_RendVars,a3
 	move.l		__RendSpriteCopperPointer(a3),a4
 
+	moveq		#0,d7							; d7=sprite heigth
+	move.b		spritefile_struct_height(a0),d7	
+	addq		#2,d7							; 2 rows extra for sprite control words
+	asl.l		#2,d7							; d7=sprite size (heigth*width in pixels*number of bitplanes/bits per byte) => heigth*16*2/8 => heigth*4
+		
+	lea			(a1,d7),a5			; a3=Resource for attached sprite
+	
 	move.l		a1,d0
 	swap.w		d0
 	move.w		d0,(a4)
@@ -542,7 +549,7 @@ _drawSprite
 	move.w		d0,4(a4)
 	
 	addq		#8,a4
-	add.l		#72,d0
+	add.l		d7,d0
 	swap.w		d0
 	move.w		d0,(a4)
 	swap.w		d0
@@ -556,6 +563,8 @@ _drawSprite
 	move.w		__RendSpritePosX(a2),d1
 	move.w		__RendSpritePosY(a2),d2
 
+	moveq		#0,d7							; d7=sprite heigth
+	move.b		spritefile_struct_height(a0),d7		
 
 	add.w		#$81,d1		; d1=hstart (high bits)
 	move.l		d1,d3		; d3=hstart (low bit)
@@ -564,7 +573,7 @@ _drawSprite
 	move.l		d2,d4		; d4=vstart (high bit)
 	
 	move.l		d2,d5		; d5=vstop (low bits)
-	add.l		#16,d5		; sprite heigth
+	add.l		d7,d5		; sprite heigth
 	move.l		d5,d6		; d6=vstop (high bit)
 
 	lsr.w		#1,d1
@@ -580,14 +589,12 @@ _drawSprite
 	lsr.w		#8-2,d4		; bit pos 8 -> pos 2
 	and.w		#$0004,d4
 	or.w		d4,d5		;d5=sprxctl
-	
-	lea			72(a1),a3
 
 	move.w		d1,(a1)+
-	move.w		d1,(a3)+
+	move.w		d1,(a5)+
 	move.w		d5,(a1)
 	or.w		#$0080,d5	; attach
-	move.w		d5,(a3)
+	move.w		d5,(a5)
 
 	popm		d2-d7/a2-a5
 	rts
