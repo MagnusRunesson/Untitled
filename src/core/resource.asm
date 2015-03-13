@@ -1,4 +1,3 @@
-
 ;==============================================================================
 ;
 ; Structures
@@ -45,7 +44,7 @@ _ResSlotSizeof				rs.b	0
 ;   a1.l=pointer to resoruce slots
 ;   a2.l=pointer to memory pool
 ; Output
-;   d0.w=resource slot index
+;   a0.l=pointer to dynamic resource
 ;
 ;==============================================================================
 
@@ -183,3 +182,17 @@ resourceLoadStaticFile
 	moveq		#0,d0								; todo: error code
 	move.w		#$0f0f,d1
 	jmp			errorScreen(pc)
+
+;==============================================================================
+;
+; Reset resource memory pool and config
+; Input
+;   a0.l=pointer to resource configuration
+;   a1.l=pointer to memory pool
+;
+;==============================================================================
+
+resourceReset
+	move.w		#0,__ResConfigFirstFreeSlot(a0)
+	move.l		__ResMemPoolBottomOfMem(a1),__ResMemPoolFirstAvailableMem(a1)
+	rts
