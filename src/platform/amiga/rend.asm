@@ -604,8 +604,8 @@ _drawSprite
 ; Draw blitter object
 ;
 ; Input
-;	a0 = resource for sprite
-;	a1 = resource for sprite bank
+;	a0 = Resource for sprite
+;	a1 = Resource for sprite bank
 ;   a2 = Sprite struct pointer
 ;   a6 = Custom base
 ;
@@ -641,15 +641,15 @@ _drawBob
 	moveq		#0,d4							; d4=sprite heigth in pixels
 	move.b		spritefile_struct_height(a0),d4
 	
+	move.w		d3,d7				; d7=sprite width in pixels
+	add.w		#16,d7				; 16 extra pixels (used because we are shifting the bob 0-15 bits)
+	
 	move.w		#512,d5				; d5=modulo for screen bitmap
-	sub.w		d3,d5
-	sub.w		#16,d5				; 16 extra pixels (used for shifting the bob)
-	asr.w		#3,d5
+	sub.w		d7,d5
+	asr.w		#3,d5				; convert width in pixels to width in word
 
 	move.w		d4,d6				; d6=bltsize
 	asl.w		#6+2,d6				; 6 => heigth in bit 6-15, 2 => 'mulu 4' (for number of bitplanes)
-	move.w		d3,d7				; d7=temp width 
-	add.w		#16,d7				; 16 extra pixels (used for shifting the bob)
 	asr.w		#4,d7				; convert width in pixels to width in word
 	or.w		d7,d6
 	
