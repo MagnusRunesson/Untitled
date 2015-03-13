@@ -1,3 +1,4 @@
+
 screen_width				equ			320
 	ifd	_is_mega_drive
 screen_height				equ			224
@@ -49,7 +50,10 @@ main:
 	move.w		#0,_potionanim_time(a2)
 
 	;
-	move.l		#_data_testmap_collisionmap,_current_collisionmap(a2)
+	move.l		#fileid_testmap_collisionmap,d0
+	jsr			resourceLoadCollisionMap(pc)
+	move.l		a0,_current_collisionmap(a2)
+	;move.l		#_data_testmap_collisionmap,_current_collisionmap(a2)
 
 	;
 	; Load world graphics
@@ -466,7 +470,13 @@ _checkBorders:
 	move.l		#fileid_testmap_map,d0
 	move.l		#0,d1
 	jsr			rendLoadTileMap(pc)
-	move.l		#_data_testmap_collisionmap,_current_collisionmap(a2)
+	
+	jsr			resourceResetCollisionMap(pc)
+
+	move.l		#fileid_testmap_collisionmap,d0
+	jsr			resourceLoadCollisionMap(pc)
+	move.l		a0,_current_collisionmap(a2)
+	;move.l		#_data_testmap_collisionmap,_current_collisionmap(a2)
 
 	;
 	; Warp hero to the right of the new map
@@ -486,7 +496,13 @@ _checkBorders:
 	move.l		#fileid_testmap2_map,d0
 	move.l		#0,d1
 	jsr			rendLoadTileMap(pc)
-	move.l		#_data_testmap2_collisionmap,_current_collisionmap(a2)
+
+	jsr			resourceResetCollisionMap(pc)
+	
+	move.l		#fileid_testmap2_collisionmap,d0
+	jsr			resourceLoadCollisionMap(pc)
+	move.l		a0,_current_collisionmap(a2)	
+	;move.l		#_data_testmap2_collisionmap,_current_collisionmap(a2)
 
 	;
 	; Warp hero to the left of the new map

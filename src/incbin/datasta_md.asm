@@ -1,6 +1,22 @@
 StaticData:
 
 
+; testmap_collisionmap.bin
+
+	cnop		0,4
+_data_testmap_collisionmap:
+	incbin	"../src/incbin/testmap_collisionmap.bin"
+_data_testmap_collisionmap_pos                              equ (_data_testmap_collisionmap-StaticData)
+
+
+; testmap2_collisionmap.bin
+
+	cnop		0,4
+_data_testmap2_collisionmap:
+	incbin	"../src/incbin/testmap2_collisionmap.bin"
+_data_testmap2_collisionmap_pos                             equ (_data_testmap2_collisionmap-StaticData)
+
+
 ; overworld_goc.bin
 
 	cnop		0,4

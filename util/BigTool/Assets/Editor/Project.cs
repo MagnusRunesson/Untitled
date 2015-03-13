@@ -301,7 +301,7 @@ public class Project : ISerializationCallbackReceiver
             megadriveFileData.AddDynamicFile(GetTileMapName(outFileNameNoExt));
             amigaFileData.AddDynamicFile(GetTileMapName(outFileNameNoExt));
             m_fileIdList.AddFile(GetCollisionMapName(outFileNameNoExt));
-            megadriveFileData.AddDynamicFile(GetCollisionMapName(outFileNameNoExt));
+            megadriveFileData.AddStaticFile(GetCollisionMapName(outFileNameNoExt));
             amigaFileData.AddDynamicFile(GetCollisionMapName(outFileNameNoExt));
 		}
 

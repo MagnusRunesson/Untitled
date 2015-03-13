@@ -90,6 +90,12 @@ SpriteFileMem
 	cnop		0,_chunk_size
 SpriteFileMemEnd
 
+CollisionMapMem
+	dcb.w		2+(64*64),$0CAE			; CollisionmApmEm
+	;dc.b		'CollisionMapMem'
+	cnop		0,_chunk_size
+CollisionMapMemEnd
+
 SharedWorkMem
 	dcb.w		totalmem_size/2,$AEDE	;shArEDworkmEm
 	;dc.b		'SharedWorkMemSafe'

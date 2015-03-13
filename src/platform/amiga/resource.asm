@@ -1,4 +1,3 @@
-
 ;==============================================================================
 ;
 ; Constants
@@ -27,6 +26,13 @@ _ResSpriteBankSlots
 _ResSpriteMemPool
 	dcb.b					(_ResMemPoolSizeof)
 
+_ResCollMapConfig
+	dcb.b					(_ResConfigSizeof)
+_ResCollMapSlots
+	dcb.b					(_ResSlotSizeof)
+
+_ResCollMapMemPool
+	dcb.b					(_ResMemPoolSizeof)
 
 ;==============================================================================
 ;
@@ -54,6 +60,19 @@ resourceInit:
 	move.w		#_res_sprite_number_of_slots,__ResConfigMaxNumberOfSlots(a0)
 	move.w		#0,__ResConfigFirstFreeSlot(a0)
 
+	; Collision map mem pool
+	lea			_ResCollMapMemPool(pc),a0
+	_get_workmem_ptr CollisionMapMem,a1
+	_get_workmem_ptr CollisionMapMemEnd,a2
+	move.l		a1,__ResMemPoolBottomOfMem(a0)
+	move.l		a1,__ResMemPoolFirstAvailableMem(a0)
+	move.l		a2,__ResMemPoolTopOfMem(a0)
+
+	; Collision map config
+	lea			_ResCollMapConfig(pc),a0
+	move.w		#1,__ResConfigMaxNumberOfSlots(a0)
+	move.w		#0,__ResConfigFirstFreeSlot(a0)
+	
 	rts
 
 
@@ -108,4 +127,31 @@ resourceLoadSprite
 resourceLoadGoc
 	bsr			resourceLoadStaticFile
 	rts
+
+
+;==============================================================================
+;
+; Wrapper for collision maps
+; Input
+;   d0.w=resource slot index
+; Output
+;   a0.l=pointer to resource
+;
+;==============================================================================
+
+resourceLoadCollisionMap
+	push		a2
+	lea			_ResCollMapConfig(pc),a0
+	lea			_ResCollMapSlots(pc),a1
+	lea			_ResCollMapMemPool(pc),a2
+	bsr			resourceLoadDynamicFile
+	pop			a2
+	rts
+
+resourceResetCollisionMap
+	lea			_ResCollMapConfig(pc),a0
+	lea			_ResCollMapMemPool(pc),a1
+	bsr			resourceReset
+	rts
+	
 
