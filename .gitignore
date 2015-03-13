@@ -19,3 +19,4 @@ src/platform/amiga/amiga_lib/not_fixed_yet
 build/mess/comments
 buildcomments.xccheckout
 *.opensdf
+!bin/win32/*.exe
