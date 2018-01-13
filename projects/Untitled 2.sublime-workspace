@@ -4,8 +4,84 @@
 		"selected_items":
 		[
 			[
+				"testma",
+				"_data_testmap_collisionmap"
+			],
+			[
+				"l7_",
+				"l7_slope_downleft"
+			],
+			[
+				"play",
+				"player_sensor_offsets"
+			],
+			[
+				"hero_",
+				"_hero_sprite_pos_x"
+			],
+			[
+				"_gom",
+				"_gom_draworder_sprites"
+			],
+			[
 				"_rend",
-				"_rendIntegerToVRAMAddress"
+				"_rendCopySpriteToVRAM_Index"
+			],
+			[
+				"_cpu",
+				"_cpu_sprite_size"
+			],
+			[
+				"_cp",
+				"_cpu_sprite_mirror"
+			],
+			[
+				"_hero",
+				"_hero_sprite_pos_x"
+			],
+			[
+				"_go_wo",
+				"_go_world_pos_x"
+			],
+			[
+				"_go_si",
+				"_go_size"
+			],
+			[
+				"_",
+				"_gom_gameobjects"
+			],
+			[
+				"_gom_ca",
+				"_gom_camera_x"
+			],
+			[
+				"_go_",
+				"_go_world_pos_y"
+			],
+			[
+				"_gom_",
+				"_gom_gameobjects"
+			],
+			[
+				"_Camera",
+				"_Camera_PosX"
+			],
+			[
+				"_cam",
+				"_Camera_PosX"
+			],
+			[
+				"_Hero",
+				"_HeroSprite_PosY"
+			],
+			[
+				"_C",
+				"_Camera_PosX"
+			],
+			[
+				"VRAM_",
+				"VRAM_TileMap1_Start"
 			],
 			[
 				"VarSpriteT",
@@ -39,15 +115,15 @@
 			"file": "/Users/magnusrunesson/Projects/md/Untitled/src/main.asm",
 			"settings":
 			{
-				"buffer_size": 1892,
+				"buffer_size": 20195,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "/Users/magnusrunesson/Projects/md/Untitled/src/platform/megadrive/mem.asm",
+			"file": "/Users/magnusrunesson/Projects/md/Untitled/src/core/gameobjectmanager.asm",
 			"settings":
 			{
-				"buffer_size": 702,
+				"buffer_size": 12972,
 				"line_ending": "Unix"
 			}
 		},
@@ -55,7 +131,15 @@
 			"file": "/Users/magnusrunesson/Projects/md/Untitled/src/macros.asm",
 			"settings":
 			{
-				"buffer_size": 825,
+				"buffer_size": 2465,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/Users/magnusrunesson/Projects/md/Untitled/src/core/mem.asm",
+			"settings":
+			{
+				"buffer_size": 1258,
 				"line_ending": "Unix"
 			}
 		},
@@ -63,7 +147,31 @@
 			"file": "/Users/magnusrunesson/Projects/md/Untitled/src/platform/megadrive/rend.asm",
 			"settings":
 			{
-				"buffer_size": 36879,
+				"buffer_size": 24627,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/Users/magnusrunesson/Projects/md/Untitled/src/incasm/gameobject_hero.asm",
+			"settings":
+			{
+				"buffer_size": 500,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/Users/magnusrunesson/Projects/md/Untitled/src/incbin/files.asm",
+			"settings":
+			{
+				"buffer_size": 4700,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/Users/magnusrunesson/Projects/md/Untitled/src/platform/megadrive/mem.asm",
+			"settings":
+			{
+				"buffer_size": 453,
 				"line_ending": "Unix"
 			}
 		}
@@ -104,6 +212,23 @@
 	},
 	"file_history":
 	[
+		"/Users/magnusrunesson/Projects/md/Untitled/src/incbin/data.asm",
+		"/Users/magnusrunesson/Desktop/Hur vi amorterar på SBAB tillfälliga lånet.txt",
+		"/Users/magnusrunesson/Projects/md/Untitled/src/platform/amiga/rend.asm",
+		"/Users/magnusrunesson/Projects/md/Untitled/src/platform/megadrive/mem.asm",
+		"/Users/magnusrunesson/Projects/md/Untitled/src/platform/megadrive/rend.asm",
+		"/Users/magnusrunesson/Projects/md/Untitled/src/incasm/gameobject_hero.asm",
+		"/Users/magnusrunesson/Projects/md/Untitled/src/core/mem.asm",
+		"/Users/magnusrunesson/Projects/md/Untitled/src/incbin/files.asm",
+		"/Users/magnusrunesson/Projects/md/Untitled/src/incasm/testtiles_image.asm",
+		"/Users/magnusrunesson/Projects/md/Untitled/src/platform/amiga/img.asm",
+		"/Users/magnusrunesson/Projects/md/Untitled/src/macros.asm",
+		"/Users/magnusrunesson/Projects/md/Untitled/src/core/gameobjectmanager.asm",
+		"/Users/magnusrunesson/Projects/md/Untitled/src/incasm/data.asm",
+		"/Users/magnusrunesson/Projects/md/Untitled/build/megadrive.asm",
+		"/Users/magnusrunesson/Projects/md/Untitled/build/amigaadf.asm",
+		"/Users/magnusrunesson/Projects/md/Untitled/src/main.asm",
+		"/Users/magnusrunesson/Projects/md/Untitled/src/platform/megadrive/macros.asm",
 		"/Users/magnusrunesson/Projects/NewGUI/Assets/dynamicfiller.cs",
 		"/Users/magnusrunesson/Projects/Potato/branches/Linematch/Assets/Prefabs/SlowEffect.prefab.meta",
 		"/Users/magnusrunesson/Projects/Potato/branches/Linematch/Assets/Prefabs/LevelSpawner.prefab.meta",
@@ -214,24 +339,7 @@
 		"/Users/magnusrunesson/Projects/ECO/Source Assets/Creatures/000000_8175e8b4-e150-4da6-bc92-632477b7d4c4.json",
 		"/Users/magnusrunesson/Projects/ECO/Source Assets/Creatures/000001_adabdf37-b525-475a-ac70-431abcdde37b.json",
 		"/Users/magnusrunesson/Projects/ECO/Source Assets/Creatures/000002_050da639-c86f-4dcd-a51f-48bf2773e25a.json",
-		"/Users/magnusrunesson/Projects/ECO/Source Assets/Creatures/000003_9d59482f-9411-4a56-9977-10973755f641.json",
-		"/Users/magnusrunesson/Projects/ECO/Source Assets/Creatures/000004_67959970-df64-47dc-8aac-92e3106383ea.json",
-		"/Users/magnusrunesson/Projects/ECO/Source Assets/Creatures/000005_54203d00-b6ac-4f45-8367-4ea4dfae123d.json",
-		"/Users/magnusrunesson/Projects/ECO/Source Assets/Creatures/000006_19f1e787-9ac8-48b6-b907-7c732f1fb6da.json",
-		"/Users/magnusrunesson/Projects/MrBuilder2.0/mr-builder/uploadBuiltAssetBundles.py",
-		"/Users/magnusrunesson/Desktop/Bra MySQL.txt",
-		"/Users/magnusrunesson/Projects/ECO/trunk/ECO/Assets/temp/Meshes/Cell_Grassy_01.fbx.meta",
-		"/Users/magnusrunesson/Projects/Old SVN/Stella/CarouselView/Assets/Scripts/System/ResourceManager.cs",
-		"/Users/magnusrunesson/Projects/ABBA/trunk/ABBA/Assets/Code/SaveLoad/SaveLoadModule.cs",
-		"/Users/magnusrunesson/Projects/ECO/Stuff/ECO SVN.txt",
-		"/Users/magnusrunesson/Desktop/TutorialScreen.cs",
-		"/Users/magnusrunesson/Desktop/ECO SVN",
-		"/Users/magnusrunesson/Desktop/build-buildlist.cs",
-		"/Users/magnusrunesson/Desktop/build-listdirs.cs",
-		"/Users/magnusrunesson/Desktop/Mail-mottagare",
-		"/Users/magnusrunesson/Desktop/Kodreview",
-		"/Users/magnusrunesson/Projects/MrBuilder2.0/mr-builder/build.py",
-		"/Users/magnusrunesson/Projects/ABBA/trunk/ABBA/Assets/Resources/ReferenceFiles/PrefabPaths.txt"
+		"/Users/magnusrunesson/Projects/ECO/Source Assets/Creatures/000003_9d59482f-9411-4a56-9977-10973755f641.json"
 	],
 	"find":
 	{
@@ -250,6 +358,85 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"printt",
+			"hey you!",
+			"_gom_numobjects",
+			"_hero_sprite_pos_x",
+			"_inputUpdate",
+			"_stoneblock_go_handle",
+			"_signpost_go_handle",
+			"testmap",
+			"lea",
+			"_current_collisionmap",
+			"_data_testmap_collisionmap",
+			"testmap",
+			"l7",
+			"l87",
+			"l5_e",
+			"d5",
+			"_checkCollision",
+			"pushm",
+			"a0",
+			"_inputUpdate",
+			"d0",
+			"_inputUpdate",
+			"$10000",
+			"addq",
+			"subq",
+			"_hero_sprite_pos_y",
+			"_hero_sprite_pos_x",
+			"_camera_pos_y",
+			"_camera_pos_x",
+			"gomSetCameraPosition",
+			"_gom_camera_x",
+			"_rendSetSpritePosition_Address",
+			"_go_world_pos_x",
+			"nop",
+			"sort",
+			"_gom_numobjects",
+			"a1",
+			"dbra",
+			"_rendCopySpriteToVRAM_Index",
+			"rendSetDraw",
+			"_rendCopySpriteToVRAM_Index:",
+			"_rendCopySpriteToVRAM_Index",
+			"VarHWSprites",
+			"_hero_sprite_pos_x(",
+			"nop",
+			"rendSetScrollXY",
+			"_camera_pos_x",
+			"nop",
+			"_gom_camera_x",
+			"_gom_numobjects",
+			"printv",
+			"_potion_sprite_handle",
+			"_hero_sprite_handle",
+			"incbin",
+			"_testanim_time",
+			"_testanim",
+			"_testanim_time",
+			"_testanim",
+			"hero_sprite_handle",
+			"_rendCopySpriteToVRAM_Index",
+			"_rendSetSpritePosition_Address",
+			"_rendSetSpriteTileID_Address",
+			"VarHWSprites",
+			"rendSprite",
+			"VarHWSprites",
+			"#8",
+			"VarHWSprites",
+			"#8",
+			"_rendSetSpritePosition_Address",
+			"_camera_posx",
+			"d3",
+			"rendLoadTileMap",
+			"d2",
+			"memGetPlatformBase",
+			"memGetUserBaseAddress",
+			"move_vram_addr",
+			"autoinc",
+			"rendSetSprite",
+			"loadSprite",
 			"VarVsync",
 			"GCCOPTS=",
 			"DSTDIR",
@@ -298,20 +485,7 @@
 			"android",
 			"parse_options",
 			"opts",
-			"self.opts",
-			"MRDBG: Asset bundle name=",
-			"&quot;",
-			"menuitem",
-			"uv",
-			"1802197525",
-			"5034",
-			"496221",
-			"1802197525",
-			"844766894",
-			"<<<",
-			"working",
-			"mine",
-			"set_try_direction"
+			"self.opts"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -319,6 +493,8 @@
 		"regex": false,
 		"replace_history":
 		[
+			"_potion_go_handle",
+			"_testanim_time",
 			"\""
 		],
 		"reverse": false,
@@ -330,7 +506,7 @@
 	"groups":
 	[
 		{
-			"selected": 3,
+			"selected": 7,
 			"sheets":
 			[
 				{
@@ -338,15 +514,15 @@
 					"file": "/Users/magnusrunesson/Projects/md/Untitled/src/main.asm",
 					"settings":
 					{
-						"buffer_size": 1892,
+						"buffer_size": 20195,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								396,
-								396
+								1695,
+								1695
 							]
 						],
 						"settings":
@@ -362,23 +538,24 @@
 				},
 				{
 					"buffer": 1,
-					"file": "/Users/magnusrunesson/Projects/md/Untitled/src/platform/megadrive/mem.asm",
+					"file": "/Users/magnusrunesson/Projects/md/Untitled/src/core/gameobjectmanager.asm",
 					"settings":
 					{
-						"buffer_size": 702,
+						"buffer_size": 12972,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								160,
-								179
+								3200,
+								3200
 							]
 						],
 						"settings":
 						{
-							"syntax": "Packages/M68k-Assembly/M68k-Assembly.tmLanguage"
+							"syntax": "Packages/M68k-Assembly/M68k-Assembly.tmLanguage",
+							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
@@ -391,7 +568,34 @@
 					"file": "/Users/magnusrunesson/Projects/md/Untitled/src/macros.asm",
 					"settings":
 					{
-						"buffer_size": 825,
+						"buffer_size": 2465,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/M68k-Assembly/M68k-Assembly.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "/Users/magnusrunesson/Projects/md/Untitled/src/core/mem.asm",
+					"settings":
+					{
+						"buffer_size": 1258,
 						"regions":
 						{
 						},
@@ -404,7 +608,8 @@
 						],
 						"settings":
 						{
-							"syntax": "Packages/M68k-Assembly/M68k-Assembly.tmLanguage"
+							"syntax": "Packages/M68k-Assembly/M68k-Assembly.tmLanguage",
+							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
@@ -413,19 +618,19 @@
 					"type": "text"
 				},
 				{
-					"buffer": 3,
+					"buffer": 4,
 					"file": "/Users/magnusrunesson/Projects/md/Untitled/src/platform/megadrive/rend.asm",
 					"settings":
 					{
-						"buffer_size": 36879,
+						"buffer_size": 24627,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								3205,
-								3205
+								1477,
+								1477
 							]
 						],
 						"settings":
@@ -434,7 +639,87 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 2275.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "/Users/magnusrunesson/Projects/md/Untitled/src/incasm/gameobject_hero.asm",
+					"settings":
+					{
+						"buffer_size": 500,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								371,
+								371
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/M68k-Assembly/M68k-Assembly.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "/Users/magnusrunesson/Projects/md/Untitled/src/incbin/files.asm",
+					"settings":
+					{
+						"buffer_size": 4700,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/M68k-Assembly/M68k-Assembly.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 7,
+					"file": "/Users/magnusrunesson/Projects/md/Untitled/src/platform/megadrive/mem.asm",
+					"settings":
+					{
+						"buffer_size": 453,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								158,
+								158
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/M68k-Assembly/M68k-Assembly.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -498,6 +783,6 @@
 	"show_open_files": false,
 	"show_tabs": true,
 	"side_bar_visible": true,
-	"side_bar_width": 227.0,
+	"side_bar_width": 192.0,
 	"status_bar_visible": true
 }
